@@ -41,7 +41,7 @@ gem 'prawn-table'
 gem 'chartkick'
 gem 'precise_distance_of_time_in_words'
 gem 'pundit'
-gem 'will_paginate'
+gem 'will_paginate', '~> 3.3'
 gem 'money-rails', '~>1.12'
 gem "roo", "2.7.0"
 gem 'simple_calendar'
