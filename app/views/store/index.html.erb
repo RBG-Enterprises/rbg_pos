@@ -226,24 +226,26 @@
               </div>
             </div>
           </div>
-          <div class="card-body">
-            <% User.sales_clerk.where(email: ['elmie@rbg.com','analyn.perez@rbg.com','nova@rbg.com', 'jenelyn.lamut@rbg.com','leizel@rbg.com', 'josie.bernal@rbg.com']).each do |sales_clerk| %>
-              <div class="row">
-                <div class="col-md-4">
-                  <%= sales_clerk.full_name %>
+          <% if current_user.proprietor? %>
+            <div class="card-body">
+              <% User.sales_clerk.where(email: ['elmie@rbg.com','analyn.perez@rbg.com','nova@rbg.com', 'jenelyn.lamut@rbg.com','leizel@rbg.com', 'josie.bernal@rbg.com']).each do |sales_clerk| %>
+                <div class="row">
+                  <div class="col-md-4">
+                    <%= sales_clerk.full_name %>
+                  </div>
+                  <div class="col-md-3">
+                    <%= sales_clerk.store_front.try(:name) %>
+                  </div>
+                  <div class="col-md-4">
+                    <span class="pull-right">
+                      <b><%= number_to_currency sales_clerk.cash_on_hand_account.debits_balance(from_date: Date.current.beginning_of_day, to_date: Date.current.end_of_day) %></b>
+                    </span>
+                  </div>
                 </div>
-                <div class="col-md-3">
-                  <%= sales_clerk.store_front.try(:name) %>
-                </div>
-                <div class="col-md-4">
-                  <span class="pull-right">
-                    <b><%= number_to_currency sales_clerk.cash_on_hand_account.debits_balance(from_date: Date.current.beginning_of_day, to_date: Date.current.end_of_day) %></b>
-                  </span>
-                </div>
-              </div>
-              <hr />
-            <% end %>
-          </div>
+                <hr />
+              <% end %>
+            </div>
+          <% end %>
         </div>
       </div>
     <% end %>
