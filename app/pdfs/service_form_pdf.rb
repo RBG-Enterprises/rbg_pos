@@ -6,6 +6,7 @@ class ServiceFormPdf < Prawn::Document
     super(margin: 40, page_size: 'A4')
     @work_order = work_order
     @view_context = view_context
+    logo_details
     heading
     barcode
     move_down 5
@@ -30,22 +31,31 @@ class ServiceFormPdf < Prawn::Document
     @view_context.number_to_currency(number, :unit => "P ")
   end
   def barcode
+    bounding_box [380, 770], width: 150 do
+      text "RELEASING FORM"
+      move_down 30
+      barcode = Barby::Code39.new(@work_order.service_number)
+      barcode.annotate_pdf(self, height: 30)
+      move_down 3
+      text  "##{@work_order.service_number}", size: 18
 
-      bounding_box [340, 770], width: 150 do
-        text "SERVICE RELEASE FORM"
-        move_down 30
-        barcode = Barby::Code39.new(@work_order.service_number)
-        barcode.annotate_pdf(self, height: 30)
-        move_down 3
-        text  "##{@work_order.service_number}", size: 18
-
-      end
-    end
-  def heading
-    bounding_box [0, 780], width: 300 do
-      image "#{Rails.root}/app/assets/images/letterhead.jpg", width: 320, height: 80
     end
   end
+  def logo_details
+    image(Rails.root.join("app/assets/images/rbg_logo.png"), at: [0,780], width: 60)
+  end
+  def heading
+    table([["", "RBG COMPUTERS, CELLSHOP AND ENTERPRISES"]], cell_style: { font: "Helvetica", :padding => [0,0,0,0]}, column_widths: [70]) do
+      cells.borders = []
+      column(2).size = 14
+      column(1).font_style = :bold
+    end
+    table([["", "#{@work_order.store_front.name} Repair Center"]], cell_style: { font: "Helvetica", :padding => [0,0,0,0]}, column_widths: [70]) do
+      cells.borders = []
+      column(1).size = 10
+    end
+  end
+
   def customer_details
     move_down 20
     text "CUSTOMER DETAILS", style: :bold
@@ -61,7 +71,7 @@ class ServiceFormPdf < Prawn::Document
     @customer_details_data ||=  [["","Customer",  "#{@work_order.customer_full_name.try(:upcase)}"]] +
                                 [["", "Contact Person", "#{@work_order.contact_person}"]] +
                                 [["", "Address", "#{@work_order.customer_address}"]] +
-                                [["", "Contact NUmber",  "#{@work_order.customer_contact_number}"]]
+                                [["", "Contact Number",  "#{@work_order.customer_contact_number}"]]
   end
   def product_details
     move_down 5
