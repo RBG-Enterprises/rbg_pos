@@ -18,13 +18,13 @@ module StoreFrontModule
     def self.price_for_store_front(store_front:)
       for_store_front(store_front: store_front).try(:price)
     end
-    
+
     def self.for_store_front(store_front:)
       where(store_front: store_front).current
     end
 
     def self.current
-      order(date: :desc).first
+      order(created_at: :desc).first
     end
 
     def self.current_price

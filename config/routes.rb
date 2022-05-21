@@ -113,7 +113,7 @@ Rails.application.routes.draw do
 
 
     resources :work_orders do
-      resources :endorsements,    only: [:edit, :update], module: :work_orders 
+      resources :endorsements,    only: [:edit, :update], module: :work_orders
       resources :service_charges, only: [:new, :create, :destroy], module: :work_orders
       resources :additional_charges, only: [:new, :create], module: :work_orders
       resources :spare_parts, only: [:new, :create, :destroy]
@@ -184,10 +184,10 @@ Rails.application.routes.draw do
     resources :purchase_order_line_item_registries, only: [:create]
     resources :unit_of_measurements, only: [:edit, :update], module: :settings
     resources :selling_prices, only: [:new, :create], module: :settings
-    resources :stock_transfers, only: [:index, :show, :edit, :update, :destroy], module: :orders do 
+    resources :stock_transfers, only: [:index, :show, :edit, :update, :destroy], module: :orders do
       resources :additional_line_items,                  only: [:new, :create, :destroy], module: :stock_transfer_orders
-      resources :additional_line_item_order_processings, only: [:create], module: :stock_transfer_orders 
-    end 
+      resources :additional_line_item_order_processings, only: [:create], module: :stock_transfer_orders
+    end
     resources :received_stock_transfers, only: [:index, :show], module: :orders
     resources :repair_services_orders, only: [:index, :show], module: :orders
     resources :sales_returns, only: [:index, :show], module: :orders
@@ -287,7 +287,7 @@ Rails.application.routes.draw do
     resources :receivables, only: [:index]
   end
   resources :sales_clerks, only: [:index, :show]
-  namespace :accounting_module do 
+  namespace :accounting_module do
     resources :level_one_account_categories, only: [:index, :new, :create, :show]
-  end 
+  end
 end

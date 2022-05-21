@@ -1,23 +1,22 @@
 module ApplicationHelper
   include Pagy::Frontend
- def flash_class(level)
-  case level
-    when :notice then "alert alert-info"
-    when :success then "alert alert-success"
-    when :error then "alert alert-error"
-    when :alert then "alert alert-alert"
+  def flash_class(level)
+    case level
+      when :notice then "alert alert-info"
+      when :success then "alert alert-success"
+      when :error then "alert alert-error"
+      when :alert then "alert alert-alert"
+    end
   end
-end
 
 
-def site_name
+  def site_name
     "RBG Point of Sale"
   end
 
   def site_url
-
-      # Our dev & test URL
-      "http://localhost:3000"
+    # Our dev & test URL
+    "http://localhost:3000"
   end
 
   def meta_author

@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_06_222920) do
+ActiveRecord::Schema.define(version: 2021_07_13_004433) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,7 +78,14 @@ ActiveRecord::Schema.define(version: 2020_09_06_222920) do
     t.bigint "byte_size", null: false
     t.string "checksum", null: false
     t.datetime "created_at", null: false
+    t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "amounts", force: :cascade do |t|
@@ -196,10 +203,6 @@ ActiveRecord::Schema.define(version: 2020_09_06_222920) do
     t.string "address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "avatar_file_name"
-    t.string "avatar_content_type"
-    t.bigint "avatar_file_size"
-    t.datetime "avatar_updated_at"
     t.boolean "enable_interest", default: false
     t.bigint "business_id"
     t.bigint "receivable_account_id"
@@ -259,7 +262,7 @@ ActiveRecord::Schema.define(version: 2020_09_06_222920) do
     t.datetime "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["invoiceable_type", "invoiceable_id"], name: "index_invoices_on_invoiceable_type_and_invoiceable_id"
+    t.index ["invoiceable_type", "invoiceable_id"], name: "index_invoices_on_invoiceable"
     t.index ["type"], name: "index_invoices_on_type"
   end
 
@@ -386,7 +389,7 @@ ActiveRecord::Schema.define(version: 2020_09_06_222920) do
     t.bigint "searchable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable_type_and_searchable_id"
+    t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable"
   end
 
   create_table "posts", force: :cascade do |t|
@@ -400,7 +403,7 @@ ActiveRecord::Schema.define(version: 2020_09_06_222920) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["type"], name: "index_posts_on_type"
-    t.index ["updateable_type", "updateable_id"], name: "index_posts_on_updateable_type_and_updateable_id"
+    t.index ["updateable_type", "updateable_id"], name: "index_updates_on_updateable"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
@@ -425,10 +428,6 @@ ActiveRecord::Schema.define(version: 2020_09_06_222920) do
     t.decimal "wholesale_price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "avatar_file_name"
-    t.string "avatar_content_type"
-    t.bigint "avatar_file_size"
-    t.datetime "avatar_updated_at"
     t.bigint "category_id"
     t.decimal "low_stock_count", default: "0.0"
     t.bigint "business_id"
@@ -471,10 +470,6 @@ ActiveRecord::Schema.define(version: 2020_09_06_222920) do
   end
 
   create_table "registries", force: :cascade do |t|
-    t.string "spreadsheet_file_name"
-    t.string "spreadsheet_content_type"
-    t.bigint "spreadsheet_file_size"
-    t.datetime "spreadsheet_updated_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "type"
@@ -585,10 +580,6 @@ ActiveRecord::Schema.define(version: 2020_09_06_222920) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "payable_account_id"
-    t.string "avatar_file_name"
-    t.string "avatar_content_type"
-    t.bigint "avatar_file_size"
-    t.datetime "avatar_updated_at"
     t.index ["business_name"], name: "index_suppliers_on_business_name", unique: true
     t.index ["payable_account_id"], name: "index_suppliers_on_payable_account_id"
   end
@@ -630,10 +621,6 @@ ActiveRecord::Schema.define(version: 2020_09_06_222920) do
     t.integer "role"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "avatar_file_name"
-    t.string "avatar_content_type"
-    t.bigint "avatar_file_size"
-    t.datetime "avatar_updated_at"
     t.string "designation"
     t.bigint "section_id"
     t.bigint "cash_on_hand_account_id"
@@ -685,7 +672,7 @@ ActiveRecord::Schema.define(version: 2020_09_06_222920) do
     t.index ["account_number"], name: "index_vouchers_on_account_number", unique: true
     t.index ["commercial_document_type", "commercial_document_id"], name: "index_commercial_document_on_vouchers"
     t.index ["entry_id"], name: "index_vouchers_on_entry_id"
-    t.index ["payee_type", "payee_id"], name: "index_vouchers_on_payee_type_and_payee_id"
+    t.index ["payee_type", "payee_id"], name: "index_vouchers_on_payee"
     t.index ["preparer_id"], name: "index_vouchers_on_preparer_id"
     t.index ["reference_number"], name: "index_vouchers_on_reference_number", unique: true
     t.index ["type"], name: "index_vouchers_on_type"
@@ -760,6 +747,7 @@ ActiveRecord::Schema.define(version: 2020_09_06_222920) do
   add_foreign_key "accounts", "businesses"
   add_foreign_key "accounts", "level_one_account_categories"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "amounts", "accounts"
   add_foreign_key "amounts", "entries"
   add_foreign_key "bank_accounts", "accounts", column: "cash_in_bank_account_id"

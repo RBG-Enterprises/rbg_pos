@@ -15,7 +15,9 @@ module WorkOrders
     end
     private
     def delete_entry
-      service_charge.entry.destroy
+      if service_charge.entry.present?
+        service_charge.entry.destroy
+      end
     end
 
     def delete_service_charge

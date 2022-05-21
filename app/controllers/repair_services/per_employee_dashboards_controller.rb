@@ -9,12 +9,12 @@ module RepairServices
       authorize [:repair_services, :per_employee_dashboards]
 
       respond_to do |format|
-        format.html 
+        format.html
         format.csv { render_csv }
-      end 
+      end
     end
 
-    private 
+    private
 
     def render_csv
       # Tell Rack to stream the content
@@ -44,7 +44,7 @@ module RepairServices
       Enumerator.new do |yielder|
         yielder << CSV.generate_line(["Work Order", "Service #", "Date Released", "Customer", "Service Charges", "Spare Parts"])
 
-        @work_orders.each do |work_order|
+        @employee.work_orders.released_on(from_date: @from_date, to_date: @to_date).each do |work_order|
           yielder << CSV.generate_line([
             work_order.product_unit.description,
             work_order.service_number,

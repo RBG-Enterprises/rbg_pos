@@ -62,6 +62,14 @@
               </div>
               <div class="row min-margin">
                 <div class="col-md-6">
+                  <b>Time Received</b>
+                </div>
+                <div class="col-md-6">
+                  <%= @work_order.created_at.strftime("%I:%M %p") %>
+                </div>
+              </div>
+              <div class="row min-margin">
+                <div class="col-md-6">
                   <b>Contact Person</b>
                 </div>
                 <div class="col-md-6">

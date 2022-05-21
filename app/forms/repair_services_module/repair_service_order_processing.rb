@@ -1,27 +1,27 @@
 module RepairServicesModule
   class RepairServiceOrderProcessing
     include ActiveModel::Model
-    attr_accessor :customer_id, 
-                  :employee_id, 
-                  :cart_id, 
-                  :date, 
+    attr_accessor :customer_id,
+                  :employee_id,
+                  :cart_id,
+                  :date,
                   :work_order_id,
                   :reference_number
-   
-    validates :customer_id, 
-              :date, 
-              :reference_number, 
-              :cart_id, 
+
+    validates :customer_id,
+              :date,
+              :reference_number,
+              :cart_id,
               :employee_id,
               :work_order_id,
               presence: true
-    
+
     def process!
       if valid?
         ApplicationRecord.transaction do
           create_repair_service_order
         end
-      end 
+      end
     end
 
     private
@@ -47,8 +47,8 @@ module RepairServicesModule
     end
     def create_entry(order)
       EntryCreators::Orders::RepairServiceOrder.new(sales_order: order, work_order: find_work_order, employee: find_employee).create_entry!
-    end 
-      
+    end
+
       def find_customer
         Customer.find(customer_id)
       end
@@ -62,10 +62,10 @@ module RepairServicesModule
       end
       def find_store_front
         find_employee.store_front
-      end 
-      
+      end
+
       def find_work_order
-        find_store_front.work_orders.find(work_order_id)
+        WorkOrder.find(work_order_id)
       end
   end
 end

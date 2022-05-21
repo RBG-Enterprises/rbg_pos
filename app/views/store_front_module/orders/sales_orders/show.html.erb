@@ -29,10 +29,18 @@
         </div>
         <div class="row min-margin">
           <div class="col-md-5">
-            <b> Ref # </b>
+            <b> Ref # / PO #</b>
           </div>
           <div class="col-md-7">
             <%= @order.reference_number %>
+          </div>
+        </div>
+        <div class="row min-margin">
+          <div class="col-md-5">
+            <b> CI/CHECK # / Description</b>
+          </div>
+          <div class="col-md-7">
+            <%= @order.description %>
           </div>
         </div>
         <div class="row min-margin">
@@ -124,7 +132,7 @@
                       <%= link_to store_front_module_sales_order_other_sales_line_item_cancellation_path(sales_order_id: @order.id, other_sales_line_item_id: line_item.id), method: :delete, data: { confirm: 'Are you sure you want to remove this item?' } do %>
                         <span class="text-danger"><i class="fa fa-times"></i>
                       <% end %>
-                     
+
                     </div>
                   </div>
                   <hr>

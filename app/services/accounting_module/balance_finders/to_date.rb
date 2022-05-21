@@ -3,10 +3,10 @@ module AccountingModule
     class ToDate
       attr_reader :from_date, :to_date, :amounts
 
-      def initialize(amounts:, to_date:)
-        @amounts   ||= amounts.includes(:entry, :account)
+      def initialize(args={})
+        @amounts   = args.fetch(:amounts).includes(:entry, :account)
         @from_date = 999.years.ago
-        @to_date   = to_date
+        @to_date   = args.fetch(:to_date)
       end
 
       def compute

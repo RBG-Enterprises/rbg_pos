@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
-ruby '2.7.2'
+ruby '3.0.2'
 gem 'prawn-icon'
-gem 'rails', '6.0.3.4'
+gem 'rails', '6.1.4'
 gem "audited", "~> 4.7"
 gem 'autonumeric-rails'
 gem 'spreadsheet'
@@ -41,13 +41,14 @@ gem 'prawn-table'
 gem 'chartkick'
 gem 'precise_distance_of_time_in_words'
 gem 'pundit'
-gem 'will_paginate'
+gem 'will_paginate', '~> 3.3'
 gem 'money-rails', '~>1.12'
 gem "roo", "2.7.0"
 gem 'simple_calendar'
 gem "pdf-reader"
 gem 'pagy'
-gem 'ffi', '1.11.2'
+gem 'ffi', '1.15.3'
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'

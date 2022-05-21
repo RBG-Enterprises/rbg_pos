@@ -43,8 +43,7 @@ class WorkOrder < ApplicationRecord
   delegate :name,  to: :department, prefix: true, allow_nil: true
 
   after_commit :set_customer_name, :set_product_name,  on: [:create, :update]
-
-  accepts_nested_attributes_for :product_unit
+  after_commit :set_release_date
 
   def self.receivable_accounts
     ids = pluck(:receivable_account_id)
@@ -246,5 +245,11 @@ class WorkOrder < ApplicationRecord
 
   def set_product_name
     self.product_name = self.product_unit.description
+  end
+  def set_release_date
+    if released? && release_date.blank?
+      self.release_date = Time.zone.now
+      self.save!
+    end
   end
 end
