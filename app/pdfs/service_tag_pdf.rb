@@ -48,7 +48,7 @@ class ServiceTagPdf < Prawn::Document
       move_down 10
       text "LAMUT REPAIR CENTER", size: 10, style: :bold
       move_down 2
-      table([["0917-100-0659"]],cell_style: {font: "Helvetica", :padding => [3,0,0,0]}, column_widths: [150, 100]) do
+      table([["0945-284-8276"]],cell_style: {font: "Helvetica", :padding => [3,0,0,0]}, column_widths: [150, 100]) do
         cells.borders = []
         row(0).font_style = :bold
       end
