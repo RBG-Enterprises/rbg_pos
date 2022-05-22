@@ -68,6 +68,20 @@ class ServiceTagPdf < Prawn::Document
       table([["COMPUTER/CELLPHONE REPAIR"]],cell_style: {size: 8, font: "Helvetica", :padding => [0,0,0,0]}, column_widths: [150, 100]) do
         cells.borders = []
       end
+
+      move_down 10
+      stroke_horizontal_rule
+      move_down 10
+    
+      text "MADDELA REPAIR CENTER", size: 10, style: :bold
+      move_down 2
+      table([["0975-225-2790"]],cell_style: {font: "Helvetica", :padding => [3,0,0,0]}, column_widths: [150, 100]) do
+        cells.borders = []
+        row(0).font_style = :bold
+      end
+      table([["COMPUTER/CELLPHONE REPAIR"]],cell_style: {size: 8, font: "Helvetica", :padding => [0,0,0,0]}, column_widths: [150, 100]) do
+        cells.borders = []
+      end
   end
 
   def heading
