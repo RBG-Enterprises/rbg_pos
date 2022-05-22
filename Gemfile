@@ -59,7 +59,7 @@ end
 group :development, :test do
   gem 'rspec-rails'
   gem 'factory_bot_rails', group: :production
-  gem 'faker'
+  gem 'faker', group: :production
   gem 'bullet'
   gem 'pry-rails'
 end
