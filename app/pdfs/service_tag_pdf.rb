@@ -75,7 +75,7 @@ class ServiceTagPdf < Prawn::Document
     
       text "MADDELA REPAIR CENTER", size: 10, style: :bold
       move_down 2
-      table([["0975-225-2790"]],cell_style: {font: "Helvetica", :padding => [3,0,0,0]}, column_widths: [150, 100]) do
+      table([["0975-065-4130"]],cell_style: {font: "Helvetica", :padding => [3,0,0,0]}, column_widths: [150, 100]) do
         cells.borders = []
         row(0).font_style = :bold
       end
@@ -97,7 +97,7 @@ class ServiceTagPdf < Prawn::Document
         column(1).size = 10
       end
       move_down 30
-      table([["* Please DO NOT FORGET to present this CLAIM FORM when claiming your unit."]], cell_style: { size: 9, font: "Helvetica"}, column_widths: [250]) do
+      table([["* Please DO NOT FORGET to present this CLAIM FORM when claiming your unit.Present VALID ID if no CLAIM FORM"]], cell_style: { size: 9, font: "Helvetica"}, column_widths: [250]) do
       end
 
       # text "RBG", style: :bold, size: 37
