@@ -2,7 +2,7 @@ module Suppliers
   class VouchersController < ApplicationController
     def index
       @supplier = Supplier.find(params[:supplier_id])
-      @vouchers = @supplier.vouchers
+      @pagy, @vouchers = pagy(@supplier.vouchers.order(created_at: :desc))
     end
     def create
       @supplier = Supplier.find(params[:supplier_id])
