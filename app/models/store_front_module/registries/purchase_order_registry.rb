@@ -113,7 +113,7 @@ module StoreFrontModule
         lagawe          = StoreFront.find_by(name: "Lagawe")
         alfonso_lista   = StoreFront.find_by(name: "Alfonso Lista")
         lamut           = StoreFront.find_by(name: "Lamut")
-        madella         = StoreFront.find_by(name: 'Maddela')
+        maddela         = StoreFront.find_by(name: 'Maddela')
 
 
         StoreFrontModule::SellingPrice.create!(
