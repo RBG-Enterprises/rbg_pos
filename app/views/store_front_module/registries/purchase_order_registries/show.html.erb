@@ -36,7 +36,7 @@
                   <td>
                     <span class="float-right"><%=number_to_currency line_item.total_cost %></span>
                   </td>
-                  <% StoreFront.all.order(:name).each do |store_front| %>
+                  <% StoreFront.all.active.order(:name).each do |store_front| %>
                     <td><%= number_to_currency store_front.selling_prices.where(product: line_item.product).last.try(:price) %></td>
                   <% end %>
 
