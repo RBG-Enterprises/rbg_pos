@@ -419,6 +419,7 @@ DEPENDENCIES
   jquery-rails
   jquery-ui-rails
   listen (>= 3.0.5, < 3.2)
+  matrix (~> 0.4.2)
   mina
   mina-puma!
   mini_magick
