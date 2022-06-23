@@ -59,7 +59,6 @@ module StoreFrontModule
         row["Total Cost"].to_f
       end
 
-
       def bar_code(row)
         normalized_barcode(row)
       end
@@ -96,12 +95,8 @@ module StoreFrontModule
         row["Alfonso Lista Selling Price"]
       end
 
-      def bambang_new_selling_price(row)
-        row["Bambang New Selling Price"]
-      end
-
-       def bambang_primark_selling_price(row)
-        row["Bambang Primark Selling Price"]
+      def maddela_new_selling_price(row)
+        row["Maddela Selling Price"]
       end
 
       def unit_of_measurement(row)
@@ -118,8 +113,7 @@ module StoreFrontModule
         lagawe          = StoreFront.find_by(name: "Lagawe")
         alfonso_lista   = StoreFront.find_by(name: "Alfonso Lista")
         lamut           = StoreFront.find_by(name: "Lamut")
-        bambang_new     = StoreFront.find_by(name: "Bambang New")
-        bambang_primark = StoreFront.find_by(name: 'Bambang Primark')
+        madella         = StoreFront.find_by(name: 'Maddela')
 
 
         StoreFrontModule::SellingPrice.create!(
@@ -133,21 +127,17 @@ module StoreFrontModule
           product:             find_product(row),
           store_front:         alfonso_lista,
           unit_of_measurement: unit_of_measurement(row))
-         StoreFrontModule::SellingPrice.create!(
+
+        StoreFrontModule::SellingPrice.create!(
           price:               lamut_selling_price(row),
           product:             find_product(row),
           store_front:         lamut,
           unit_of_measurement: unit_of_measurement(row))
 
-          StoreFrontModule::SellingPrice.create!(
-          price:               bambang_new_selling_price(row),
+        StoreFrontModule::SellingPrice.create!(
+          price:               maddela_selling_price(row),
           product:             find_product(row),
-          store_front:         bambang_new,
-          unit_of_measurement: unit_of_measurement(row))
-          StoreFrontModule::SellingPrice.create!(
-          price:               bambang_primark_selling_price(row),
-          product:             find_product(row),
-          store_front:         bambang_primark,
+          store_front:         maddela,
           unit_of_measurement: unit_of_measurement(row))
       end
 
@@ -158,6 +148,7 @@ module StoreFrontModule
           conversion_quantity: conversion_quantity(row),
           quantity:            unit_quantity(row))
       end
+
       def normalized_barcode(row)
         if row["Barcode"].to_s.include?(".")
           row["Barcode"].to_s.chop.gsub(".", "")
