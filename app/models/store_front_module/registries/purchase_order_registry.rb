@@ -95,7 +95,7 @@ module StoreFrontModule
         row["Alfonso Lista Selling Price"]
       end
 
-      def maddela_new_selling_price(row)
+      def maddela_selling_price(row)
         row["Maddela Selling Price"]
       end
 
