@@ -49,6 +49,7 @@ gem "pdf-reader"
 gem 'pagy'
 gem 'ffi', '1.15.3'
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem 'net-smtp', require: false
 
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
