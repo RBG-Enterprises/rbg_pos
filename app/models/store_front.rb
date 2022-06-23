@@ -31,6 +31,10 @@ class StoreFront < ApplicationRecord
 
   delegate :name, to: :business, prefix: true
 
+  def self.active
+    where(deactivated_at: nil)
+  end
+
   def self.service_receivable_account_categories
     ids = pluck(:service_receivable_account_category_id)
     AccountingModule::AccountCategory.where(id: ids.uniq.compact.flatten)

@@ -13,7 +13,7 @@
                 <th><b>DESCRIPTION</b></th>
                 <th><span class="float-right"><b>UNIT COST</b></span></th>
                 <th><span class="float-right"><b>TOTAL COST</b></span></th>
-                <% StoreFront.all.order(:name).each do |store_front| %>
+                <% StoreFront.all.active.order(:name).each do |store_front| %>
                   <th><%= store_front.name %> Selling Price</th>
                <% end %>
 

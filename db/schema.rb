@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_13_004433) do
+ActiveRecord::Schema.define(version: 2022_06_23_054550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -547,6 +547,7 @@ ActiveRecord::Schema.define(version: 2021_07_13_004433) do
     t.bigint "service_revenue_account_id"
     t.bigint "service_receivable_account_category_id"
     t.bigint "sales_revenue_account_category_id"
+    t.datetime "deactivated_at"
     t.index ["business_id"], name: "index_store_fronts_on_business_id"
     t.index ["cost_of_goods_sold_account_id"], name: "index_store_fronts_on_cost_of_goods_sold_account_id"
     t.index ["internal_use_account_id"], name: "index_store_fronts_on_internal_use_account_id"
