@@ -1,6 +1,6 @@
 
 <% @products.each do |product| %>
-  <% product.stocks.processed.where(store_front: current_store_front).each do |stock| %>
+  <% product.stocks.processed.available.where(store_front: current_store_front).each do |stock| %>
     <%= render 'store/stock', stock: stock %>
   <% end %>
 <% end %>
