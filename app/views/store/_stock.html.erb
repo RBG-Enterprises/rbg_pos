@@ -1,21 +1,19 @@
-<div class="row">
-  <div class="col-md-6">
-    <b><%= stock.name.try(:upcase) %></b>
-    <% if stock.balance_for_cart(current_cart) > 0 %>
+<% if stock.balance_for_cart(current_cart) > 0 %>
+  <div class="row">
+    <div class="col-md-6">
+      <b><%= stock.name.try(:upcase) %></b>
       &nbsp; <span class="badge bg-gray"><%= stock.balance_for_cart(current_cart) %> left</span>
-    <% else %>
-      <span class="badge bg-red"> Out Of Stock </span>
-    <% end %><br>
-    <small class="text-muted">
-        <%= stock.barcode.try(:truncate, (30)) %>
-    </small>
+      <small class="text-muted">
+          <%= stock.barcode.try(:truncate, (30)) %>
+      </small>
+    </div>
+    <div class="col-md-6">
+      <b class="badge  bg-warning">
+        PRICE: <%= number_to_currency StoreFronts::SellingPriceFinder.new(stock: stock, store_front: current_store_front).selling_price %>
+      </b>
+    </div>
   </div>
-  <div class="col-md-6">
-    <b class="badge  bg-warning">
-      PRICE: <%= number_to_currency StoreFronts::SellingPriceFinder.new(stock: stock, store_front: current_store_front).selling_price %>
-    </b>
-  </div>
-</div>
+<% end %>
 <br>
 <% if stock.balance_for_cart(current_cart) > 0 %>
   <%= simple_form_for @sales_order_line_item, url: :store_front_module_sales_order_line_item_processings do |f| %>
