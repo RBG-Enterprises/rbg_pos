@@ -4,18 +4,14 @@ DateRange = Struct.new(:from_date, :to_date, keyword_init: true) do
   end
 
   def start_date
-    if from_date.is_a?(Date) || from_date.is_a?(Time) || from_date.is_a?(DateTime)
-      from_date.strftime('%Y-%m-%d 00:00:00 +0800')
-    else
-      Time.zone.parse(from_date).strftime('%Y-%m-%d 00:00:00 +0800')
-    end
+    return from_date.beginning_of_day if from_date.is_a?(Date) || from_date.is_a?(DateTime)
+
+    Time.zone.parse(from_date.to_s).beginning_of_day
   end
 
   def end_date
-    if to_date.is_a?(Date) || to_date.is_a?(Time) || to_date.is_a?(DateTime)
-      to_date.strftime('%Y-%m-%d 23:59:59 +0800')
-    else
-    Time.zone.parse(to_date).strftime('%Y-%m-%d 23:59:59 +0800')
-    end
+    return to_date.end_of_day if to_date.is_a?(Date) || to_date.is_a?(DateTime)
+
+    Time.zone.parse(to_date.to_s).end_of_day
   end
 end
