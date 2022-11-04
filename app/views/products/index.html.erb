@@ -56,7 +56,7 @@
                    </td>
                    <% if current_user.proprietor? %>
                      <td><%= number_to_currency product.try(:last_purchase_cost) %></td>
-                     <% if produt.latest_purchase_order.present? %>
+                     <% if product.latest_purchase_order.present? %>
                        <td><%= link_to product.latest_purchase_order.date.strftime("%B %e, %Y"), store_front_module_purchase_order_path(product.latest_purchase_order) %></td>
                       <% else %>
                       <td></td>
