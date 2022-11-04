@@ -68,7 +68,15 @@ class Product < ApplicationRecord
   end
 
   def last_purchase_cost
-    purchases.last.try(:unit_cost)
+    latest_purchase.try(:unit_cost)
+  end
+
+  def latest_purchase
+    purchases.last
+  end
+
+  def latest_purchase_order
+    purchase_orders.latest
   end
 
 
@@ -91,7 +99,7 @@ class Product < ApplicationRecord
     processed.
     available_quantity
   end
-  
+
 	def sold_items_count
 		sales_balance
 	end
