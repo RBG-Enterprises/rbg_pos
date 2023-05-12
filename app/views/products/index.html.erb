@@ -35,6 +35,7 @@
                 	<th>Price</th>
                   <% if current_user.proprietor? %>
                     <th>Last Purchase Cost</th>
+                    <th>Last Purchase Date</th>
                     <th> In Stock </th>
                   <% end %>
 
@@ -55,7 +56,13 @@
                    </td>
                    <% if current_user.proprietor? %>
                      <td><%= number_to_currency product.try(:last_purchase_cost) %></td>
+                     <% if product.latest_purchase_order.present? %>
+                       <td><%= link_to product.latest_purchase_order.date.strftime("%B %e, %Y"), store_front_module_purchase_order_path(product.latest_purchase_order) %></td>
+                      <% else %>
+                      <td></td>
+                    <% end %>
                      <td><%= product.in_stock(store_front: current_store_front) %></td>
+
 
                     <% end %>
 

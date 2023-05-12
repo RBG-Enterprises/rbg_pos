@@ -15,6 +15,10 @@ module StoreFrontModule
       delegate :name, to: :origin_store_front, prefix: true, allow_nil: true
       delegate :name, to: :destination_store_front, prefix: true, allow_nil: true
 
+      def self.latest
+        order(date: :desc).first
+      end
+
       def origin_store_front
         supplier
       end
