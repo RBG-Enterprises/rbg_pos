@@ -99,6 +99,9 @@ module StoreFrontModule
         row["Maddela Selling Price"]
       end
 
+      def quirino_selling_price(row)
+        row["Quirino Consumer Goods Trading Selling Price"]
+
       def unit_of_measurement(row)
         StoreFrontModule::UnitOfMeasurement.find_or_create_by!(
           unit_code:           unit_code(row),
@@ -114,6 +117,7 @@ module StoreFrontModule
         alfonso_lista   = StoreFront.find_by(name: "Alfonso Lista")
         lamut           = StoreFront.find_by(name: "Lamut")
         maddela         = StoreFront.find_by(name: 'Maddela')
+        quirino_trading = StoreFront.find_by(name: "Quirino Consumer Goods Trading")
 
 
         StoreFrontModule::SellingPrice.create!(
@@ -138,6 +142,12 @@ module StoreFrontModule
           price:               maddela_selling_price(row),
           product:             find_product(row),
           store_front:         maddela,
+          unit_of_measurement: unit_of_measurement(row))
+
+        StoreFrontModule::SellingPrice.create!(
+          price:               quirino_selling_price(row),
+          product:             find_product(row),
+          store_front:         quirino_trading,
           unit_of_measurement: unit_of_measurement(row))
       end
 
