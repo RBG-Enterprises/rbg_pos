@@ -101,6 +101,7 @@ module StoreFrontModule
 
       def quirino_selling_price(row)
         row["Quirino Consumer Goods Trading Selling Price"]
+      end
 
       def unit_of_measurement(row)
         StoreFrontModule::UnitOfMeasurement.find_or_create_by!(
