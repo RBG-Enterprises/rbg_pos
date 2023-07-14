@@ -33,7 +33,7 @@ gem 'jquery-ui-rails'
 gem 'barby'
 gem 'simple_form'
 gem 'devise'
-gem 'devise_invitable', '~> 1.7.0'
+gem 'devise_invitable'
 gem 'mini_magick'
 gem 'bootsnap', require: false
 gem 'prawn'
