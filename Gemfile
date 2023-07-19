@@ -10,7 +10,6 @@ gem 'autonumeric-rails'
 gem 'spreadsheet'
 gem 'rqrcode'
 gem 'webpacker'
-gem "font-awesome-sass", "~> 6.4.0"
 gem 'sidekiq'
 # gem 'activerecord-postgis-adapter'
 gem 'pg_search'
