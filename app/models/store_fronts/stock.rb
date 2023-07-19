@@ -25,6 +25,10 @@ module StoreFronts
     delegate :date,           to: :purchase_order, prefix: true, allow_nil: true
     delegate :quantity,       to: :purchase, prefix: true
 
+    def self.in_stocks
+      where("available_quantity > 0.0")
+    end
+
     def self.available
       where(available: true)
     end
@@ -52,7 +56,7 @@ module StoreFronts
       stock_transfers_balance  -
       sales_balance            -
       internal_uses_balance    -
-      spoilages_balance        - 
+      spoilages_balance        -
       for_warranties_balance
     end
 
@@ -97,11 +101,21 @@ module StoreFronts
     end
 
     def for_warranties_balance
-      for_warranties.processed.balance 
-    end 
+      for_warranties.processed.balance
+    end
 
-    def update_available_quantity
-      ::StoreFronts::StockQuantityUpdater.new(stock: self).update_available_quantity!
+    def update_available_quantity!
+      return if purchase.blank?
+
+      update(available_quantity: balance)
+    end
+
+    def update_availability_for_cart(cart)
+      if balance_for_cart(cart).to_f <=0
+        update!(available: false)
+      else
+        update!(available: true)
+      end
     end
 
   end

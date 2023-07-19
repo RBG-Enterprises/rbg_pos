@@ -42,21 +42,21 @@ module StoreFronts
     it '.available' do
       available_stock    = create(:stock, available: true)
       discontinued_stock = create(:stock, available: false)
-      
+
       available = described_class.available
-      
+
       expect(available).to eq [available_stock]
       expect(available).to_not eq [discontinued_stock]
 
-      
+
     end
 
     it '.available_quantity' do
       stock_1 = create(:stock, available_quantity: 10)
       stock_2 = create(:stock, available_quantity: 10)
-      
+
       expect(described_class.available_quantity).to eql 20
-    end 
+    end
 
     it '#balance' do
       stock    = create(:stock)
@@ -65,7 +65,7 @@ module StoreFronts
       order    = create(:purchase_order, voucher: voucher)
       purchase = create(:purchase_order_line_item, quantity: 100, stock: stock)
       order.line_items << purchase
-      
+
       expect(stock.balance).to eql 100
 
       #sales
@@ -74,7 +74,7 @@ module StoreFronts
       sales_order  = create(:sales_order, voucher: sale_voucher)
       sale         = create(:sales_order_line_item, stock: stock, quantity: 10)
       sales_order.line_items << sale
-      
+
       expect(stock.balance).to eql 90
 
       #stock_transfers
@@ -82,7 +82,7 @@ module StoreFronts
       transfer_voucher = create(:voucher, entry: transfer_entry)
       transfer_order   = create(:stock_transfer_order, voucher: transfer_order)
       transfer         = create(:stock_transfer_order_line_item, quantity: 10, stock: stock, order: transfer_order)
-      
+
       expect(stock.balance).to eql 80
 
       #internal_uses
@@ -126,7 +126,7 @@ module StoreFronts
       expect(stock.balance).to eql 50
     end
 
-    it '#balance_for_cart(cart)' do 
+    it '#balance_for_cart(cart)' do
       stock    = create(:stock)
       entry    = create(:entry_with_credit_and_debit)
       voucher  = create(:voucher, entry: entry)
@@ -139,6 +139,28 @@ module StoreFronts
       sales_order_line_item = create(:sales_order_line_item, quantity: 10, stock: stock, cart: cart)
 
       expect(stock.balance_for_cart(cart)).to eql 90
+    end
+
+    it '#update_available_quantity!' do
+      stock = create(:stock)
+      entry    = create(:entry_with_credit_and_debit)
+      voucher  = create(:voucher, entry: entry)
+      order    = create(:purchase_order, voucher: voucher)
+      purchase = create(:purchase_order_line_item, quantity: 100, stock: stock)
+      order.line_items << purchase
+
+      stock.update_available_quantity!
+
+      expect(stock.available_quantity).to eql 100
+
+      sale_entry   = create(:entry_with_credit_and_debit)
+      sale_voucher = create(:voucher, entry: sale_entry)
+      sales_order  = create(:sales_order, voucher: sale_voucher)
+      sale         = create(:sales_order_line_item, stock: stock, quantity: 10)
+      sales_order.line_items << sale
+
+      stock.update_available_quantity!
+      expect(stock.available_quantity).to eql 90
     end
   end
 end

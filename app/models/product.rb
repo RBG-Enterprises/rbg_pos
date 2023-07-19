@@ -24,6 +24,8 @@ class Product < ApplicationRecord
   has_many :selling_prices,       class_name: "StoreFrontModule::SellingPrice"
   has_many :purchase_prices,      class_name: 'StoreFrontModule::PurchasePrice'
   has_many :stocks,               class_name: 'StoreFronts::Stock'
+  has_many :available_stocks, -> { in_stocks }, class_name: 'StoreFronts::Stock'
+
   has_many :stock_transfers, through: :stocks
   has_many :stock_transfer_orders, through: :stock_transfers, source: :purchase_order
 

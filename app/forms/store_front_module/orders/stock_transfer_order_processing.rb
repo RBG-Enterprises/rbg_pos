@@ -76,7 +76,7 @@ module StoreFrontModule
         ids = find_cart.stock_transfer_order_line_items.pluck(:stock_id)
         stocks = ::StoreFronts::Stock.where(id: ids.uniq.compact.flatten)
         stocks.each do |stock|
-          ::StoreFronts::StockQuantityUpdater.new(stock: stock).update_available_quantity!
+          stock.update_available_quantity!
         end
       end
 

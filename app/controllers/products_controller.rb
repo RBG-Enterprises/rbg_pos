@@ -2,7 +2,7 @@ require 'will_paginate/array'
 class ProductsController < ApplicationController
 	def index
     if params[:search].present?
-      @pagy, @products = pagy(Product.text_search_with_barcode(params[:search]))
+      @pagy, @products = pagy(Product.includes(:category, :unit_of_measurements, stocks: [:purchase]).text_search_with_barcode(params[:search]))
     else
       @pagy, @products = pagy(Product.includes(:unit_of_measurements, :category).order(:name))
     end
@@ -24,7 +24,7 @@ class ProductsController < ApplicationController
   def low_on_stock
     @low_on_stock_products = (Product.low_on_stock).paginate(page: params[:page], per_page: 35)
 	end
-	
+
 	def new
 		@product = Product.new
 		authorize @product
