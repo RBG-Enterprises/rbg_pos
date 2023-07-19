@@ -61,7 +61,7 @@
                       <% else %>
                       <td></td>
                     <% end %>
-                     <td><%= product.in_stock(store_front: current_store_front) %></td>
+                     <td><%= product.available_quantity(store_front: current_store_front) %></td>
 
 
                     <% end %>
