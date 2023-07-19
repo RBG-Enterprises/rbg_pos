@@ -1,0 +1,25 @@
+<div>
+  <h4 class="title-up float-left"> Spoilages </h4>
+  <%= link_to 'New Spoilage', new_store_front_module_stock_spoilage_path(stock), class: 'btn btn-primary float-right' %>
+</div>
+
+<div  class="table table-responsive">
+  <table class="table table-responsive">
+    <thead>
+      <tr>
+        <th> Date </th>
+        <th> Quantity </th>
+        <th> REF # </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @spoilages.each do |spoilage| %>
+        <tr>
+          <td><%= spoilage.created_at.strftime('%B %e, %Y')%></td>
+          <td><%= spoilage.quantity %> <%= spoilage.unit_code %> </td>
+          <td># <%= spoilage.order.reference_number %> </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,48 +1,45 @@
 
-  <div class="row">
-    <div class="col-md-6">
-      <b><%= stock.name.try(:upcase) %></b>
-      &nbsp; <span class="badge bg-gray"><%= stock.balance_for_cart(current_cart) %> left</span>
-      <small class="text-muted">
-          <%= stock.barcode.try(:truncate, (30)) %>
-      </small>
-    </div>
-    <div class="col-md-6">
-      <b class="badge  bg-warning">
-        PRICE: <%= number_to_currency StoreFronts::SellingPriceFinder.new(stock: stock, store_front: current_store_front).selling_price %>
-      </b>
-    </div>
+<div class="row">
+  <div class="col-md-6">
+    <b><%= stock.name.try(:upcase) %></b>
+    &nbsp; <span class="badge bg-gray"><%= stock.balance_for_cart(current_cart) %> left</span>
+    <small class="text-muted">
+        <%= stock.barcode.try(:truncate, (30)) %>
+    </small>
   </div>
+  <div class="col-md-6">
+    <b class="badge  bg-warning">
+      PRICE: <%= number_to_currency StoreFronts::SellingPriceFinder.new(stock: stock, store_front: current_store_front).selling_price %>
+    </b>
+  </div>
+</div>
 
-<br>
-<% if stock.balance_for_cart(current_cart) > 0 %>
-  <%= simple_form_for @sales_order_line_item, url: :store_front_module_sales_order_line_item_processings do |f| %>
+<%= simple_form_for @sales_order_line_item, url: :store_front_module_sales_order_line_item_processings do |f| %>
   <%= f.input :store_front_id, input_html: { value: current_store_front.id }, as: :hidden %>
 
-    <div class="row">
-    <div class="col-md-3">
-      <%= f.input :quantity, as: :string, input_html: { oninput: 'calculateLineItemTotalCost()', id: 'line_item_quantity', value: 1}, autofocus: true, label: false %>
-      <%= f.input :stock_id, input_html: { value: stock.id }, as: :hidden %>
-      <%= f.input :cart_id, input_html: { value: @cart.id }, as: :hidden %>
-      <%= f.input :bar_code, input_html: { value: params[:search] }, as: :hidden %>
-    </div>
-    <div class="col-md-3">
-      <%= f.input :unit_cost, placeholder: "Selling Price", label: false, input_html: { id: 'line_item_selling_price', value: StoreFronts::SellingPriceFinder.new(stock: stock, store_front: current_store_front).selling_price } %>
-    </div>
-    <div class="col-md-3">
-      <%= f.input :unit_of_measurement_id, collection: stock.product.unit_of_measurements.map{|a| [a.unit_code, a.id] }, selected: stock.product.base_measurement, label: false, input_html: { class: 'chosen-select' } %>
-    </div>
-    <div class="col-md-3">
-      <% if stock.balance > 0 %>
-      <%= button_tag type: 'submit', class: "btn btn-outline-primary" do %>
-        <i class="fa fa-shopping-basket" aria-hidden="true"></i> Add to Cart
-      <% end %>
-      <% else %>
-      <span class="badge bg-red"> Out Of Stock </span>
-      <% end %>
-      <% end %>
-
-    </div>
+  <div class="row">
+  <div class="col-md-3">
+    <%= f.input :quantity, as: :string, input_html: { oninput: 'calculateLineItemTotalCost()', id: 'line_item_quantity', value: 1}, autofocus: true, label: false %>
+    <%= f.input :stock_id, input_html: { value: stock.id }, as: :hidden %>
+    <%= f.input :cart_id, input_html: { value: @cart.id }, as: :hidden %>
+    <%= f.input :bar_code, input_html: { value: params[:search] }, as: :hidden %>
   </div>
-  <% end %>
+  <div class="col-md-3">
+    <%= f.input :unit_cost, placeholder: "Selling Price", label: false, input_html: { id: 'line_item_selling_price', value: StoreFronts::SellingPriceFinder.new(stock: stock, store_front: current_store_front).selling_price } %>
+  </div>
+  <div class="col-md-3">
+    <%= f.input :unit_of_measurement_id, collection: stock.product.unit_of_measurements.map{|a| [a.unit_code, a.id] }, selected: stock.product.base_measurement, label: false, input_html: { class: 'chosen-select' } %>
+  </div>
+  <div class="col-md-3">
+    <% if stock.balance > 0 %>
+    <%= button_tag type: 'submit', class: "btn btn-outline-primary" do %>
+      <i class="fa fa-shopping-basket" aria-hidden="true"></i> Add to Cart
+    <% end %>
+    <% else %>
+    <span class="badge bg-red"> Out Of Stock </span>
+    <% end %>
+<% end %>
+
+  </div>
+</div>
 <hr>

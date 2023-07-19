@@ -43,6 +43,8 @@
         <%= render 'store/searched_stocks_results' %>
       <% elsif @products.present? %>
         <%= render 'store/searched_products_results' %>
+      <% elsif params[:search].present? && (@stocks.blank? || @products.blank?) %>
+        <p class='alert alert-danger'> No products found for <b><%=params[:search]%></b> or out of stock. </p>
       <% end %>
     </div>
   </div>

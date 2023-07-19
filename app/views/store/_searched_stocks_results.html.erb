@@ -1,4 +1,6 @@
 <% @stocks.each do |stock| %>
-  <%= render 'store/stock', stock: stock %>
+  <% if stock.balance_for_cart(current_cart) > 0 %>
+    <%= render 'store/stock', stock: stock %>
+  <% end %>
 <% end %>
 <center><%==pagy_bootstrap_nav(@pagy) %></center>
