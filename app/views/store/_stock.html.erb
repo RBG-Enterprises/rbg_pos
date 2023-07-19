@@ -1,4 +1,4 @@
-<% if stock.balance_for_cart(current_cart) > 0 %>
+
   <div class="row">
     <div class="col-md-6">
       <b><%= stock.name.try(:upcase) %></b>
@@ -13,7 +13,7 @@
       </b>
     </div>
   </div>
-<% end %>
+
 <br>
 <% if stock.balance_for_cart(current_cart) > 0 %>
   <%= simple_form_for @sales_order_line_item, url: :store_front_module_sales_order_line_item_processings do |f| %>
