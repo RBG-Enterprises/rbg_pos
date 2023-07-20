@@ -117,6 +117,5 @@ module StoreFronts
         update!(available: true)
       end
     end
-
   end
 end
