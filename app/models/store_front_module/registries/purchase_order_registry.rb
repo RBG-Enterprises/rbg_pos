@@ -68,7 +68,7 @@ module StoreFrontModule
       end
 
       def find_product(row)
-        Product.find_by(name: row["Product Name"])
+        Product.find_or_create_by(name: row["Product Name"], business: employee.store_front.business)
       end
 
       def conversion_quantity(row)
