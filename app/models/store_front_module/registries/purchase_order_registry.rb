@@ -9,6 +9,7 @@ module StoreFrontModule
         header = product_spreadsheet.row(1)
         (2..product_spreadsheet.last_row).each do |i|
           row = Hash[[header, product_spreadsheet.row(i)].transpose]
+          Rails.logger.info(row)
           create_or_find_product(row)
           create_or_find_line_item(row)
           find_or_create_selling_price(row)
