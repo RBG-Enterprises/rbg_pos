@@ -19,12 +19,12 @@
           </div>
           <div class="col-md-2">
             <%= link_to 'New Repair', new_computer_repair_section_work_order_path, class: 'btn btn-primary float-right' %>
-            
+
           </div>
 
         </div>
         <br>
-        <% User.technician.each do |technician| %>
+        <% User.technician.active.each do |technician| %>
           <% if current_user.proprietor? %>
             <%=link_to repair_services_per_employee_dashboards_path(user_id: technician.id) do %>
               <span data-toggle="tooltip" title="<%=technician.first_name %>" data-placement="top">

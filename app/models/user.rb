@@ -26,9 +26,17 @@ class User < ApplicationRecord
   delegate :balance, to: :default_cash_on_hand_account, prefix: true, allow_nil: true
   before_save :set_default_image
 
+  def self.active
+    where(deactivated_at: nil)
+  end
+
   def self.cash_on_hand_accounts
     ids = pluck(:cash_on_hand_account_id)
     AccountingModule::Account.where(id: ids.uniq.compact.flatten)
+  end
+
+  def active?
+    deactivated_at.blank?
   end
 
   def name_and_store_front
