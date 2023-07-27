@@ -16,9 +16,9 @@ module RepairServicesModule
       @work_order = WorkOrder.find(params[:work_order_id])
       @repair_service_order_line_item = RepairServicesModule::RepairServiceOrderLineItemProcessing.new(line_item_params)
       if @repair_service_order_line_item.valid?
-         @repair_service_order_line_item.process!
-         ::StoreFronts::StockAvailabilityUpdater.new(stock: @repair_service_order_line_item.find_stock, cart: current_cart).update_availability!
-        redirect_to new_repair_services_module_work_order_repair_service_order_line_item_processing_url(@work_order), notice: "added to cart"
+          @repair_service_order_line_item.process!
+          @repair_service_order_line_item.update_availability_for_cart(current_cart)
+          redirect_to new_repair_services_module_work_order_repair_service_order_line_item_processing_url(@work_order), notice: "added to cart"
       else
         redirect_to new_repair_services_module_work_order_repair_service_order_line_item_processing_url(@work_order), alert: "Error"
 
@@ -27,8 +27,8 @@ module RepairServicesModule
     def destroy
       @work_order = WorkOrder.find(params[:work_order_id])
       @line_item  = StoreFrontModule::LineItems::SalesOrderLineItem.find(params[:id])
+      @line_item.stock.update_availability_for_cart(current_cart)
       @line_item.destroy
-      ::StoreFronts::StockAvailabilityUpdater.new(stock: @line_item.stock, cart: current_cart).update_availability!
       redirect_to new_repair_services_module_work_order_repair_service_order_line_item_processing_url(@work_order), notice: "Removed successfully"
     end
 

@@ -43,6 +43,8 @@
         <%= render 'store/searched_stocks_results' %>
       <% elsif @products.present? %>
         <%= render 'store/searched_products_results' %>
+      <% elsif params[:search].present? && (@stocks.blank? || @products.blank?) %>
+        <p class='alert alert-danger'> No products found for <b><%=params[:search]%></b> or out of stock. </p>
       <% end %>
     </div>
   </div>
@@ -228,7 +230,7 @@
           </div>
             <div class="card-body">
               <% if current_user.proprietor? %>
-                <% User.sales_clerk.where(email: ['elmie@rbg.com','analyn.perez@rbg.com','nova@rbg.com', 'jenelyn.lamut@rbg.com', 'jonalyn.lagawe@rbgtech.co', 'dexter.madsale@rbg.com', 'ronald.quirino.sales_clerk@rbg.com']).each do |sales_clerk| %>
+                <% User.sales_clerk.includes(:store_front, :cash_on_hand_account).where(email: ['elmie@rbg.com','analyn.perez@rbg.com','nova@rbg.com', 'jenelyn.lamut@rbg.com', 'jonalyn.lagawe@rbgtech.co', 'dexter.madsale@rbg.com', 'ronald.quirino.sales_clerk@rbg.com']).each do |sales_clerk| %>
                   <div class="row">
                     <div class="col-md-4">
                       <%= sales_clerk.full_name %>

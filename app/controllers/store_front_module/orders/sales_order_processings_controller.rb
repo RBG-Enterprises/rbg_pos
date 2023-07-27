@@ -28,7 +28,7 @@ module StoreFrontModule
 
       def update_stock_available_quantity
         @processed_order.stocks.each do |stock|
-          ::StoreFronts::StockQuantityUpdater.new(stock: stock).update_available_quantity!
+          stock.update_available_quantity!
         end
       end
 

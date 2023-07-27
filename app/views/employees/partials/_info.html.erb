@@ -3,6 +3,9 @@
     <% if current_user.proprietor? %>
       <%= link_to 'Update Info', edit_user_path(@employee), class: "btn btn-warning btn-sm" %>
       <%= link_to 'Withdraw Capital', new_capital_withdrawal_path, class: "btn btn-warning btn-sm" %>
+      <% if @employee.active? %>
+        <%= button_to 'Deactivate Account', employee_account_deactivations_path(employee_id: @employee.id), class: "btn btn-danger btn-sm" %>
+      <% end %>
     <% end %>
     <hr>
     <div class="row">

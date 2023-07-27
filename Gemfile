@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.2.2'
+
+gem 'active_interaction', '~> 5.3'
 gem 'prawn-icon'
 gem 'rails', '6.1.4'
 gem "audited", "~> 4.7"
@@ -8,7 +10,6 @@ gem 'autonumeric-rails'
 gem 'spreadsheet'
 gem 'rqrcode'
 gem 'webpacker'
-gem "font-awesome-rails"
 gem 'sidekiq'
 # gem 'activerecord-postgis-adapter'
 gem 'pg_search'
@@ -21,7 +22,6 @@ gem 'axlsx', git: 'https://github.com/randym/axlsx.git', ref: 'c8ac844'
 gem 'caxlsx_rails'
 gem 'mina', require: false
 gem 'mina-puma', require: false,  github: 'untitledkingdom/mina-puma'
-gem 'sass-rails', '~> 6.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails'
 gem 'groupdate'
@@ -79,3 +79,5 @@ end
 gem 'rack-mini-profiler', require: false
 
 gem "matrix", "~> 0.4.2"
+
+gem "dartsass-rails", "~> 0.5.0"

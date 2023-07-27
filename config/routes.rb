@@ -86,6 +86,7 @@ Rails.application.routes.draw do
   resources :users, only: [:edit, :update]
   resources :registries, only: [:create, :show, :destroy]
   resources :employees, only: [:show, :edit, :update] do
+    resource :account_deactivations, only: :create, module: :employees
     resources :repairs, only: [:index], module: :employees
     resources :remittances, only: [:new, :create], module: :employees
     resources :bank_remittances, only: [:new, :create], module: :employees
@@ -144,6 +145,7 @@ Rails.application.routes.draw do
       resources :sales, only: [:index], module: :stocks
       resources :internal_uses, only: [:index], module: :stocks
       resources :stock_transfers, only: [:index], module: :stocks
+      resources :spoilages, only: [:index, :new, :create], module: :stocks
     end
     resources :sales_order_line_items, only: [:show, :edit, :update] do
       resources :cancellations, only: [:create], module: :sales_order_line_items

@@ -7,7 +7,7 @@ class Voucher < ApplicationRecord
   has_many :orders, dependent: :destroy
   delegate :name, to: :preparer, prefix: true, allow_nil: true
   delegate :name, to: :disburser, prefix: true, allow_nil: true
-  delegate :name, to: :payee, prefix: true
+  delegate :name, to: :payee, prefix: true, allow_nil: true
   delegate :total, to: :entry, allow_nil: true
 
   validates :account_number, presence: true, uniqueness: true

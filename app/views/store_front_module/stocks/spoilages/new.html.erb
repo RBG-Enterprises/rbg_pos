@@ -1,0 +1,6 @@
+<%= simple_form_for @spoilage, url: :store_front_module_stock_spoilages do |f| %>
+  <%= f.input :quantity %>
+  <%= f.input :reference_number %>
+  <%= f.input :description %>
+  <%= f.submit "Save Spoilage", class: 'btn btn-primary' %>
+<% end %>

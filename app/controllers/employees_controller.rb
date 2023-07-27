@@ -1,6 +1,6 @@
 class EmployeesController < ApplicationController
   def index
-    @employees = User.all
+    @employees = User.all.paginate(page: params[:page], per_page: 35)
   end
   def show
     @employee = User.find(params[:id])

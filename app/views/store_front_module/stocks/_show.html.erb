@@ -14,7 +14,10 @@
   <%= link_to 'Sales', store_front_module_stock_sales_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_sales_path(stock))}" %>
 </li>
 <li class="nav-item">
- <%= link_to 'Stock Transfers', store_front_module_stock_stock_transfers_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_stock_transfers_path(stock))}" %>
+  <%= link_to 'Stock Transfers', store_front_module_stock_stock_transfers_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_stock_transfers_path(stock))}" %>
+</li>
+<li class="nav-item">
+  <%= link_to 'Spoilages', store_front_module_stock_spoilages_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_spoilages_path(stock))}" %>
 </li>
 <li class="nav-item">
  <%= link_to 'Internal Uses', store_front_module_stock_internal_uses_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_internal_uses_path(stock))}" %>
@@ -32,6 +35,9 @@
     <% end %>
     <% if current_page? store_front_module_stock_stock_transfers_path(stock) %>
       <%=render 'store_front_module/stocks/partials/transfers', stock: stock %>
+    <% end %>
+    <% if current_page? store_front_module_stock_spoilages_path(stock) %>
+      <%=render 'store_front_module/stocks/partials/spoilages', stock: stock %>
     <% end %>
     <% if current_page? store_front_module_stock_internal_uses_path(stock) %>
       <%=render 'store_front_module/stocks/partials/internal_uses', stock: stock %>

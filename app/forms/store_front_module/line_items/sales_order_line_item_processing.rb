@@ -20,6 +20,7 @@ module StoreFrontModule
       def process!
         ActiveRecord::Base.transaction do
           process_sales_order_line_item
+          update_stock_availability
         end
       end
 
@@ -39,9 +40,9 @@ module StoreFrontModule
         bar_code:            find_stock.barcode)
       end
 
-
-
-
+      def update_stock_availability
+        find_stock.update_availability_for_cart(find_cart)
+      end
 
       def find_cart
         Cart.find(cart_id)
