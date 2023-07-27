@@ -228,7 +228,7 @@
           </div>
             <div class="card-body">
               <% if current_user.proprietor? %>
-                <% User.sales_clerk.where(email: ['elmie@rbg.com','analyn.perez@rbg.com','nova@rbg.com', 'jenelyn.lamut@rbg.com','leizel@rbg.com', 'josie.bernal@rbg.com', 'jonalyn.lagawe@rbgtech.co', 'dexter.madsale@rbg.com', 'ronald.quirino.sales_clerk@rbg.com']).each do |sales_clerk| %>
+                <% User.sales_clerk.where(email: ['elmie@rbg.com','analyn.perez@rbg.com','nova@rbg.com', 'jenelyn.lamut@rbg.com', 'jonalyn.lagawe@rbgtech.co', 'dexter.madsale@rbg.com', 'ronald.quirino.sales_clerk@rbg.com']).each do |sales_clerk| %>
                   <div class="row">
                     <div class="col-md-4">
                       <%= sales_clerk.full_name %>
