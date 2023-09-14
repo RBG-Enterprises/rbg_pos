@@ -23,7 +23,10 @@ module StoreFronts
     delegate :supplier,       to: :purchase_order, allow_nil: true
     delegate :name,           to: :supplier,       prefix: true
     delegate :date,           to: :purchase_order, prefix: true, allow_nil: true
-    delegate :quantity,       to: :purchase, prefix: true
+
+    def purchase_quantity
+      purchase&.quantity.presence || 0
+    end
 
     def self.in_stocks
       where("available_quantity > 0.0")
@@ -105,8 +108,6 @@ module StoreFronts
     end
 
     def update_available_quantity!
-      return if purchase.blank?
-
       update(available_quantity: balance)
     end
 
