@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_07_26_124446) do
-
+ActiveRecord::Schema[7.0].define(version: 2023_12_27_071021) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -20,8 +19,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.decimal "quantity"
     t.string "description"
     t.string "serial_number"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "work_order_id"
     t.index ["product_unit_id"], name: "index_accessories_on_product_unit_id"
     t.index ["work_order_id"], name: "index_accessories_on_work_order_id"
@@ -33,8 +32,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "type"
     t.boolean "contra", default: false
     t.bigint "business_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.bigint "parent_account_category_id"
     t.index ["business_id"], name: "index_account_categories_on_business_id"
     t.index ["parent_account_category_id"], name: "index_account_categories_on_parent_account_category_id"
@@ -46,8 +45,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "account_code"
     t.boolean "contra", default: false
     t.string "type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "active", default: true
     t.bigint "business_id"
     t.bigint "account_category_id"
@@ -65,7 +64,7 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "record_type", null: false
     t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
@@ -76,8 +75,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "content_type"
     t.text "metadata"
     t.bigint "byte_size", null: false
-    t.string "checksum", null: false
-    t.datetime "created_at", null: false
+    t.string "checksum"
+    t.datetime "created_at", precision: nil, null: false
     t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
@@ -93,8 +92,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.bigint "entry_id"
     t.decimal "amount"
     t.string "type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "commercial_document_type"
     t.bigint "commercial_document_id"
     t.index ["account_id", "entry_id"], name: "index_amounts_on_account_id_and_entry_id"
@@ -110,9 +109,9 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "bank_name"
     t.bigint "cash_in_bank_account_id"
     t.bigint "business_id"
-    t.datetime "date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "date", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["business_id"], name: "index_bank_accounts_on_business_id"
     t.index ["cash_in_bank_account_id"], name: "index_bank_accounts_on_cash_in_bank_account_id"
   end
@@ -120,8 +119,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   create_table "bill_counts", force: :cascade do |t|
     t.bigint "bill_id"
     t.decimal "bill_count"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "cash_count_id"
     t.index ["bill_id"], name: "index_bill_counts_on_bill_id"
     t.index ["cash_count_id"], name: "index_bill_counts_on_cash_count_id"
@@ -130,8 +129,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   create_table "bills", force: :cascade do |t|
     t.string "name"
     t.string "amount"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "business_account_configs", force: :cascade do |t|
@@ -140,8 +139,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.bigint "service_revenue_category_id", null: false
     t.bigint "sales_receivable_category_id", null: false
     t.bigint "sales_revenue_category_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["business_id"], name: "index_business_account_configs_on_business_id"
     t.index ["sales_receivable_category_id"], name: "index_sales_rec_categories_on_business_configs"
     t.index ["sales_revenue_category_id"], name: "index_sales_rev_categories_on_business_configs"
@@ -155,8 +154,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "address"
     t.string "email"
     t.string "contact_number"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "service_revenue_parent_account_category_id"
     t.bigint "sales_revenue_parent_account_category_id"
     t.bigint "service_receivable_parent_account_category_id"
@@ -166,15 +165,15 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   end
 
   create_table "carts", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "cash_counts", force: :cascade do |t|
     t.bigint "employee_id"
-    t.datetime "date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "date", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["employee_id"], name: "index_cash_counts_on_employee_id"
   end
 
@@ -183,16 +182,16 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.decimal "cash_change"
     t.string "cash_paymentable_type"
     t.bigint "cash_paymentable_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.decimal "discount_amount"
     t.index ["cash_paymentable_type", "cash_paymentable_id"], name: "index_paymentable_on_cash_payments"
   end
 
   create_table "categories", force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["name"], name: "index_categories_on_name", unique: true
   end
 
@@ -201,12 +200,12 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "last_name"
     t.string "contact_number"
     t.string "address"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "avatar_file_name"
     t.string "avatar_content_type"
     t.bigint "avatar_file_size"
-    t.datetime "avatar_updated_at"
+    t.datetime "avatar_updated_at", precision: nil
     t.boolean "enable_interest", default: false
     t.bigint "business_id"
     t.bigint "receivable_account_id"
@@ -227,28 +226,28 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   create_table "departments", force: :cascade do |t|
     t.string "name"
     t.bigint "customer_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["customer_id"], name: "index_departments_on_customer_id"
   end
 
   create_table "employee_cash_accounts", force: :cascade do |t|
     t.bigint "employee_id"
     t.bigint "cash_account_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["cash_account_id"], name: "index_employee_cash_accounts_on_cash_account_id"
     t.index ["employee_id"], name: "index_employee_cash_accounts_on_employee_id"
   end
 
   create_table "entries", force: :cascade do |t|
     t.string "reference_number"
-    t.datetime "entry_date"
+    t.datetime "entry_date", precision: nil
     t.string "commercial_document_type"
     t.bigint "commercial_document_id"
     t.string "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "entry_type"
     t.bigint "user_id"
     t.bigint "recorder_id"
@@ -263,9 +262,9 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "number"
     t.string "invoiceable_type"
     t.bigint "invoiceable_id"
-    t.datetime "date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "date", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["invoiceable_type", "invoiceable_id"], name: "index_invoices_on_invoiceable_type_and_invoiceable_id"
     t.index ["type"], name: "index_invoices_on_type"
   end
@@ -274,8 +273,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "ledgerable_type"
     t.bigint "ledgerable_id"
     t.bigint "account_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["account_id"], name: "index_ledger_accounts_on_account_id"
     t.index ["ledgerable_type", "ledgerable_id"], name: "index_ledger_accounts_on_ledgerable_type_and_ledgerable_id"
   end
@@ -286,8 +285,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "type"
     t.bigint "store_front_id", null: false
     t.boolean "contra", default: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["store_front_id"], name: "index_level_one_account_categories_on_store_front_id"
     t.index ["type"], name: "index_level_one_account_categories_on_type"
   end
@@ -297,8 +296,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.decimal "unit_cost"
     t.decimal "total_cost"
     t.decimal "quantity"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "order_id"
     t.bigint "user_id"
     t.string "search"
@@ -314,7 +313,7 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "referencer_type"
     t.bigint "referencer_id"
     t.bigint "registry_id"
-    t.datetime "date"
+    t.datetime "date", precision: nil
     t.bigint "store_front_id"
     t.bigint "stock_id"
     t.index ["cart_id"], name: "index_line_items_on_cart_id"
@@ -334,9 +333,9 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   end
 
   create_table "orders", force: :cascade do |t|
-    t.datetime "date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "date", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "employee_id"
     t.string "reference_number"
     t.string "description"
@@ -376,11 +375,11 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.decimal "amount"
     t.string "description"
     t.string "reference_number"
-    t.datetime "date"
+    t.datetime "date", precision: nil
     t.bigint "order_id"
     t.bigint "cart_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["cart_id"], name: "index_other_sales_line_items_on_cart_id"
     t.index ["order_id"], name: "index_other_sales_line_items_on_order_id"
   end
@@ -391,8 +390,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "type"
     t.bigint "business_id", null: false
     t.boolean "contra", default: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["business_id"], name: "index_parent_account_categories_on_business_id"
     t.index ["type"], name: "index_parent_account_categories_on_type"
   end
@@ -404,8 +403,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.decimal "cash_tendered"
     t.decimal "change"
     t.decimal "total_cost"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.decimal "total_cost_less_discount"
     t.index ["order_id"], name: "index_payments_on_order_id"
   end
@@ -414,8 +413,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.text "content"
     t.string "searchable_type"
     t.bigint "searchable_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable_type_and_searchable_id"
   end
 
@@ -425,10 +424,10 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "type"
     t.string "title"
     t.string "content"
-    t.datetime "date"
+    t.datetime "date", precision: nil
     t.bigint "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["type"], name: "index_posts_on_type"
     t.index ["updateable_type", "updateable_id"], name: "index_posts_on_updateable_type_and_updateable_id"
     t.index ["user_id"], name: "index_posts_on_user_id"
@@ -440,8 +439,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "serial_number"
     t.text "physical_condition"
     t.text "reported_problem"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "service_number"
     t.bigint "customer_id"
     t.index ["customer_id"], name: "index_product_units_on_customer_id"
@@ -453,12 +452,12 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "unit"
     t.decimal "retail_price"
     t.decimal "wholesale_price"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "avatar_file_name"
     t.string "avatar_content_type"
     t.bigint "avatar_file_size"
-    t.datetime "avatar_updated_at"
+    t.datetime "avatar_updated_at", precision: nil
     t.bigint "category_id"
     t.decimal "low_stock_count", default: "0.0"
     t.bigint "business_id"
@@ -475,9 +474,9 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.bigint "employee_id", null: false
     t.bigint "store_front_id", null: false
     t.bigint "receivable_account_id", null: false
-    t.datetime "date"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "date", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.bigint "payable_account_id"
     t.index ["employee_id"], name: "index_purchase_orders_on_employee_id"
     t.index ["payable_account_id"], name: "index_purchase_orders_on_payable_account_id"
@@ -492,9 +491,9 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.bigint "unit_of_measurement_id"
     t.bigint "store_front_id"
     t.decimal "price"
-    t.datetime "date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "date", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["product_id"], name: "index_purchase_prices_on_product_id"
     t.index ["store_front_id"], name: "index_purchase_prices_on_store_front_id"
     t.index ["unit_of_measurement_id"], name: "index_purchase_prices_on_unit_of_measurement_id"
@@ -504,9 +503,9 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "spreadsheet_file_name"
     t.string "spreadsheet_content_type"
     t.bigint "spreadsheet_file_size"
-    t.datetime "spreadsheet_updated_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "spreadsheet_updated_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "type"
     t.bigint "employee_id"
     t.index ["employee_id"], name: "index_registries_on_employee_id"
@@ -516,23 +515,23 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   create_table "repairs", force: :cascade do |t|
     t.text "symptoms_observed"
     t.text "repair_description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "sections", force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "selling_prices", force: :cascade do |t|
     t.decimal "price"
     t.bigint "unit_of_measurement_id"
     t.bigint "product_id"
-    t.datetime "date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "date", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "store_front_id"
     t.index ["product_id"], name: "index_selling_prices_on_product_id"
     t.index ["store_front_id"], name: "index_selling_prices_on_store_front_id"
@@ -542,16 +541,16 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   create_table "service_charges", force: :cascade do |t|
     t.string "description"
     t.decimal "amount"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "charge_type"
     t.index ["charge_type"], name: "index_service_charges_on_charge_type"
   end
 
   create_table "stocks", force: :cascade do |t|
     t.bigint "product_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "store_front_id"
     t.string "barcode"
     t.bigint "unit_of_measurement_id"
@@ -565,8 +564,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   create_table "store_front_accounts", force: :cascade do |t|
     t.bigint "store_front_id"
     t.bigint "account_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["account_id"], name: "index_store_front_accounts_on_account_id"
     t.index ["store_front_id"], name: "index_store_front_accounts_on_store_front_id"
   end
@@ -574,8 +573,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   create_table "store_front_configs", force: :cascade do |t|
     t.bigint "accounts_receivable_account_id"
     t.bigint "store_front_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["accounts_receivable_account_id"], name: "index_store_front_configs_on_accounts_receivable_account_id"
     t.index ["store_front_id"], name: "index_store_front_configs_on_store_front_id"
   end
@@ -584,8 +583,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.bigint "business_id"
     t.bigint "merchandise_inventory_account_id"
     t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "address"
     t.bigint "cost_of_goods_sold_account_id"
     t.bigint "sales_return_account_id"
@@ -598,7 +597,7 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.bigint "service_revenue_account_id"
     t.bigint "service_receivable_account_category_id"
     t.bigint "sales_revenue_account_category_id"
-    t.datetime "deactivated_at"
+    t.datetime "deactivated_at", precision: nil
     t.index ["business_id"], name: "index_store_fronts_on_business_id"
     t.index ["cost_of_goods_sold_account_id"], name: "index_store_fronts_on_cost_of_goods_sold_account_id"
     t.index ["internal_use_account_id"], name: "index_store_fronts_on_internal_use_account_id"
@@ -618,8 +617,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   create_table "sub_accounts", force: :cascade do |t|
     t.bigint "main_account_id"
     t.bigint "sub_account_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["main_account_id"], name: "index_sub_accounts_on_main_account_id"
     t.index ["sub_account_id"], name: "index_sub_accounts_on_sub_account_id"
   end
@@ -629,13 +628,13 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "owner_name"
     t.string "address"
     t.string "contact_number"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "payable_account_id"
     t.string "avatar_file_name"
     t.string "avatar_content_type"
     t.bigint "avatar_file_size"
-    t.datetime "avatar_updated_at"
+    t.datetime "avatar_updated_at", precision: nil
     t.index ["business_name"], name: "index_suppliers_on_business_name", unique: true
     t.index ["payable_account_id"], name: "index_suppliers_on_payable_account_id"
   end
@@ -643,8 +642,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   create_table "technician_work_orders", force: :cascade do |t|
     t.bigint "technician_id"
     t.bigint "work_order_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["technician_id"], name: "index_technician_work_orders_on_technician_id"
     t.index ["work_order_id"], name: "index_technician_work_orders_on_work_order_id"
   end
@@ -656,8 +655,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.decimal "quantity"
     t.decimal "conversion_quantity"
     t.boolean "base_measurement", default: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["product_id"], name: "index_unit_of_measurements_on_product_id"
   end
 
@@ -665,28 +664,28 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.inet "current_sign_in_ip"
     t.inet "last_sign_in_ip"
     t.string "first_name"
     t.string "last_name"
     t.integer "role"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "avatar_file_name"
     t.string "avatar_content_type"
     t.bigint "avatar_file_size"
-    t.datetime "avatar_updated_at"
+    t.datetime "avatar_updated_at", precision: nil
     t.string "designation"
     t.bigint "section_id"
     t.bigint "cash_on_hand_account_id"
     t.bigint "store_front_id"
     t.bigint "business_id"
-    t.datetime "deactivated_at"
+    t.datetime "deactivated_at", precision: nil
     t.index ["business_id"], name: "index_users_on_business_id"
     t.index ["cash_on_hand_account_id"], name: "index_users_on_cash_on_hand_account_id"
     t.index ["deactivated_at"], name: "index_users_on_deactivated_at"
@@ -704,8 +703,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.bigint "commercial_document_id"
     t.string "description"
     t.integer "amount_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "recorder_id"
     t.bigint "cart_id"
     t.index ["account_id"], name: "index_voucher_amounts_on_account_id"
@@ -717,15 +716,15 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   end
 
   create_table "vouchers", force: :cascade do |t|
-    t.datetime "date"
+    t.datetime "date", precision: nil
     t.string "payee_type"
     t.bigint "payee_id"
     t.string "description"
     t.decimal "payable_amount"
     t.string "type"
     t.bigint "preparer_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "reference_number"
     t.string "commercial_document_type"
     t.bigint "commercial_document_id"
@@ -742,16 +741,16 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
 
   create_table "work_order_categories", force: :cascade do |t|
     t.string "title"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["title"], name: "index_work_order_categories_on_title", unique: true
   end
 
   create_table "work_order_service_charges", force: :cascade do |t|
     t.bigint "service_charge_id"
     t.bigint "work_order_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id"
     t.index ["service_charge_id"], name: "index_work_order_service_charges_on_service_charge_id"
     t.index ["user_id"], name: "index_work_order_service_charges_on_user_id"
@@ -762,22 +761,22 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.integer "status"
     t.bigint "product_unit_id"
     t.bigint "customer_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "reported_problem"
     t.string "physical_condition"
     t.string "service_number"
     t.boolean "under_warranty", default: false
     t.integer "supplier_id"
-    t.datetime "purchase_date"
-    t.datetime "expiry_date"
+    t.datetime "purchase_date", precision: nil
+    t.datetime "expiry_date", precision: nil
     t.string "customer_name"
     t.string "product_name"
     t.bigint "section_id"
     t.bigint "store_front_id"
     t.string "contact_person"
-    t.datetime "release_date"
-    t.datetime "date_received"
+    t.datetime "release_date", precision: nil
+    t.datetime "date_received", precision: nil
     t.bigint "receivable_account_id"
     t.bigint "sales_discount_account_id"
     t.bigint "service_revenue_account_id"

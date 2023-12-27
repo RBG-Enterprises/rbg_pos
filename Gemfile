@@ -4,8 +4,7 @@ ruby '3.3.0'
 
 gem 'active_interaction', '~> 5.3'
 gem 'prawn-icon'
-gem 'rails', '6.1.4'
-gem "audited", "~> 4.7"
+gem "rails", "~> 7.0.8"
 gem 'autonumeric-rails'
 gem 'spreadsheet'
 gem 'rqrcode'
@@ -81,3 +80,4 @@ gem 'rack-mini-profiler', require: false
 gem "matrix", "~> 0.4.2"
 
 gem "dartsass-rails", "~> 0.5.0"
+gem "sprockets-rails"
