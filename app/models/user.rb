@@ -21,7 +21,7 @@ class User < ApplicationRecord
   has_many :voucher_amounts,        class_name: "Vouchers::VoucherAmount", foreign_key: 'recorder_id'
   has_many :cash_counts,            class_name: "CashCounts::CashCount", foreign_key: 'employee_id'
 
-  enum role: [:proprietor, :sales_clerk, :stock_custodian, :technician, :accountant]
+  enum role: [:proprietor, :sales_clerk, :technician, :accountant, :warehouse_clerk]
 
   delegate :balance, to: :default_cash_on_hand_account, prefix: true, allow_nil: true
   before_save :set_default_image

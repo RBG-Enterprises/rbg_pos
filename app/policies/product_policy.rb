@@ -1,17 +1,17 @@
 class ProductPolicy < ApplicationPolicy
 	def index?
 		true
-	end 
+	end
 	def new?
-		user.proprietor? || user.stock_custodian? || user.sales_clerk?
+		user.proprietor? || user.warehouse_clerk? || user.sales_clerk?
 	end
 	def create?
 		new?
 	end
 	def edit?
 		user.proprietor?
-	end 
+	end
 	def update?
 		edit?
 	end
-end 
+end

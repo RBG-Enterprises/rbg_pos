@@ -6,8 +6,8 @@ class ApplicationController < ActionController::Base
   rescue_from Pundit::NotAuthorizedError, with: :permission_denied
   helper_method :current_store_front, :current_business, :current_cart
 
-
   private
+
   def permission_denied
     redirect_to customers_url, alert: 'Sorry but you are not allowed to access this page.'
   end

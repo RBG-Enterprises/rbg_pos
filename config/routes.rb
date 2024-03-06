@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
   root :to => 'store#index', :constraints => lambda { |request| request.env['warden'].user.role == 'sales_clerk' if request.env['warden'].user }, as: :sales_department_root
   root :to => 'store#index', :constraints => lambda { |request| request.env['warden'].user.role == 'proprietor' if request.env['warden'].user }, as: :prop_department_root
-  root :to => 'products#index', :constraints => lambda { |request| request.env['warden'].user.role == 'stock_custodian' if request.env['warden'].user }, as: :stocks_department_root
+  root :to => 'products#index', :constraints => lambda { |request| request.env['warden'].user.role == 'warehouse_clerk' if request.env['warden'].user }, as: :warehouse_department_root
   root :to => 'computer_repair_section/dashboard#index', :constraints => lambda { |request| request.env['warden'].user.role == 'technician' if request.env['warden'].user }, as: :technician_root
   resources :store, only: [:index]
 	resources :customers do

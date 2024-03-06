@@ -17,8 +17,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         <%= render 'layouts/brand' %>
         <% if current_user.proprietor? %>
           <%=render 'layouts/sidebar' %>
-        <% elsif current_user.stock_custodian? %>
-          <%=render 'layouts/stock_custodian_sidebar' %>
+        <% elsif current_user.warehouse_clerk? %>
+          <%= render 'layouts/warehouse_sidebar' %>
         <% elsif current_user.sales_clerk? %>
           <%=render 'layouts/sales_clerk_sidebar' %>
          <% elsif current_user.technician? %>

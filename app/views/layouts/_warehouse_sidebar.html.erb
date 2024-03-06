@@ -1,0 +1,58 @@
+<div class="sidebar">
+  <!-- Sidebar user (optional) -->
+  <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+    <div class="image">
+    </div>
+    <div class="info">
+      <a href="#" class="d-block"><%= current_user.first_name %></a>
+    </div>
+  </div>
+  <!-- Sidebar Menu -->
+  <nav class="mt-2">
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+    <% if current_user.cash_on_hand_account.present? %>
+    <%= link_to cash_account_path(current_user.cash_on_hand_account)  do %>
+    <h4 class="subtitle-up"><b>&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;<%= number_to_currency current_user.cash_on_hand_account.balance %></b></h4>
+    &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;<small>CASH BALANCE</small>
+    <% end %>
+    <% end %>
+    <hr>
+      <li class="nav-item">
+        <a href="/computer_repair_section/dashboard?technician=<%=current_user.id %>" class="nav-link <%= 'active' if current_page? computer_repair_section_dashboard_index_path %>">
+          <i class="nav-icon fa fa-th"></i>
+          <p>Repairs</p>
+        </a>
+      </li>
+
+      <li class="nav-item active">
+        <a href="/knowledge_center" class="nav-link <%= 'active' if current_page? knowledge_center_index_path %>">
+          <i class="nav-icon fa fa-info-circle"></i>
+          <p>Knowledge Center</p>
+        </a>
+      </li>
+      <li class="nav-item active">
+        <a href="/customers" class="nav-link <%= 'active' if current_page? customers_path %>">
+          <i class="nav-icon fa fa-users"></i>
+          <p>Customer</p>
+        </a>
+      </li>
+
+      <li class="nav-item active">
+        <a href="/products" class="nav-link <%= 'active' if current_page? products_path %>">
+          <i class="nav-icon fa fa-tags"></i>
+          <p>Products</p>
+        </a>
+      </li>
+
+      <li class="nav-item active">
+        <a href="/inventories" class="nav-link <%= 'active' if current_page? inventories_path %>">
+          <i class="nav-icon fa fa-cubes"></i>
+          <p>Inventories</p>
+        </a>
+      </li>
+
+
+
+              </ul>
+            </nav>
+            </div>
