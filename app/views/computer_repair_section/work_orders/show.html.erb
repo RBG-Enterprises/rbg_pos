@@ -5,7 +5,8 @@
           <div class="row">
             <div class="col-md-7">
               <h3 class="title-up">#<%= @work_order.service_number %> - <%= @work_order.description.try(:upcase) %> </h3>
-              <small class='text-muted'> Current Technician: <%= @work_order.technician.try(:full_name) %> </small>
+              <small class='text-muted'> Current Technician: <%= @work_order.technician.try(:full_name) %> </small><br>
+              <small class='text-muted'> <%= @work_order.work_order_category.title %>
               <br>
               <% if current_user == @work_order.technician || current_user.proprietor? %>
                 <%= link_to 'Endorse', edit_computer_repair_section_work_order_endorsement_path(@work_order), class: 'btn btn-sm btn-outline-warning' %>
