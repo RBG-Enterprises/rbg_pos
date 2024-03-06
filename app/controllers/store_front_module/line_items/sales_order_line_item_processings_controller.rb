@@ -13,6 +13,7 @@ module StoreFrontModule
       def destroy
         @line_item = StoreFrontModule::LineItems::SalesOrderLineItem.find(params[:id])
         @stock = @line_item.stock
+        @stock.update_available_quantity!
         @stock.update_availability_for_cart(current_cart)
         @line_item.destroy
 
