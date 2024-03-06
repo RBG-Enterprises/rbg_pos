@@ -79,7 +79,7 @@ Rails.application.routes.draw do
 
     resources :account, only: [:index], module: :suppliers
     resources :voucher_amounts, only: [:new, :create, :destroy], module: :suppliers
-    resources :vouchers, only: [:index, :create, :show], module: :suppliers
+    resources :vouchers, only: [:index, :create, :show, :destroy], module: :suppliers
     resources :voucher_confirmations, only: [:create], module: :suppliers
     resources :payments, only: [:new, :create], module: :suppliers
   end

@@ -24,7 +24,6 @@ module Vouchers
           account: amount.account)
       end
       entry.save!
-
       voucher.update!(entry_id: entry.id)
     end
   end

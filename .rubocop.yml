@@ -124,3 +124,5 @@ Style/MethodCallWithArgsParentheses:
 #   end
 Style/MultilineBlockChain:
   Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false

@@ -20,6 +20,13 @@ module Suppliers
       @confirmation = Suppliers::VoucherConfirmation.new
     end
 
+    def destroy
+      @supplier = Supplier.find(params[:supplier_id])
+      @voucher = @supplier.vouchers.find(params[:id])
+      Vouchers::Cancellation.run(voucher: @voucher)
+
+      redirect_to supplier_vouchers_url(supplier_id: @supplier.id), notice: "Voucher deleted successfully."
+    end
     private
     def voucher_params
       params.require(:suppliers_voucher_processing).permit(
