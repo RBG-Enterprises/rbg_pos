@@ -10,7 +10,7 @@
               </div>
               <div class="col-md-3">
                 <b class="text-primary"><%= order.supplier_name %></b><br>
-                <small class="text-muted"><i class="fa fa-clock-o"></i> <%= order.date.strftime("%b %e, %Y %I:%M %p") %></small>
+                <small class="text-muted"><i class="fa fa-clock-o"></i> <%= order.created_at.strftime("%b %e, %Y %I:%M %p") %></small>
               </div>
               <div class="col-md-6">
                 <% order.purchase_order_line_items.includes(:product, :unit_of_measurement).limit(35).each do |line_item| %>
