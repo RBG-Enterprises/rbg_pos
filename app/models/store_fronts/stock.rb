@@ -111,6 +111,10 @@ module StoreFronts
       update(available_quantity: balance)
     end
 
+    def update_availability!
+      update(available: available_quantity > 0)
+    end
+
     def update_availability_for_cart(cart)
       if balance_for_cart(cart).to_f <=0
         update!(available: false)
