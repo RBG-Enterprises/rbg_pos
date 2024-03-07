@@ -26,8 +26,6 @@ module Vouchers
         )
       end
       entry.save!
-
-      voucher.update!(entry: entry)
     end
   end
 end
