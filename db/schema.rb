@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_07_26_124446) do
+ActiveRecord::Schema.define(version: 2024_03_07_163223) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,6 +86,25 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "activities", id: :serial, force: :cascade do |t|
+    t.string "trackable_type"
+    t.integer "trackable_id"
+    t.string "owner_type"
+    t.integer "owner_id"
+    t.string "key"
+    t.text "parameters"
+    t.string "recipient_type"
+    t.integer "recipient_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["owner_id", "owner_type"], name: "index_activities_on_owner_id_and_owner_type"
+    t.index ["owner_type", "owner_id"], name: "index_activities_on_owner"
+    t.index ["recipient_id", "recipient_type"], name: "index_activities_on_recipient_id_and_recipient_type"
+    t.index ["recipient_type", "recipient_id"], name: "index_activities_on_recipient"
+    t.index ["trackable_id", "trackable_type"], name: "index_activities_on_trackable_id_and_trackable_type"
+    t.index ["trackable_type", "trackable_id"], name: "index_activities_on_trackable"
   end
 
   create_table "amounts", force: :cascade do |t|
@@ -203,10 +222,6 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.string "address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "avatar_file_name"
-    t.string "avatar_content_type"
-    t.bigint "avatar_file_size"
-    t.datetime "avatar_updated_at"
     t.boolean "enable_interest", default: false
     t.bigint "business_id"
     t.bigint "receivable_account_id"
@@ -266,18 +281,8 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.datetime "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["invoiceable_type", "invoiceable_id"], name: "index_invoices_on_invoiceable_type_and_invoiceable_id"
+    t.index ["invoiceable_type", "invoiceable_id"], name: "index_invoices_on_invoiceable"
     t.index ["type"], name: "index_invoices_on_type"
-  end
-
-  create_table "ledger_accounts", force: :cascade do |t|
-    t.string "ledgerable_type"
-    t.bigint "ledgerable_id"
-    t.bigint "account_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["account_id"], name: "index_ledger_accounts_on_account_id"
-    t.index ["ledgerable_type", "ledgerable_id"], name: "index_ledger_accounts_on_ledgerable_type_and_ledgerable_id"
   end
 
   create_table "level_one_account_categories", force: :cascade do |t|
@@ -397,26 +402,13 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.index ["type"], name: "index_parent_account_categories_on_type"
   end
 
-  create_table "payments", force: :cascade do |t|
-    t.bigint "order_id"
-    t.integer "mode_of_payment"
-    t.decimal "discount_amount", default: "0.0"
-    t.decimal "cash_tendered"
-    t.decimal "change"
-    t.decimal "total_cost"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.decimal "total_cost_less_discount"
-    t.index ["order_id"], name: "index_payments_on_order_id"
-  end
-
   create_table "pg_search_documents", force: :cascade do |t|
     t.text "content"
     t.string "searchable_type"
     t.bigint "searchable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable_type_and_searchable_id"
+    t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable"
   end
 
   create_table "posts", force: :cascade do |t|
@@ -430,7 +422,7 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["type"], name: "index_posts_on_type"
-    t.index ["updateable_type", "updateable_id"], name: "index_posts_on_updateable_type_and_updateable_id"
+    t.index ["updateable_type", "updateable_id"], name: "index_updates_on_updateable"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
@@ -455,10 +447,6 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.decimal "wholesale_price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "avatar_file_name"
-    t.string "avatar_content_type"
-    t.bigint "avatar_file_size"
-    t.datetime "avatar_updated_at"
     t.bigint "category_id"
     t.decimal "low_stock_count", default: "0.0"
     t.bigint "business_id"
@@ -501,23 +489,12 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   end
 
   create_table "registries", force: :cascade do |t|
-    t.string "spreadsheet_file_name"
-    t.string "spreadsheet_content_type"
-    t.bigint "spreadsheet_file_size"
-    t.datetime "spreadsheet_updated_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "type"
     t.bigint "employee_id"
     t.index ["employee_id"], name: "index_registries_on_employee_id"
     t.index ["type"], name: "index_registries_on_type"
-  end
-
-  create_table "repairs", force: :cascade do |t|
-    t.text "symptoms_observed"
-    t.text "repair_description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "sections", force: :cascade do |t|
@@ -569,15 +546,6 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_store_front_accounts_on_account_id"
     t.index ["store_front_id"], name: "index_store_front_accounts_on_store_front_id"
-  end
-
-  create_table "store_front_configs", force: :cascade do |t|
-    t.bigint "accounts_receivable_account_id"
-    t.bigint "store_front_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["accounts_receivable_account_id"], name: "index_store_front_configs_on_accounts_receivable_account_id"
-    t.index ["store_front_id"], name: "index_store_front_configs_on_store_front_id"
   end
 
   create_table "store_fronts", force: :cascade do |t|
@@ -632,10 +600,6 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "payable_account_id"
-    t.string "avatar_file_name"
-    t.string "avatar_content_type"
-    t.bigint "avatar_file_size"
-    t.datetime "avatar_updated_at"
     t.index ["business_name"], name: "index_suppliers_on_business_name", unique: true
     t.index ["payable_account_id"], name: "index_suppliers_on_payable_account_id"
   end
@@ -677,10 +641,6 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.integer "role"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "avatar_file_name"
-    t.string "avatar_content_type"
-    t.bigint "avatar_file_size"
-    t.datetime "avatar_updated_at"
     t.string "designation"
     t.bigint "section_id"
     t.bigint "cash_on_hand_account_id"
@@ -734,7 +694,7 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
     t.index ["account_number"], name: "index_vouchers_on_account_number", unique: true
     t.index ["commercial_document_type", "commercial_document_id"], name: "index_commercial_document_on_vouchers"
     t.index ["entry_id"], name: "index_vouchers_on_entry_id"
-    t.index ["payee_type", "payee_id"], name: "index_vouchers_on_payee_type_and_payee_id"
+    t.index ["payee_type", "payee_id"], name: "index_vouchers_on_payee"
     t.index ["preparer_id"], name: "index_vouchers_on_preparer_id"
     t.index ["reference_number"], name: "index_vouchers_on_reference_number", unique: true
     t.index ["type"], name: "index_vouchers_on_type"
@@ -835,7 +795,6 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   add_foreign_key "employee_cash_accounts", "users", column: "employee_id"
   add_foreign_key "entries", "users"
   add_foreign_key "entries", "users", column: "recorder_id"
-  add_foreign_key "ledger_accounts", "accounts"
   add_foreign_key "level_one_account_categories", "store_fronts"
   add_foreign_key "line_items", "carts"
   add_foreign_key "line_items", "line_items", column: "purchase_order_line_item_id"
@@ -860,7 +819,6 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   add_foreign_key "other_sales_line_items", "carts"
   add_foreign_key "other_sales_line_items", "orders"
   add_foreign_key "parent_account_categories", "businesses"
-  add_foreign_key "payments", "orders"
   add_foreign_key "posts", "users"
   add_foreign_key "product_units", "customers"
   add_foreign_key "products", "businesses"
@@ -880,8 +838,6 @@ ActiveRecord::Schema.define(version: 2023_07_26_124446) do
   add_foreign_key "stocks", "unit_of_measurements"
   add_foreign_key "store_front_accounts", "accounts"
   add_foreign_key "store_front_accounts", "store_fronts"
-  add_foreign_key "store_front_configs", "accounts", column: "accounts_receivable_account_id"
-  add_foreign_key "store_front_configs", "store_fronts"
   add_foreign_key "store_fronts", "account_categories", column: "sales_revenue_account_category_id"
   add_foreign_key "store_fronts", "account_categories", column: "service_receivable_account_category_id"
   add_foreign_key "store_fronts", "accounts", column: "cost_of_goods_sold_account_id"
