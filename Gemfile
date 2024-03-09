@@ -53,6 +53,7 @@ gem 'net-smtp', require: false
 gem 'net-imap', require: false
 gem 'net-pop', require: false
 gem 'listen', '>= 3.0.5', '< 3.2'
+gem 'bullet'
 
 group :development do
   gem 'spring'
@@ -63,7 +64,6 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'factory_bot_rails', group: :production
   gem 'faker', group: :production
-  gem 'bullet'
   gem 'pry-rails'
 end
 
