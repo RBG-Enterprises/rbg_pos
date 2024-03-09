@@ -77,6 +77,7 @@ module StoreFrontModule
         stocks = ::StoreFronts::Stock.where(id: ids.uniq.compact.flatten)
         stocks.each do |stock|
           stock.update_available_quantity!
+          stock.update_availability!
         end
       end
 
