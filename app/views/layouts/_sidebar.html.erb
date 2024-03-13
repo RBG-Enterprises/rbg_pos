@@ -59,7 +59,7 @@
           <p>All Sales Clerks</p>
         </a>
       </li>
-    <% current_business.employees.sales_clerk.each do |employee| %>
+    <% current_business.employees.sales_clerk.active.each do |employee| %>
       <li class="nav-item">
         <a href="/admin/employees/<%=employee.id %>" class="nav-link">
           <i class="nav-icon fa fa-user-circle"></i>
