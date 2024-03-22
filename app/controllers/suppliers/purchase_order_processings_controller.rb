@@ -1,5 +1,5 @@
 module Suppliers
-  class PurchaseOrderProcessingsController < ApplicationController
+  class PurchaseOrderProcessingsController < AuthenticatedController
     def create
       @supplier = Supplier.find(params[:supplier_id])
       @purchase_order = Suppliers::PurchaseOrder.new(order_params)

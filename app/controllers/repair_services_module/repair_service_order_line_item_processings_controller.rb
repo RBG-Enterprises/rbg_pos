@@ -1,5 +1,5 @@
 module RepairServicesModule
-  class RepairServiceOrderLineItemProcessingsController < ApplicationController
+  class RepairServiceOrderLineItemProcessingsController < AuthenticatedController
     def new
       @work_order = WorkOrder.find(params[:work_order_id])
       if params[:search].present?

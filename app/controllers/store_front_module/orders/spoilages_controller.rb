@@ -1,6 +1,6 @@
 module StoreFrontModule
   module Orders
-    class SpoilagesController < ApplicationController
+    class SpoilagesController < AuthenticatedController
       def index
         @orders = StoreFrontModule::Orders::SpoilageOrder.order(date: :desc).all.paginate(page: params[:page], per_page: 35)
       end

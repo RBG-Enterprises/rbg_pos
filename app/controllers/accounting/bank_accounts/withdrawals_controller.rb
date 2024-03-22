@@ -1,6 +1,6 @@
 module Accounting
   module BankAccounts
-    class WithdrawalsController < ApplicationController
+    class WithdrawalsController < AuthenticatedController
       def new
         @bank_account = BankAccount.find(params[:bank_account_id])
         @withdrawal = Accounting::BankAccounts::Withdrawal.new

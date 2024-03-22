@@ -1,4 +1,4 @@
-class AccessoriesController < ApplicationController
+class AccessoriesController < AuthenticatedController
   def new
     @product_unit = ProductUnit.find(params[:product_unit_id])
     @work_order = WorkOrder.find(params[:work_order_id])

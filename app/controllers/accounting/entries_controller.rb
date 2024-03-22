@@ -1,5 +1,5 @@
 module Accounting
-	class EntriesController < ApplicationController
+	class EntriesController < AuthenticatedController
     def index
       @entries = AccountingModule::Entry.all
     end

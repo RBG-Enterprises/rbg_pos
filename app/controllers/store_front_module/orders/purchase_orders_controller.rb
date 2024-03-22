@@ -1,6 +1,6 @@
 module StoreFrontModule
   module Orders
-    class PurchaseOrdersController < ApplicationController
+    class PurchaseOrdersController < AuthenticatedController
       def index
          if params[:search].present?
           @pagy, @orders = pagy(current_store_front.purchase_orders.not_stock_transfers.text_search_with_stocks(params[:search]).order(created_at: :desc))

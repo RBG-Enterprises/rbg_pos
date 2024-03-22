@@ -1,13 +1,13 @@
-class CategoriesController < ApplicationController
-	def new 
-		@category = Category.new 
-	end 
-	def create 
+class CategoriesController < AuthenticatedController
+	def new
+		@category = Category.new
+	end
+	def create
 		@category = Category.create(category_params)
 	end
 
-	private 
+	private
 	def category_params
 		params.require(:category).permit(:name)
-	end 
-end 
+	end
+end

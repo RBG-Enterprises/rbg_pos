@@ -1,25 +1,25 @@
-class BranchesController < ApplicationController
-  def index 
-    @branches = Branch.all 
+class BranchesController < AuthenticatedController
+  def index
+    @branches = Branch.all
   end
-	def new 
-		@branch = Branch.new 
+	def new
+		@branch = Branch.new
 	end
-	def create 
+	def create
 	  @branch = Branch.create(branch_params)
 	  @branch.business = Business.first
-	  if @branch.save 
+	  if @branch.save
 	    redirect_to branches_url, notice: "Branch created successfully"
 	  else
-	    render :new 
-	  end 
+	    render :new
+	  end
 	end
-  def show 
+  def show
     @branch = Branch.find(params[:id])
   end
 
-	private 
+	private
 	def branch_params
 		params.require(:branch).permit(:name)
 	end
-end 
+end

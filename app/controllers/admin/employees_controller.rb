@@ -1,5 +1,5 @@
 module Admin
-  class EmployeesController < ApplicationController
+  class EmployeesController < AuthenticatedController
     def show
       @employee = User.find(params[:id])
       @cash_account = @employee.cash_on_hand_account

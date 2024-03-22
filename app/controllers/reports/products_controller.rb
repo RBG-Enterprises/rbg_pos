@@ -1,5 +1,5 @@
 module Reports
-  class ProductsController < ApplicationController
+  class ProductsController < AuthenticatedController
     def index
       @categories = Category.all
       @products = Product.all

@@ -1,7 +1,7 @@
 module StoreFrontModule
   module Orders
     module StockTransferOrders
-      class AdditionalLineItemsController < ApplicationController
+      class AdditionalLineItemsController < AuthenticatedController
         def new
           @stock_transfer_order = current_store_front.delivered_stock_transfer_orders.find(params[:stock_transfer_id])
           @additional_line_item = StoreFrontModule::LineItems::StockTransferOrderLineItemProcessing.new

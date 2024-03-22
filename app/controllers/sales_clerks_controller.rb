@@ -1,4 +1,4 @@
-class SalesClerksController < ApplicationController
+class SalesClerksController < AuthenticatedController
   def index
     @employees = current_business.employees.sales_clerk
   end

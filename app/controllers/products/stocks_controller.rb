@@ -1,6 +1,6 @@
 require 'will_paginate/array'
 module Products
-  class StocksController < ApplicationController
+  class StocksController < AuthenticatedController
     def index
       @product       = Product.find(params[:product_id])
       @pagy, @stocks = pagy(@product.stocks.processed.where(store_front: current_store_front))

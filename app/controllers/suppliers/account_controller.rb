@@ -1,5 +1,5 @@
 module Suppliers
-  class AccountController < ApplicationController
+  class AccountController < AuthenticatedController
     def index
       @supplier = Supplier.find(params[:supplier_id])
     end

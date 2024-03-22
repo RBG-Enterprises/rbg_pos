@@ -1,4 +1,4 @@
-class CashAccountsController < ApplicationController
+class CashAccountsController < AuthenticatedController
   def show
     @cash_account = AccountingModule::Asset.find(params[:id])
     if params[:from_date] && params[:to_date]

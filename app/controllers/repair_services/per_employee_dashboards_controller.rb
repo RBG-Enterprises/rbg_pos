@@ -1,5 +1,5 @@
 module RepairServices
-  class PerEmployeeDashboardsController < ApplicationController
+  class PerEmployeeDashboardsController < AuthenticatedController
     def index
       @from_date          = params[:from_date] ? Date.parse(params[:from_date]) : Date.current.beginning_of_month
       @to_date            = params[:to_date]   ? Date.parse(params[:to_date])   : Date.current.end_of_month

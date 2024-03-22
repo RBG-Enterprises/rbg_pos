@@ -1,4 +1,4 @@
-class VoucherAmountsController < ApplicationController
+class VoucherAmountsController < AuthenticatedController
   def destroy
     @voucher_amount = Vouchers::VoucherAmount.find(params[:id])
     @voucher_amount.destroy

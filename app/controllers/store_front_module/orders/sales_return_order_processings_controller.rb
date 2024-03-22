@@ -1,6 +1,6 @@
 module StoreFrontModule
   module Orders
-    class SalesReturnOrderProcessingsController < ApplicationController
+    class SalesReturnOrderProcessingsController < AuthenticatedController
       def create
         @sales_return_order = StoreFrontModule::Orders::SalesReturnOrderProcessing.new(order_params)
         if @sales_return_order.valid?

@@ -1,5 +1,5 @@
 module Businesses
-  class LedgerAccountsController < ApplicationController
+  class LedgerAccountsController < AuthenticatedController
     def new
       @ledger_account = current_business.ledger_accounts.build
       if params[:search].present?

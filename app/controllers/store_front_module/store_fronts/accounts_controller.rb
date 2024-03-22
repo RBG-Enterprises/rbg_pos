@@ -1,6 +1,6 @@
 module StoreFrontModule
   module StoreFronts
-    class AccountsController < ApplicationController
+    class AccountsController < AuthenticatedController
       def index
         @store_front = current_business.store_fronts.find(params[:store_front_id])
         @accounts = @store_front.accounts

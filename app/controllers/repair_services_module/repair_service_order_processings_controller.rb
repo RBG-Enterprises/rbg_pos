@@ -1,5 +1,5 @@
 module RepairServicesModule
-  class RepairServiceOrderProcessingsController < ApplicationController
+  class RepairServiceOrderProcessingsController < AuthenticatedController
     def create
       @work_order = WorkOrder.find(params[:work_order_id])
       @repair_service_order = RepairServicesModule::RepairServiceOrderProcessing.new(order_params)

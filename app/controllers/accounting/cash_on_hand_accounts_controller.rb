@@ -1,5 +1,5 @@
 module Accounting
-  class CashOnHandAccountsController < ApplicationController
+  class CashOnHandAccountsController < AuthenticatedController
     def new
       @account = AccountingModule::Asset.new
     end

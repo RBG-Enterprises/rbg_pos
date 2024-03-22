@@ -1,6 +1,6 @@
 module Reports
   module StoreFronts
-    class InventoriesController < ApplicationController
+    class InventoriesController < AuthenticatedController
       def index
       end
     end

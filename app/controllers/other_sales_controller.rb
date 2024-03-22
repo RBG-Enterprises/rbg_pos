@@ -1,4 +1,4 @@
-class OtherSalesController < ApplicationController
+class OtherSalesController < AuthenticatedController
   def new
     @other_sale = OtherSalesForm.new
   end

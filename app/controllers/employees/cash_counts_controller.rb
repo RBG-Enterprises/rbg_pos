@@ -1,5 +1,5 @@
 module Employees
-  class CashCountsController < ApplicationController
+  class CashCountsController < AuthenticatedController
     def new
       @employee = User.find(params[:employee_id])
       @cash_count = @employee.cash_counts.new

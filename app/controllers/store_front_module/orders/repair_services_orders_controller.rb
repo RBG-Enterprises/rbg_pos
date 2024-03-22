@@ -1,6 +1,6 @@
 module StoreFrontModule
   module Orders
-    class RepairServicesOrdersController < ApplicationController
+    class RepairServicesOrdersController < AuthenticatedController
       def index
         @orders = RepairServicesModule::RepairServiceOrder.all.paginate(page: params[:page], per_page: 30)
       end

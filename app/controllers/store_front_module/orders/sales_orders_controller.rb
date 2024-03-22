@@ -1,6 +1,6 @@
 module StoreFrontModule
   module Orders
-    class SalesOrdersController < ApplicationController
+    class SalesOrdersController < AuthenticatedController
       def index
         if params[:search].present?
           @pagy, @orders = pagy(current_store_front.sales_orders.text_search_with_stocks(params[:search]))

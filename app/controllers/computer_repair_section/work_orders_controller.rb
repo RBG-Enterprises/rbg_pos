@@ -1,5 +1,5 @@
 module ComputerRepairSection
-  class WorkOrdersController < ApplicationController
+  class WorkOrdersController < AuthenticatedController
     def new
       @work_order = ::WorkOrders::Registration.new
       if params[:customer_search].present?

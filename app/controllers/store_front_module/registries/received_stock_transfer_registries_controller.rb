@@ -1,6 +1,6 @@
  module StoreFrontModule
   module Registries
-    class ReceivedStockTransferRegistriesController < ApplicationController
+    class ReceivedStockTransferRegistriesController < AuthenticatedController
       def new
         @registry = StoreFrontModule::Registries::ReceivedStockTransferRegistry.new
       end

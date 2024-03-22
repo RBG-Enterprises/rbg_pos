@@ -1,6 +1,6 @@
 module StoreFrontModule
   module OrderProcessings
-    class CreditSalesOrderProcessingsController < ApplicationController
+    class CreditSalesOrderProcessingsController < AuthenticatedController
       def create
         @customer = Customer.find(params[:customer_id])
          @sales_order = StoreFrontModule::Orders::CreditSalesOrderProcessing.new(order_params)

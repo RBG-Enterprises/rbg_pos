@@ -1,5 +1,5 @@
 module StoreFrontModule
-  class CreditSalesOrderLineItemProcessingsController < ApplicationController
+  class CreditSalesOrderLineItemProcessingsController < AuthenticatedController
     def new
       @customer = Customer.find(params[:customer_id])
       if params[:search].present?

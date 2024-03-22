@@ -1,4 +1,4 @@
-class UsersController < ApplicationController
+class UsersController < AuthenticatedController
 	def new
 		@user = User.new
 		authorize @user

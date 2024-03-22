@@ -1,9 +1,9 @@
-module ComputerRepairSection 
-  module WorkOrders 
-    class EndorsementsController < ApplicationController 
+module ComputerRepairSection
+  module WorkOrders
+    class EndorsementsController < AuthenticatedController
       def edit
         @work_order = current_store_front.work_orders.find(params[:work_order_id])
-      end 
+      end
 
       def update
         @work_order = current_store_front.work_orders.find(params[:work_order_id])
@@ -11,15 +11,15 @@ module ComputerRepairSection
         if @work_order.valid?
           @work_order.save!
           redirect_to computer_repair_section_work_order_url(@work_order), notice: 'saved successfully.'
-        else 
-          render :edit 
-        end 
-      end 
+        else
+          render :edit
+        end
+      end
 
-      private 
+      private
       def work_order_params
         params.require(:work_order).permit(:technician_id)
-      end 
-    end 
-  end 
-end 
+      end
+    end
+  end
+end

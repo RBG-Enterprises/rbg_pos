@@ -1,6 +1,6 @@
 require 'rqrcode'
 
-class WorkOrdersController < ApplicationController
+class WorkOrdersController < AuthenticatedController
   def index
     @from_date = DateTime.parse(params[:from_date])
     @to_date = DateTime.parse(params[:to_date])

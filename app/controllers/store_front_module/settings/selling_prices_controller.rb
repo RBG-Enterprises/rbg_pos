@@ -1,6 +1,6 @@
 module StoreFrontModule
   module Settings
-    class SellingPricesController < ApplicationController
+    class SellingPricesController < AuthenticatedController
       def new
         @product = Product.find(params[:product_id])
         @unit_of_measurement = StoreFrontModule::UnitOfMeasurement.find(params[:unit_of_measurement_id])

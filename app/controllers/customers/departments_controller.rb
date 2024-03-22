@@ -1,5 +1,5 @@
 module Customers
-  class DepartmentsController < ApplicationController
+  class DepartmentsController < AuthenticatedController
     def new
       @customer = Customer.find(params[:customer_id])
       @department = @customer.departments.build

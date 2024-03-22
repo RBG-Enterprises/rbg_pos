@@ -1,5 +1,5 @@
 module Vouchers
-  class VoucherAmountProcessingsController < ApplicationController
+  class VoucherAmountProcessingsController < AuthenticatedController
     def new
       @voucher_amount = Vouchers::VoucherAmountProcessing.new
     end

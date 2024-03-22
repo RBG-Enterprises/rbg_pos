@@ -1,4 +1,4 @@
-class CapitalWithdrawalsController < ApplicationController
+class CapitalWithdrawalsController < AuthenticatedController
   def new
     @withdraw = CapitalWithdrawalForm.new
   end

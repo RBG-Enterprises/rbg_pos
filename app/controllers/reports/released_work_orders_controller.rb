@@ -1,5 +1,5 @@
 module Reports
-  class ReleasedWorkOrdersController < ApplicationController
+  class ReleasedWorkOrdersController < AuthenticatedController
     def index
       @employee = User.find(params[:user_id])
       @from_date = params[:from_date] ? Time.zone.parse(params[:from_date]) : Date.current.beginning_of_month

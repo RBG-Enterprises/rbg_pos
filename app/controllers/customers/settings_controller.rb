@@ -1,5 +1,5 @@
 module Customers
-  class SettingsController < ApplicationController
+  class SettingsController < AuthenticatedController
     def index
       @customer = Customer.find(params[:customer_id])
     end

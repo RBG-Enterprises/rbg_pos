@@ -1,5 +1,5 @@
 module Employees
-    class AccountDeactivationsController < ApplicationController
+    class AccountDeactivationsController < AuthenticatedController
       def create
         @employee = User.find(params[:employee_id])
         @employee.update!(deactivated_at: Time.zone.now)

@@ -1,6 +1,6 @@
 module StoreFrontModule
   module StoreFronts
-    class WorkOrdersController < ApplicationController
+    class WorkOrdersController < AuthenticatedController
       def index
         @store_front = current_business.store_fronts.find(params[:store_front_id])
         @service_receiveable_account_category = @store_front.service_receivable_account_category

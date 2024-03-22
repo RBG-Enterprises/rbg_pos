@@ -1,5 +1,5 @@
 module Reports
-  class AccountsReceivablesController < ApplicationController
+  class AccountsReceivablesController < AuthenticatedController
     def index
       @customers = Customer.with_credits.sort
       respond_to do |format|

@@ -1,5 +1,5 @@
 module Customers
-  class OrdersController < ApplicationController
+  class OrdersController < AuthenticatedController
     def index
       @customer = Customer.find(params[:customer_id])
       if params[:search].present?

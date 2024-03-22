@@ -1,6 +1,6 @@
 module StoreFrontModule
   module SalesOrderLineItems
-    class SalesReturnsController < ApplicationController
+    class SalesReturnsController < AuthenticatedController
       def new
         @sales_order_line_item = current_store_front.sales_order_line_items.find(params[:sales_order_line_item_id])
         @sales_return          = StoreFrontModule::LineItems::SalesReturnProcessing.new

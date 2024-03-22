@@ -1,5 +1,5 @@
 module Customers
-  class OtherCreditsController < ApplicationController
+  class OtherCreditsController < AuthenticatedController
     def new
       @customer = Customer.find(params[:customer_id])
       @other_credit = Customers::OtherCredit.new

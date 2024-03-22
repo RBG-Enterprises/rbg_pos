@@ -1,5 +1,5 @@
 module Accounting
-  class EntryLineItemsController < ApplicationController
+  class EntryLineItemsController < AuthenticatedController
     def new
       @entry_line_item = Accounting::EntryLineItem.new
       @adjusting_entry = Accounting::AdjustingEntry.new

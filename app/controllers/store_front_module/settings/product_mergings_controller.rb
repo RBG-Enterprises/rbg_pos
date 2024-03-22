@@ -1,6 +1,6 @@
 module StoreFrontModule
   module Settings
-    class ProductMergingsController < ApplicationController
+    class ProductMergingsController < AuthenticatedController
       def new
         @product_merging = StoreFrontModule::Settings::ProductMerging.new
       end

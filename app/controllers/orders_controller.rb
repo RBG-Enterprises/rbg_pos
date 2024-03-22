@@ -1,4 +1,4 @@
-class OrdersController < ApplicationController
+class OrdersController < AuthenticatedController
 	def index
     if params[:search].present?
       @orders = Order.text_search(params[:search]).paginate(page: params[:page], per_page: 35)

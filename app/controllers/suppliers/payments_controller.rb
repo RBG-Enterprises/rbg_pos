@@ -1,5 +1,5 @@
 module Suppliers
-  class PaymentsController < ApplicationController
+  class PaymentsController < AuthenticatedController
     def new
      @supplier = Supplier.find(params[:supplier_id])
       @entry = AccountingModule::SupplierPaymentForm.new

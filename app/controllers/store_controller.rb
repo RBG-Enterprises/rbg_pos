@@ -1,4 +1,4 @@
-class StoreController < ApplicationController
+class StoreController < AuthenticatedController
 	def index
     if params[:search].present?
       @pagy, @stocks   = pagy(current_store_front.stocks.processed.available.includes(:product, :purchase => [:unit_of_measurement]).text_search(params[:search]))

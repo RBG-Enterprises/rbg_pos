@@ -1,4 +1,4 @@
-class CustomersController < ApplicationController
+class CustomersController < AuthenticatedController
 	def index
 		if params[:search].present?
 			@pagy, @customers = pagy(current_business.customers.includes(:orders, :work_orders, :avatar_attachment =>[:blob]).text_search(params[:search]))

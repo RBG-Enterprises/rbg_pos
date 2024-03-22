@@ -1,7 +1,7 @@
 module StoreFrontModule
   module Orders
     module SalesOrders
-      class AdditionalLineItemsController < ApplicationController
+      class AdditionalLineItemsController < AuthenticatedController
         def new
           @sales_order = StoreFrontModule::Orders::SalesOrder.find(params[:sales_order_id])
           @cart = current_cart

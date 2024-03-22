@@ -1,5 +1,5 @@
 module Employees
-  class ReportsController < ApplicationController
+  class ReportsController < AuthenticatedController
     def index
       @employee = User.find(params[:employee_id])
     end

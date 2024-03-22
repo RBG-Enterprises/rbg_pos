@@ -1,5 +1,5 @@
 module StoreFrontModule
-  class CashSalesOrderLineItemProcessingsController < ApplicationController
+  class CashSalesOrderLineItemProcessingsController < AuthenticatedController
     def new
       @customer  = Customer.find(params[:customer_id])
       @line_item = StoreFrontModule::LineItems::SalesOrderLineItem.new

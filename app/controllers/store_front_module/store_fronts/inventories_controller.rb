@@ -1,7 +1,7 @@
 require 'csv'
 module StoreFrontModule
   module StoreFronts
-    class InventoriesController < ApplicationController
+    class InventoriesController < AuthenticatedController
       def index
         @store_front = current_business.store_fronts.find(params[:store_front_id])
         @stocks      = @store_front.stocks.processed
@@ -44,7 +44,7 @@ module StoreFrontModule
           @stocks.joins(:product).order('products.name').each do |stock|
             yielder << CSV.generate_line([
               stock.name,
-              stock.barcode.to_s, 
+              stock.barcode.to_s,
               stock.purchase_quantity,
               stock.sales_balance,
               stock.stock_transfers_balance,
