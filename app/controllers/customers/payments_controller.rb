@@ -1,5 +1,5 @@
 module Customers
-  class PaymentsController < ApplicationController
+  class PaymentsController < AuthenticatedController
     def new
       @customer = Customer.find(params[:customer_id])
       @entry = AccountingModule::CustomerPaymentForm.new

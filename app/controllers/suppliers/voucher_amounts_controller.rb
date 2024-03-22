@@ -1,5 +1,5 @@
 module Suppliers
-  class VoucherAmountsController < ApplicationController
+  class VoucherAmountsController < AuthenticatedController
     def new
       @supplier = Supplier.find(params[:supplier_id])
       @voucher_amount = Suppliers::VoucherAmountProcessing.new

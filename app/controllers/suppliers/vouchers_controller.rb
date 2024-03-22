@@ -1,5 +1,5 @@
 module Suppliers
-  class VouchersController < ApplicationController
+  class VouchersController < AuthenticatedController
     def index
       @supplier = Supplier.find(params[:supplier_id])
       @pagy, @vouchers = pagy(@supplier.vouchers.order(created_at: :desc))

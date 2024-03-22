@@ -1,6 +1,6 @@
 module ComputerRepairSection
   module WorkOrders
-    class RefundsController < ApplicationController
+    class RefundsController < AuthenticatedController
       def new
         @work_order = WorkOrder.find(params[:work_order_id])
         @refund = AccountingModule::RefundProcessing.new

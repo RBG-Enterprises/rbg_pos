@@ -1,6 +1,6 @@
 module StoreFrontModule
   module Registries
-    class PurchaseOrderRegistriesController < ApplicationController
+    class PurchaseOrderRegistriesController < AuthenticatedController
       def new
         @registry = StoreFrontModule::Registries::PurchaseOrderRegistry.new
       end

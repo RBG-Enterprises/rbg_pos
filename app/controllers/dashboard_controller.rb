@@ -1,4 +1,4 @@
-class DashboardController < ApplicationController
+class DashboardController < AuthenticatedController
 	def index
     @employees = User.all
     @business = current_user.business

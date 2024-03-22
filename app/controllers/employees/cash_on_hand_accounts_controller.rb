@@ -1,5 +1,5 @@
 module Employees
-  class CashOnHandAccountsController < ApplicationController
+  class CashOnHandAccountsController < AuthenticatedController
     def show
       @account  = AccountingModule::Account.find(params[:id])
       @employee = User.find(params[:employee_id])

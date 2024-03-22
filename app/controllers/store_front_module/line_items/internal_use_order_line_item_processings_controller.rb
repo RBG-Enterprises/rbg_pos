@@ -1,6 +1,6 @@
 module StoreFrontModule
   module LineItems
-    class InternalUseOrderLineItemProcessingsController < ApplicationController
+    class InternalUseOrderLineItemProcessingsController < AuthenticatedController
       def new
         if params[:search].present?
           @pagy, @stocks   = pagy(current_store_front.stocks.processed.text_search(params[:search]))

@@ -1,4 +1,4 @@
-class StocksController < ApplicationController
+class StocksController < AuthenticatedController
 	def index
 		if params[:search].present?
 			@stocks= Stock.text_search(params[:search]).paginate(page: params[:page], per_page: 20)
