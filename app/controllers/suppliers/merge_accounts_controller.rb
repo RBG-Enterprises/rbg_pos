@@ -1,5 +1,5 @@
 module Suppliers
-  class MergeAccountsController < ApplicationController
+  class MergeAccountsController < AuthenticatedController
     def new
       @merge_account = Suppliers::AccountMergingForm.new
     end

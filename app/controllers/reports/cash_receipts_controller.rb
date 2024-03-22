@@ -1,5 +1,5 @@
 module Reports
-  class CashReceiptsController < ApplicationController
+  class CashReceiptsController < AuthenticatedController
     def index
       @from_date = Chronic.parse(params[:from_date].to_date)
       @to_date   = Chronic.parse(params[:to_date].to_date)

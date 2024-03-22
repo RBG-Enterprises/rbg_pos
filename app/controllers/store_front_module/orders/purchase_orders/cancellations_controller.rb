@@ -1,7 +1,7 @@
 module StoreFrontModule
   module Orders
     module PurchaseOrders
-      class CancellationsController < ApplicationController
+      class CancellationsController < AuthenticatedController
         def create
           @order = Order.find(params[:purchase_order_id])
           ::

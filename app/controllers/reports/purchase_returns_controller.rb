@@ -1,5 +1,5 @@
 module Reports
-  class PurchaseReturnsController < ApplicationController
+  class PurchaseReturnsController < AuthenticatedController
     def index
       @from_date = Chronic.parse(params[:from_date].to_date)
       @to_date = Chronic.parse(params[:to_date].to_date)
@@ -14,4 +14,4 @@ module Reports
       end
     end
   end
-end 
+end

@@ -1,5 +1,5 @@
 module Insights
-  class SalesController < ApplicationController
+  class SalesController < AuthenticatedController
     def index
     end
   end

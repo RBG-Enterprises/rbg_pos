@@ -1,7 +1,7 @@
 module StoreFrontModule
   module Orders
     module SalesOrders
-      class AdditionalOtherSalesItemOrderProcessingsController < ApplicationController
+      class AdditionalOtherSalesItemOrderProcessingsController < AuthenticatedController
         def create
           @sales_order = StoreFrontModule::Orders::SalesOrder.find(params[:sales_order_id])
           @additional_other_sales_order = StoreFrontModule::Orders::OtherSalesLineItemOrderProcessing.new(other_item_params)

@@ -1,6 +1,6 @@
 module StoreFrontModule
   module StoreFronts
-    class SalesOrdersController < ApplicationController
+    class SalesOrdersController < AuthenticatedController
       def index
         @store_front = current_business.store_fronts.find(params[:store_front_id])
         if params[:from_date] && params[:to_date]

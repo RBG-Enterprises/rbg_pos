@@ -1,5 +1,5 @@
 module Accounting
-  class AdjustingEntriesController < ApplicationController
+  class AdjustingEntriesController < AuthenticatedController
     def create
       @adjusting_entry = Accounting::AdjustingEntry.new(entry_params)
       if @adjusting_entry.valid?

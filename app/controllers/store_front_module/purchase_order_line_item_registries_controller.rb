@@ -1,5 +1,5 @@
 module StoreFrontModule
-  class PurchaseOrderLineItemRegistriesController < ApplicationController
+  class PurchaseOrderLineItemRegistriesController < AuthenticatedController
     def create
       @registry = Uploads::PurchaseOrderLineItem.new(registry_params)
       if @registry.valid?

@@ -1,6 +1,6 @@
 module StoreFrontModule
   module Registries
-    class PurchaseOrderLineItemsController < ApplicationController
+    class PurchaseOrderLineItemsController < AuthenticatedController
       def destroy
         @registry = StoreFrontModule::Registries::PurchaseOrderRegistry.find(params[:purchase_order_registry_id])
         @line_item = @registry.purchase_order_line_items.find(params[:id])
