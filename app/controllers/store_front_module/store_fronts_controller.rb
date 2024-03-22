@@ -1,5 +1,5 @@
 module StoreFrontModule
-  class StoreFrontsController < ApplicationController
+  class StoreFrontsController < AuthenticatedController
     def index
       @business = current_user.business
       @store_fronts = @business.store_fronts

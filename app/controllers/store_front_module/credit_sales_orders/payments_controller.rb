@@ -1,6 +1,6 @@
 module StoreFrontModule
   module CreditSalesOrders
-    class PaymentsController < ApplicationController
+    class PaymentsController < AuthenticatedController
       def new
         @order = StoreFrontModule::Orders::SalesOrder.find(params[:credit_sales_order_id])
         @payment = StoreFrontModule::Payments::CreditSalesOrderPaymentProcessing.new

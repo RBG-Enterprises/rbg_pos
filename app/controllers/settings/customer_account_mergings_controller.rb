@@ -1,5 +1,5 @@
 module Settings
-  class CustomerAccountMergingsController < ApplicationController
+  class CustomerAccountMergingsController < AuthenticatedController
     def new
       @merging = Customers::AccountMerging.new
     end

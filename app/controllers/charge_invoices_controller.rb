@@ -1,4 +1,4 @@
-class ChargeInvoicesController < ApplicationController
+class ChargeInvoicesController < AuthenticatedController
   def index
     if params[:search].present?
       @charge_invoices = Invoices::ChargeInvoice.text_search(params[:search]).paginate(page: params[:page], per_page: 35)
