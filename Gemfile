@@ -79,7 +79,6 @@ gem 'rack-mini-profiler', require: false
 
 gem "matrix", "~> 0.4.2"
 
-gem "dartsass-rails", "~> 0.5.0"
 gem 'rubocop', require: false
 gem 'rubocop-rails', require: false
 gem 'rubocop-rspec', require: false
