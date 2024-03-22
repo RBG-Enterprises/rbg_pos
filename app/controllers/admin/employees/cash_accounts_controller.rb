@@ -1,6 +1,6 @@
 module Admin
   module Employees
-    class CashAccountsController < ApplicationController
+    class CashAccountsController < AuthenticatedController
       def new
         @employee     = current_store_front.employees.find(params[:employee_id])
         @cash_account = @employee.employee_cash_accounts.build

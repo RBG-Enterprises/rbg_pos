@@ -1,6 +1,6 @@
 module StoreFrontModule
   module Settings
-    class UnitOfMeasurementsController < ApplicationController
+    class UnitOfMeasurementsController < AuthenticatedController
       def edit
         @unit_of_measurement = StoreFrontModule::UnitOfMeasurement.find(params[:id])
       end

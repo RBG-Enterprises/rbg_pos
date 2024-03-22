@@ -1,5 +1,5 @@
 module Reports
-  class RepairsController < ApplicationController
+  class RepairsController < AuthenticatedController
     def index
       @from_date = params[:from_date] || DateTime.now.beginning_of_month
       @to_date = params[:to_date] || DateTime.now.end_of_month

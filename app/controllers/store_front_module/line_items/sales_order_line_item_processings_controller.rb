@@ -1,6 +1,6 @@
 module StoreFrontModule
   module LineItems
-    class SalesOrderLineItemProcessingsController < ApplicationController
+    class SalesOrderLineItemProcessingsController < AuthenticatedController
       def create
         @sales_order_line_item = StoreFrontModule::LineItems::SalesOrderLineItemProcessing.new(line_item_params)
         if @sales_order_line_item.valid?

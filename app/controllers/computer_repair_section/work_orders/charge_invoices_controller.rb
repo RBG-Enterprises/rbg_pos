@@ -1,6 +1,6 @@
 module ComputerRepairSection
   module WorkOrders
-    class ChargeInvoicesController < ApplicationController
+    class ChargeInvoicesController < AuthenticatedController
       def new
         @work_order = WorkOrder.find(params[:work_order_id])
         @charge_invoice = @work_order.build_charge_invoice

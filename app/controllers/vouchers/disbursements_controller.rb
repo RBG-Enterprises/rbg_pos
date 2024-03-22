@@ -1,5 +1,5 @@
 module Vouchers
-  class DisbursementsController < ApplicationController
+  class DisbursementsController < AuthenticatedController
     def new
       @voucher = Voucher.find(params[:voucher_id])
       @disbursement = Vouchers::DisbursementProcessing.new

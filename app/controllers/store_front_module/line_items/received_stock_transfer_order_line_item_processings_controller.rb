@@ -1,6 +1,6 @@
 module StoreFrontModule
   module LineItems
-    class ReceivedStockTransferOrderLineItemProcessingsController <  ApplicationController
+    class ReceivedStockTransferOrderLineItemProcessingsController <  AuthenticatedController
       def new
         if params[:search].present?
           @products = Product.text_search(params[:search]).all

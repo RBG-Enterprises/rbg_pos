@@ -1,4 +1,4 @@
-class EntriesController < ApplicationController
+class EntriesController < AuthenticatedController
   def destroy
     @entry = AccountingModule::Entry.find(params[:id])
     @entry.destroy

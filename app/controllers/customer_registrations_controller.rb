@@ -1,4 +1,4 @@
-class CustomerRegistrationsController < ApplicationController
+class CustomerRegistrationsController < AuthenticatedController
 	def new
 		@customer = Customer.new
 	end

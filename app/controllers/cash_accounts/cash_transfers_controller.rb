@@ -1,5 +1,5 @@
 module CashAccounts
-  class CashTransfersController < ApplicationController
+  class CashTransfersController < AuthenticatedController
     def new
       @cash_account = AccountingModule::Asset.find(params[:cash_account_id])
       @cash_transfer = AccountingModule::CashTransferVoucher.new

@@ -1,5 +1,5 @@
 module WorkOrders
-  class PaymentsController < ApplicationController
+  class PaymentsController < AuthenticatedController
     def new
       @work_order = WorkOrder.find(params[:work_order_id])
       @payment = WorkOrders::PaymentProcessing.new

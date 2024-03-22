@@ -1,4 +1,4 @@
-class EmployeesController < ApplicationController
+class EmployeesController < AuthenticatedController
   def index
     @employees = User.all.paginate(page: params[:page], per_page: 35)
   end

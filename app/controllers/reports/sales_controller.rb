@@ -1,5 +1,5 @@
 module Reports
-	class SalesController < ApplicationController
+	class SalesController < AuthenticatedController
 		def index
 			@from_date   = Chronic.parse(params[:from_date].to_date)
       @to_date     = Chronic.parse(params[:to_date].to_date)
@@ -27,12 +27,12 @@ module Reports
             employee:             @employee,
             view_context:         view_context)
           send_data pdf.render, type: 'application/pdf', disposition: 'inline', file_name: 'Sales Report.pdf'
-          pdf = nil 
+          pdf = nil
 		    end
 		  end
     end
-    
-    private 
+
+    private
     def render_csv
       # Tell Rack to stream the content
       headers.delete("Content-Length")
@@ -82,10 +82,10 @@ module Reports
             order_description(order),
             order.discount_amount,
             order.try(:total_cost)])
-          end 
-        else 
+          end
+        else
           yielder << CSV.generate_line(["DATE", "OR", "CUSTOMER", "ITEMS", "COGS", "DISCOUNT", "TOTAL COST", "INCOME"])
-            
+
           @orders.ordered_on(from_date: (@from_date.beginning_of_day), to_date: @to_date.end_of_day).each do |order|
             yielder << CSV.generate_line([
             order.date.strftime("%B %e, %Y"),
@@ -99,7 +99,7 @@ module Reports
           end
         end
       end
-    end 
+    end
 
     def order_description(order)
       if order.line_items.present?

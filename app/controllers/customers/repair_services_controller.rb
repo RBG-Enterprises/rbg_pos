@@ -1,5 +1,5 @@
 module Customers
-  class RepairServicesController < ApplicationController
+  class RepairServicesController < AuthenticatedController
     def index
       @customer = Customer.find(params[:customer_id])
       @repair_services = @customer.work_orders.order(created_at: :desc).all.paginate(page: params[:page], per_page: 35)

@@ -1,4 +1,4 @@
-class StockTransfersController < ApplicationController
+class StockTransfersController < AuthenticatedController
   def index
     @stock_transfers = StockTransfer.all.order(date: :desc).paginate(page: (params[:page]), per_page: 35)
   end
