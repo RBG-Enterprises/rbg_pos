@@ -1,6 +1,6 @@
 module StoreFrontModule
   module Orders
-    class SpoilageOrderProcessingsController < ApplicationController
+    class SpoilageOrderProcessingsController < AuthenticatedController
       def create
         @order = StoreFrontModule::Orders::SpoilageOrderProcessing.new(order_params)
         if @order.valid?

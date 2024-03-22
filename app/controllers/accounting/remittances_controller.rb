@@ -1,5 +1,5 @@
 module Accounting
-	class RemittancesController < ApplicationController
+	class RemittancesController < AuthenticatedController
 		def new
 			@remittance = AccountingModule::RemittanceForm.new
 		end

@@ -1,6 +1,6 @@
 module Accounting
   module BankAccounts
-    class DepositsController < ApplicationController
+    class DepositsController < AuthenticatedController
       def new
         @bank_account = BankAccount.find(params[:bank_account_id])
         @deposit = Accounting::BankAccounts::Deposit.new

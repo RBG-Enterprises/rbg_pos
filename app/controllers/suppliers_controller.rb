@@ -1,4 +1,4 @@
-class SuppliersController < ApplicationController
+class SuppliersController < AuthenticatedController
 	def index
 		if params[:search].present?
 			@suppliers = Supplier.text_search(params[:search]).paginate(page: params[:page], per_page: 20)

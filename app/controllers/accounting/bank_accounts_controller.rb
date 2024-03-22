@@ -1,5 +1,5 @@
 module Accounting
-  class BankAccountsController < ApplicationController
+  class BankAccountsController < AuthenticatedController
     def new
       @bank_account = BankAccount.new
     end

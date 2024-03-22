@@ -1,5 +1,5 @@
 module ComputerRepairSection
-  class WorkOrderServiceChargesController < ApplicationController
+  class WorkOrderServiceChargesController < AuthenticatedController
 
     def create
       @work_order = WorkOrder.find(params[:work_order_id])

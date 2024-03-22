@@ -1,4 +1,4 @@
-class IncomeStatementController < ApplicationController
+class IncomeStatementController < AuthenticatedController
   def index
     @from_date = params[:from_date] ? DateTime.parse(params[:from_date]) : DateTime.now.at_beginning_of_month
     @to_date = params[:to_date] ? DateTime.parse(params[:to_date]) : DateTime.now

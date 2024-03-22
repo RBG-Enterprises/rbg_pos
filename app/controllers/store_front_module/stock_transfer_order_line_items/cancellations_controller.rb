@@ -1,6 +1,6 @@
 module StoreFrontModule
   module StockTransferOrderLineItems
-    class CancellationsController < ApplicationController
+    class CancellationsController < AuthenticatedController
       def create
         @line_item = StoreFrontModule::LineItems::PurchaseOrderLineItem.find(params[:stock_transfer_order_line_item_id])
         ::LineItems::StockTransferOrderLineItems::Cancellation.new(line_item: @line_item).cancel!

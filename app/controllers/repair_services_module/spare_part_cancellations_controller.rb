@@ -1,5 +1,5 @@
 module RepairServicesModule
-  class SparePartCancellationsController < ApplicationController
+  class SparePartCancellationsController < AuthenticatedController
     def destroy
       @work_order = WorkOrder.find(params[:work_order_id])
       @line_item = StoreFrontModule::LineItems::SalesOrderLineItem.find(params[:line_item_id])

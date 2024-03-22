@@ -1,4 +1,4 @@
-class UnitOfMeasurementsController < ApplicationController
+class UnitOfMeasurementsController < AuthenticatedController
   def new
     @product = Product.find(params[:product_id])
     @unit = StoreFrontModule::UnitOfMeasurementRegistration.new

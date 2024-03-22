@@ -1,6 +1,6 @@
 module StoreFrontModule
   module Orders
-    class StockTransfersController < ApplicationController
+    class StockTransfersController < AuthenticatedController
       def index
         if params[:store_front_id].present?
           @pagy, @stock_transfer_orders = pagy(current_business.store_fronts.find(params[:store_front_id]).received_stock_transfer_orders)

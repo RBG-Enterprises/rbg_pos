@@ -1,5 +1,5 @@
 module ComputerRepairSection
-  class SparePartsController < ApplicationController
+  class SparePartsController < AuthenticatedController
     def new
       @work_order = WorkOrder.find(params[:work_order_id])
       @products = Product.text_search(params[:search])

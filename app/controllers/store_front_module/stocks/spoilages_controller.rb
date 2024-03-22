@@ -2,7 +2,7 @@
 
 module StoreFrontModule
     module Stocks
-      class SpoilagesController < ApplicationController
+      class SpoilagesController < AuthenticatedController
         def index
           @stock = current_store_front.stocks.find(params[:stock_id])
           @pagy, @spoilages = pagy(@stock.spoilages.processed)

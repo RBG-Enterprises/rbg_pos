@@ -1,5 +1,5 @@
 module Settings
-  class StoreFrontsController < ApplicationController
+  class StoreFrontsController < AuthenticatedController
     def new
       @store_front = StoreFront.new
     end

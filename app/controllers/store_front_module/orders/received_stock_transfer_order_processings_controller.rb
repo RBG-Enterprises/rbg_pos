@@ -1,6 +1,6 @@
 module StoreFrontModule
   module Orders
-    class ReceivedStockTransferOrderProcessingsController < ApplicationController
+    class ReceivedStockTransferOrderProcessingsController < AuthenticatedController
       def create
         @stock_transfer_order = StoreFrontModule::Orders::ReceivedStockTransferOrderProcessing.new(order_params)
         if @stock_transfer_order.process!

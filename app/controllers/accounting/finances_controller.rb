@@ -1,5 +1,5 @@
 module Accounting
-  class FinancesController < ApplicationController
+  class FinancesController < AuthenticatedController
     def index
       @accounts = AccountingModule::Account.cash_on_hand_accounts.all
     end

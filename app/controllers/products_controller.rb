@@ -1,5 +1,5 @@
 require 'will_paginate/array'
-class ProductsController < ApplicationController
+class ProductsController < AuthenticatedController
 	def index
     if params[:search].present?
       @pagy, @products = pagy(Product.includes(:category, :unit_of_measurements, stocks: [:purchase]).text_search_with_barcode(params[:search]))

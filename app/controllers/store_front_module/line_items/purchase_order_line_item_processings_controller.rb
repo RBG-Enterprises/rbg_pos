@@ -1,6 +1,6 @@
 module StoreFrontModule
   module LineItems
-    class PurchaseOrderLineItemProcessingsController < ApplicationController
+    class PurchaseOrderLineItemProcessingsController < AuthenticatedController
       def new
         if params[:search].present?
           @products = Product.text_search_with_barcode(params[:search]).all

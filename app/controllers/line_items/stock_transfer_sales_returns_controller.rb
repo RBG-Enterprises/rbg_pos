@@ -1,5 +1,5 @@
 module LineItems
-  class StockTransferSalesReturnsController < ApplicationController
+  class StockTransferSalesReturnsController < AuthenticatedController
     def new
       @line_item = LineItem.find(params[:line_item_id])
       if @line_item.returned?
