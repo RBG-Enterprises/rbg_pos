@@ -60,6 +60,7 @@ module StoreFronts
           stocks.each do |stock|
             stock.update_available_quantity!
             stock.update_availability!
+          end
         end
       end
     end
