@@ -2,9 +2,7 @@ module StoreFrontModule
   module Orders
     class StockTransfersController < ApplicationController
       def index
-        if params[:store_front_id].present?
-          @pagy, @stock_transfer_orders = pagy(current_business.store_fronts.find(params[:store_front_id]).received_stock_transfer_orders)
-        elsif params[:from_date] && params[:to_date]
+        if params[:from_date] && params[:to_date]
           @pagy, @stock_transfer_orders = pagy(current_store_front.purchase_orders.stock_transfers.entered_on(from_date: from_date, to_date: to_date))
         elsif params[:search].present?
           @pagy, @stock_transfer_orders = pagy(current_store_front.purchase_orders.stock_transfers.text_search_with_stocks(params[:search]))

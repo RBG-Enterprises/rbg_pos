@@ -10,7 +10,6 @@ wb.add_worksheet(name: "Products") do |sheet|
       product.spoilages_balance,
       product.internal_use_orders_balance,
       product.sales_returns_balance,
-      product.received_stock_transfers_balance,
       product.balance]
     end
   end

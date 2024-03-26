@@ -23,17 +23,12 @@
       end
 
       def self.purchases_and_stock_transfers(store_front)
-        all.processed + received_stock_transfers(store_front: store_front).processed
+        all.processed
       end
 
       def self.not_stock_transfers
         joins(:purchase_order).
         where.not('orders.supplier_type' => "StoreFront")
-      end
-
-      def self.received_stock_transfers(args={})
-        joins(:purchase_order).
-        where('orders.destination_store_front_id' => args[:store_front].id)
       end
 
       def self.delivered_stock_transfers(args={})

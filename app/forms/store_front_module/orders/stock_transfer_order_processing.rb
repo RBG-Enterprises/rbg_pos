@@ -8,8 +8,8 @@ module StoreFrontModule
                      :date,
                      :description,
                      :destination_store_front_id,
-                     :registry_id,
                      :reference_number
+
       validates :destination_store_front_id, :reference_number, :date, presence: true
 
       def find_order
@@ -51,14 +51,6 @@ module StoreFrontModule
             order.stock_transfer_order_line_items << line_item
           end
 
-          if find_registry.present?
-            find_registry.purchase_order_line_items.each do |line_item|
-              line_item.update!(date: date)
-              line_item.cart_id = nil
-              order.purchase_order_line_items << line_item
-
-            end
-          end
           create_voucher(order)
           create_entry(order)
           update_stock_available_quantity
@@ -87,9 +79,7 @@ module StoreFrontModule
       def find_cart
         Cart.find(cart_id)
       end
-      def find_registry
-        Registry.find_by(id: registry_id)
-      end
+
       def find_employee
         User.find(employee_id)
       end

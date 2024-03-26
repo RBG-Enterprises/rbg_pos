@@ -166,7 +166,6 @@ Rails.application.routes.draw do
     end
     resources :stock_registry_processings, only: [:create]
     resources :stock_transfer_registries, only: [:new, :create, :show], module: :registries
-    resources :received_stock_transfer_registries, only: [:new, :create, :show], module: :registries
     resources :purchase_order_registries, only: [:new, :create, :show, :destroy], module: :registries do
       resources :purchase_order_line_items, only: [:destroy]
     end
@@ -190,11 +189,9 @@ Rails.application.routes.draw do
       resources :additional_line_items,                  only: [:new, :create, :destroy], module: :stock_transfer_orders
       resources :additional_line_item_order_processings, only: [:create], module: :stock_transfer_orders
     end
-    resources :received_stock_transfers, only: [:index, :show], module: :orders
     resources :repair_services_orders, only: [:index, :show], module: :orders
     resources :sales_returns, only: [:index, :show], module: :orders
     resources :stock_transfer_order_line_item_processings, only: [:new, :create, :destroy], module: :line_items
-    resources :received_stock_transfer_order_line_item_processings, only: [:new, :create, :destroy], module: :line_items
     resources :sales_return_order_line_item_processings, only: [:new, :create, :destroy], module: :line_items
     resources :product_mergings, only: [:new, :create], module: :settings
     resources :purchase_orders, only: [:new, :index, :show], module: :orders do
@@ -217,7 +214,6 @@ Rails.application.routes.draw do
     resources :purchase_return_order_processings, only: [:create], module: :orders
     resources :sales_order_processings, only: [:create], module: :orders
     resources :stock_transfer_order_processings, only: [:create], module: :orders
-    resources :received_stock_transfer_order_processings, only: [:create], module: :orders
     resources :sales_return_order_processings, only: [:create], module: :orders
     resources :internal_use_order_processings, only: [:create], module: :orders
   end

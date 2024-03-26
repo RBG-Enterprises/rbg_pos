@@ -164,15 +164,6 @@ class Product < ApplicationRecord
     end
   end
 
-  def received_stock_transfers_balance(args={})
-    if args[:store_front].present?
-    purchases.received_stock_transfers(store_front: args[:store_front]).
-    balance(destination_store_front: args[:store_front])
-    else
-      0
-    end
-  end
-
   def set_default_image
     if !avatar.attached?
       self.avatar.attach(io: File.open(Rails.root.join('app', 'assets', 'images', 'default.png')), filename: 'default-image.png', content_type: 'image/png')

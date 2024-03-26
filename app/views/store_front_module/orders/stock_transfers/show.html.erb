@@ -52,7 +52,7 @@
           <%= link_to "Add Items", new_store_front_module_stock_transfer_additional_line_item_path(@order), class: "btn btn-danger" %>
         <% end %>
         <hr>
-              <% @order.purchase_order_line_items.each do |line_item| %>
+              <% @order.stock_transfer_line_items.each do |line_item| %>
                 <div class="row">
                   <div class="col-md-2">
                     <%= line_item.quantity %> <%= line_item.unit_code %>

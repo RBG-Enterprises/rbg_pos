@@ -2,23 +2,21 @@ require 'rails_helper'
 
 describe StoreFront do
   describe 'associations' do
-    it { is_expected.to belong_to :service_receivable_account_category }
-    it { is_expected.to belong_to :sales_revenue_account_category }
+    it { is_expected.to belong_to(:service_receivable_account_category).optional }
+    it { is_expected.to belong_to(:sales_revenue_account_category).optional }
     it { is_expected.to belong_to :business }
     it { is_expected.to belong_to :merchandise_inventory_account }
-    it { is_expected.to belong_to :sales_account }
-    it { is_expected.to belong_to :sales_discount_account }
+    it { is_expected.to belong_to(:sales_account).optional }
+    it { is_expected.to belong_to(:sales_discount_account).optional }
     it { is_expected.to belong_to :cost_of_goods_sold_account }
-    it { is_expected.to belong_to :receivable_account }
-    it { is_expected.to belong_to :internal_use_account }
-    it { is_expected.to belong_to :purchase_return_account }
-    it { is_expected.to belong_to :spoilage_account }
-    it { is_expected.to belong_to :service_revenue_account }
+    it { is_expected.to belong_to(:receivable_account).optional }
+    it { is_expected.to belong_to(:internal_use_account).optional }
+    it { is_expected.to belong_to(:purchase_return_account).optional }
+    it { is_expected.to belong_to(:spoilage_account).optional }
+    it { is_expected.to belong_to(:service_revenue_account).optional }
     it { is_expected.to have_many :sales_orders }
     it { is_expected.to have_many :delivered_stock_transfer_orders }
-    it { is_expected.to have_many :received_stock_transfer_orders }
     it { is_expected.to have_many :delivered_stock_transfers }
-    it { is_expected.to have_many :received_stock_transfers }
     it { is_expected.to have_many :selling_prices }
     it { is_expected.to have_many :employees }
     it { is_expected.to have_many :store_front_accounts }
