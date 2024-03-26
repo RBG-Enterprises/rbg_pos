@@ -2,7 +2,7 @@ module StoreFronts
   module Orders
     module SalesOrders
       class Cancellation
-        attr_reader :sales_order, :voucher, :receivable_account, :sales_revenue_account
+        attr_reader :sales_order, :voucher, :receivable_account, :sales_revenue_account, :stocks
 
         def initialize(sales_order:)
           @sales_order           = sales_order
@@ -10,6 +10,7 @@ module StoreFronts
 
           @receivable_account    = @sales_order.receivable_account
           @sales_revenue_account = @sales_order.sales_revenue_account
+          @stocks                = @sales_order.stocks
         end
 
         def cancel!
@@ -21,6 +22,7 @@ module StoreFronts
             delete_voucher!
             delete_entries!
             delete_accounts!
+            update_stocks!
           end
         end
 
@@ -52,6 +54,12 @@ module StoreFronts
             voucher.voucher_amounts.destroy_all
             voucher.destroy
           end
+        end
+
+        def update_stocks!
+          stocks.each do |stock|
+            stock.update_available_quantity!
+            stock.update_availability!
         end
       end
     end
