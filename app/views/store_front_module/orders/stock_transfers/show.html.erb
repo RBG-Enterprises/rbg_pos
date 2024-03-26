@@ -68,9 +68,9 @@
                   <div class="col-md-1">
                     <% if current_user.proprietor? %>
 
-                      <%= link_to store_front_module_stock_transfer_order_line_item_cancellations_path(stock_transfer_order_line_item_id: line_item.id), data: { confirm: 'Are you sure you want to delete this item?' }, method: :create do %>
-                        <span class="text-danger"><i class="fa fa-times"></i>
-                      <% end %>
+                      <%# = link_to store_front_module_stock_transfer_order_line_item_cancellations_path(stock_transfer_order_line_item_id: line_item.id), data: { confirm: 'Are you sure you want to delete this item?' }, method: :create do %>
+                        <%# <span class="text-danger"><i class="fa fa-times"></i> %>
+                      <%# end %>
                     <% end %>
                   </div>
                 </div>
