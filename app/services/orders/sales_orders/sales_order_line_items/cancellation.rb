@@ -45,6 +45,7 @@ module Orders
 
         def update_stock_available_quantity
           line_item.stock.update_available_quantity!
+          line_item.stock.update_availability!
         end
 
         def credit_account
