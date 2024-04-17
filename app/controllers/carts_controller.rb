@@ -3,6 +3,9 @@ class CartsController < ApplicationController
 		@cart = Cart.find(params[:id])
 		@stock_ids = @cart.line_items.pluck(:stock_id)
 		@cart.destroy
+
+		update_stocks
+
 		redirect_to store_index_url, notice: 'Cart emptied successfully.'
 	end
 
