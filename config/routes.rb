@@ -277,13 +277,6 @@ Rails.application.routes.draw do
   resources :businesses, only: [:show] do
     resources :ledger_accounts, only: [:new, :create], module: :businesses
   end
-  resources :insights, only: [:index]
-  namespace :insights do
-    resources :repairs, only: [:index]
-    resources :sales, only: [:index]
-    resources :customers, only: [:index]
-    resources :receivables, only: [:index]
-  end
   resources :sales_clerks, only: [:index, :show]
   namespace :accounting_module do
     resources :level_one_account_categories, only: [:index, :new, :create, :show]

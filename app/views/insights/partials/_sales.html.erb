@@ -1,2 +1,0 @@
-<h4 class="title-up"> Sales Summary</h4>
-<%= line_chart StoreFrontModule::Orders::SalesOrder.group_by_month(:created_at).count, curve: false %>
