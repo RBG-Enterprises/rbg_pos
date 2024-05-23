@@ -12,6 +12,7 @@ module AccountingModule
     has_many :debit_amounts,   :class_name => 'AccountingModule::DebitAmount', :inverse_of => :entry, dependent: :destroy
     has_many :credit_accounts, :through => :credit_amounts, :source => :account, :class_name => 'AccountingModule::Account'
     has_many :debit_accounts,  :through => :debit_amounts, :source => :account, :class_name => 'AccountingModule::Account'
+    has_many :vouchers, dependent: :destroy
 
     validates :description, presence: true
     validate :has_credit_amounts?
