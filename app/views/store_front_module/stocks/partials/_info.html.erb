@@ -33,3 +33,27 @@
 <br>
 <p><b>Supplier</b></p>
 <%= @stock.supplier_name %>
+<hr />
+<p><b>Stocks with the same Barcode (<%= @stock.barcode %>)</b></p>
+<div class="card-body">
+        <div class="table table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th> Store </th>
+                <th> In Stock </th>
+                <th> Last Update </th>
+              </tr>
+            </thead>
+            <tbody>
+              <% StoreFronts::Stock.includes(:store_front).where(barcode: @stock.barcode).each do |stock| %>
+                <tr>
+                  <td><%= stock.store_front.name %></td>
+                  <td><%= stock.available_quantity %></td>
+                  <td><%= stock.updated_at.strftime("%B %e, %Y") %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>

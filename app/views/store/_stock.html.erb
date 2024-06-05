@@ -2,7 +2,7 @@
 <div class="row">
   <div class="col-md-6">
     <b><%= stock.name.try(:upcase) %></b>
-    &nbsp; <span class="badge bg-gray"><%= stock.balance_for_cart(current_cart) %> left</span>
+    <!-- &nbsp; <span class="badge bg-gray"><%#= stock.balance_for_cart(current_cart) %> left</span> -->
     <small class="text-muted">
         <%= stock.barcode.try(:truncate, (30)) %>
     </small>
@@ -31,13 +31,13 @@
     <%= f.input :unit_of_measurement_id, collection: stock.product.unit_of_measurements.map{|a| [a.unit_code, a.id] }, selected: stock.product.base_measurement, label: false, input_html: { class: 'chosen-select' } %>
   </div>
   <div class="col-md-3">
-    <% if stock.balance > 0 %>
+    <%# if stock.balance > 0 %>
     <%= button_tag type: 'submit', class: "btn btn-outline-primary" do %>
       <i class="fa fa-shopping-basket" aria-hidden="true"></i> Add to Cart
     <% end %>
-    <% else %>
-    <span class="badge bg-red"> Out Of Stock </span>
-    <% end %>
+    <%# else %>
+    <!-- <span class="badge bg-red"> Out Of Stock </span> -->
+    <%# end %>
 <% end %>
 
   </div>

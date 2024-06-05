@@ -12,7 +12,7 @@ module StoreFrontModule
                     :stock_id
       validates :quantity, numericality: { greater_than: 0.1 }
 
-      validate :quantity_is_less_than_or_equal_to_available_quantity?
+      # validate :quantity_is_less_than_or_equal_to_available_quantity?
       def find_stock
         find_store_front.stocks.find(stock_id)
       end
@@ -83,9 +83,9 @@ module StoreFrontModule
       end
 
 
-      def quantity_is_less_than_or_equal_to_available_quantity?
-        errors[:quantity] << "exceeded available quantity" if quantity.to_f > available_quantity
-      end
+      # def quantity_is_less_than_or_equal_to_available_quantity?
+      #   errors[:quantity] << "exceeded available quantity" if quantity.to_f > available_quantity
+      # end
     end
   end
 end
