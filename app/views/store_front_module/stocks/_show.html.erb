@@ -22,7 +22,9 @@
 <li class="nav-item">
  <%= link_to 'Internal Uses', store_front_module_stock_internal_uses_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_internal_uses_path(stock))}" %>
 </li>
-
+<li class="nav-item">
+  <%= link_to 'Activities', store_front_module_stock_activities_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_activities_path(stock))}" %>
+</li>
 </ul>
 <br>
 
@@ -41,6 +43,9 @@
     <% end %>
     <% if current_page? store_front_module_stock_internal_uses_path(stock) %>
       <%=render 'store_front_module/stocks/partials/internal_uses', stock: stock %>
+    <% end %>
+    <% if current_page? store_front_module_stock_activities_path(stock) %>
+      <%=render 'store_front_module/stocks/partials/activities', stock: stock %>
     <% end %>
   </div>
 </div>

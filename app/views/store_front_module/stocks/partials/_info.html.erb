@@ -46,12 +46,12 @@
               </tr>
             </thead>
             <tbody>
-              <% store_front_ids = StoreFronts::Stock.includes(:store_front).where(barcode: @stock.barcode).pluck(:store_front_id) %>
+              <% store_front_ids = StoreFronts::Stock.processed.includes(:store_front).where(barcode: @stock.barcode).pluck(:store_front_id) %>
               <% StoreFront.where(id: store_front_ids).each do |store_front| %>
                 <tr>
                   <td><%= store_front.name %></td>
-                  <td><%= store_front.stocks.where(barcode: @stock.barcode).sum(:available_quantity) %></td>
-                  <td><%= store_front.stocks.where(barcode: @stock.barcode).order(updated_at: :desc).last.updated_at.strftime("%B %e, %Y") %></td>
+                  <td><%= store_front.stocks.processed.where(barcode: @stock.barcode).sum(:available_quantity) %></td>
+                  <td><%= store_front.stocks.processed.where(barcode: @stock.barcode).order(updated_at: :desc).last.updated_at.strftime("%B %e, %Y") %></td>
                 </tr>
               <% end %>
             </tbody>

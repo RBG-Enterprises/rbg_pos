@@ -144,6 +144,7 @@ Rails.application.routes.draw do
     resources :stocks, only: [:show] do
       resources :sales, only: [:index], module: :stocks
       resources :internal_uses, only: [:index], module: :stocks
+      resources :activities, only: [:index], module: :stocks
       resources :stock_transfers, only: [:index], module: :stocks
       resources :spoilages, only: [:index, :new, :create], module: :stocks
     end
