@@ -14,7 +14,8 @@ class StoreFronts::StockTransfers::StockCreation
     available:           true,
     product:             line_item.product,
     unit_of_measurement: line_item.unit_of_measurement,
-    barcode:              stock.barcode)
+    available_quantity:  line_item.quantity,
+    barcode:             stock.barcode)
 
     line_item.update!(stock: new_stock)
   end
