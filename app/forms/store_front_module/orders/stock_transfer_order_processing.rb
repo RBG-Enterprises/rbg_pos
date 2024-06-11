@@ -23,6 +23,7 @@ module StoreFrontModule
       end
 
       private
+
       def create_stock_transfer_order
         order = StoreFrontModule::Orders::PurchaseOrder.new(
           credit: true,
@@ -35,25 +36,29 @@ module StoreFrontModule
           supplier:                   find_employee.store_front,
           search_term:                find_destination_store_front.name,
           destination_store_front_id: destination_store_front_id,
-          reference_number:           reference_number)
-          create_accounts(order)
-          order.save!
+          reference_number:           reference_number,
+        )
 
-          find_cart.purchase_order_line_items.each do |line_item|
-            line_item.update!(date: date)
-            line_item.cart_id = nil
-            order.purchase_order_line_items << line_item
-            create_stock(line_item)
-          end
+        create_accounts(order)
+        order.save!
 
-          find_cart.stock_transfer_order_line_items.where(order_id: nil).each do |line_item|
-            line_item.update!(order_id: order.id)
-            order.stock_transfer_order_line_items << line_item
-          end
+        find_cart.purchase_order_line_items.each do |line_item|
+          line_item.update!(date: date)
+          line_item.cart_id = nil
+          order.purchase_order_line_items << line_item
+          create_stock(line_item)
+        end
 
-          create_voucher(order)
-          create_entry(order)
-          update_stock_available_quantity
+        find_cart.stock_transfer_order_line_items.where(order_id: nil).update_all( # rubocop:disable Rails/SkipsModelValidations
+          destination_store_front_id: find_destination_store_front.id,
+          date: date,
+          order_id: order.id,
+          cart_id: nil,
+        )
+
+        create_voucher(order)
+        create_entry(order)
+        update_stock_available_quantity
       end
 
       def create_stock(line_item)
@@ -65,9 +70,9 @@ module StoreFrontModule
       end
 
       def update_stock_available_quantity
-        ids = find_cart.stock_transfer_order_line_items.pluck(:stock_id)
-        stocks = ::StoreFronts::Stock.where(id: ids.uniq.compact.flatten)
-        stocks.each do |stock|
+        ids = order.stock_transfer_order_line_items.pluck(:stock_id)
+        existing_stocks = ::StoreFronts::Stock.where(id: ids.uniq.compact.flatten)
+        existing_stocks.each do |stock|
           stock.update_available_quantity!
           stock.update_availability!
         end
