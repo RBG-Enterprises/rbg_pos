@@ -58,7 +58,7 @@ module StoreFrontModule
 
         create_voucher(order)
         create_entry(order)
-        update_stock_available_quantity
+        update_stock_available_quantity(order)
       end
 
       def create_stock(line_item)
@@ -69,7 +69,7 @@ module StoreFrontModule
         ::AccountCreators::PurchaseOrder.new(purchase_order: order).create_accounts!
       end
 
-      def update_stock_available_quantity
+      def update_stock_available_quantity(order)
         ids = order.stock_transfer_order_line_items.pluck(:stock_id)
         existing_stocks = ::StoreFronts::Stock.where(id: ids.uniq.compact.flatten)
         existing_stocks.each do |stock|
