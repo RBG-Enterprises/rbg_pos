@@ -65,7 +65,6 @@
               <tbody>
 
                 <% @purchase_order_line_items.each do |line_item| %>
-                <%= current_cart.stock_transfer_order_line_items.unprocessed.pluck(:stock_id) %>
                   <tr>
                     <td><%= line_item.quantity %> <%= line_item.unit_code %></td>
                     <td width="300px"><%= line_item.name.try(:titleize) %><br> <span class="text-muted"><%= line_item.bar_code %></span>
