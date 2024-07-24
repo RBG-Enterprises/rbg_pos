@@ -1,21 +1,43 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
-  authenticate :user, -> (user) { user.proprietor? } do
+  authenticate :user, ->(user) { user.proprietor? } do
   end
   unauthenticated :user do
-    root :to => 'store#index', :constraints => lambda { |request| request.env['warden'].user.nil? }, as: :unauthenticated_root
+    root to: "store#index",
+      constraints: lambda { |request|
+        request.env["warden"].user.nil?
+      },
+      as: :unauthenticated_root
   end
-  devise_for :users, controllers: { sessions: 'users/sessions' , registrations: "users"}
+  devise_for :users, controllers: { sessions: "users/sessions", registrations: "users" }
 
-  root :to => 'store#index', :constraints => lambda { |request| request.env['warden'].user.role == 'sales_clerk' if request.env['warden'].user }, as: :sales_department_root
-  root :to => 'store#index', :constraints => lambda { |request| request.env['warden'].user.role == 'proprietor' if request.env['warden'].user }, as: :prop_department_root
-  root :to => 'products#index', :constraints => lambda { |request| request.env['warden'].user.role == 'warehouse_clerk' if request.env['warden'].user }, as: :warehouse_department_root
-  root :to => 'computer_repair_section/dashboard#index', :constraints => lambda { |request| request.env['warden'].user.role == 'technician' if request.env['warden'].user }, as: :technician_root
+  root to: "store#index",
+    constraints: lambda { |request|
+      request.env["warden"].user.role == "sales_clerk" if request.env["warden"].user
+    },
+    as: :sales_department_root
+  root to: "store#index",
+    constraints: lambda { |request|
+      request.env["warden"].user.role == "proprietor" if request.env["warden"].user
+    },
+    as: :prop_department_root
+  root to: "products#index",
+    constraints: lambda { |request|
+      request.env["warden"].user.role == "warehouse_clerk" if request.env["warden"].user
+    },
+    as: :warehouse_department_root
+  root to: "computer_repair_section/dashboard#index",
+    constraints: lambda { |request|
+      request.env["warden"].user.role == "technician" if request.env["warden"].user
+    },
+    as: :technician_root
   resources :store, only: [:index]
-	resources :customers do
+  resources :customers do
     resources :departments, only: [:new, :create], module: :customers
     resources :refunds,         only: [:new, :create],                module: :customers
     resources :payments,        only: [:new, :create],                module: :customers
-    resources :orders,          only: [:index, :edit, :update],                       module: :customers
+    resources :orders,          only: [:index, :edit, :update], module: :customers
     resources :repair_services, only: [:index],                       module: :customers
     resources :account,         only: [:index],                       module: :customers
     resources :other_credits,   only: [:index, :show, :new, :create], module: :customers
@@ -23,10 +45,10 @@ Rails.application.routes.draw do
   end
   resources :products do
     resources :unit_of_measurements, only: [:new, :create]
-    match "/out_of_stock" => "products#out_of_stock",  via: [:get], on: :collection
-    match "/low_on_stock" => "products#low_on_stock",  via: [:get], on: :collection
+    get "/out_of_stock" => "products#out_of_stock", on: :collection
+    get "/low_on_stock" => "products#low_on_stock", on: :collection
 
-  	resources :stocks,          only: [:index, :new, :create, :edit, :update], module: :products
+    resources :stocks, only: [:index, :new, :create, :edit, :update], module: :products
     resources :stock_transfers, only: [:index], module: :products
     resources :orders,          only: [:index], module: :products
     resources :settings,        only: [:index], module: :products
@@ -39,7 +61,6 @@ Rails.application.routes.draw do
   resources :customer_registrations, only: [:new, :create]
   resources :store_customer_registrations, only: [:new, :create]
   resources :work_order_customer_registrations, only: [:new, :create]
-
 
   namespace :reports do
     resources :purchase_returns, only: [:index]
@@ -54,7 +75,6 @@ Rails.application.routes.draw do
     resources :repairs,       only: [:index]
     resources :products, only: [:index]
     resources :accounts_receivables, only: [:index]
-
   end
   resources :accounting, only: [:index]
   namespace :accounting do
@@ -99,10 +119,8 @@ Rails.application.routes.draw do
     end
   end
   resources :cash_accounts, only: [:show] do
-
     resources :expenses, only: [:new, :create], module: :cash_accounts
     resources :cash_transfers, only: [:new, :create], module: :cash_accounts
-
   end
   resources :work_orders, only: [:index, :new, :create] do
     resources :payments, only: [:ew, :create], module: :work_orders
@@ -111,7 +129,6 @@ Rails.application.routes.draw do
   namespace :computer_repair_section do
     resources :dashboard, only: [:index]
     resources :insights, only: [:index]
-
 
     resources :work_orders do
       resources :endorsements,    only: [:edit, :update], module: :work_orders
@@ -147,11 +164,11 @@ Rails.application.routes.draw do
       resources :activities, only: [:index], module: :stocks
       resources :stock_transfers, only: [:index], module: :stocks
       resources :spoilages, only: [:index, :new, :create], module: :stocks
+      resources :syncs, only: :create, module: :stocks
     end
     resources :sales_order_line_items, only: [:show, :edit, :update] do
       resources :cancellations, only: [:create], module: :sales_order_line_items
       resources :sales_returns, only: [:new, :create], module: :sales_order_line_items
-
     end
     resources :stock_transfer_order_line_items, only: [:show] do
       resources :cancellations, only: [:create], module: :stock_transfer_order_line_items
@@ -225,7 +242,7 @@ Rails.application.routes.draw do
     resources :confirmations, only: [:create], module: :vouchers
   end
   namespace :repair_services_module do
-      resources :repair_service_order_line_item_processings, only: [:destroy]
+    resources :repair_service_order_line_item_processings, only: [:destroy]
     resources :work_orders, only: [:show] do
       resources :service_charge_processings, only: [:new, :create]
       resources :payment_processings, only: [:new, :create, :show]
@@ -255,8 +272,7 @@ Rails.application.routes.draw do
     resources :finances, only: [:index]
     resources :entries, only: [:index, :show]
     resources :accounts, only: [:index, :show, :new, :create, :edit, :update] do
-    match "/deactivate" => "accounts#deactivate",  via: [:post], on: :member
-
+      post "/deactivate" => "accounts#deactivate", on: :member
     end
   end
   resources :inventories, only: [:index, :show]

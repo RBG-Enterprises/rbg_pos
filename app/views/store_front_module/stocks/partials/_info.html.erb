@@ -6,6 +6,8 @@
   <div class="col-md-6">
     <small> IN STOCK </small>
     <h4 class="title-up"><%= @stock.balance%></h4>
+    <%= button_to 'Sync Count', store_front_module_stock_syncs_path(@stock), class: "btn btn-outline-secondary" %>
+
   </div>
 </div>
 <hr>
@@ -34,6 +36,8 @@
 <p><b>Supplier</b></p>
 <%= @stock.supplier_name %>
 <hr />
+
+
 <p><b>Stocks with the same Barcode (<%= @stock.barcode %>)</b></p>
 <div class="card-body">
         <div class="table table-responsive">
