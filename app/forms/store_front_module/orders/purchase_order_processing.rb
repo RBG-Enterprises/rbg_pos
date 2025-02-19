@@ -11,6 +11,7 @@ module StoreFrontModule
         ActiveRecord::Base.transaction do
           create_purchase_order
           remove_cart_reference
+          update_stocks_to_processed
           create_purchase_prices
         end
       end
@@ -44,9 +45,16 @@ module StoreFrontModule
           end
         end
       end
+
+      def update_stocks_to_processed
+        find_order.purchase_order_line_items.each do |line_item|
+          line_item.stock.update!(is_processed: true)
+        end
+      end
+
       def create_accounts(order)
         ::AccountCreators::PurchaseOrder.new(purchase_order: order).create_accounts!
-      end 
+      end
 
       def create_purchase_prices
         find_order.purchase_order_line_items.each do |line_item|

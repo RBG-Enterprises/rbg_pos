@@ -23,6 +23,7 @@ module Vouchers
         commercial_document: order,
         account_number: order.account_number
       )
+
       voucher.voucher_amounts.debit.build(
         amount: order.total_cost_less_discount,
         account: cash_on_hand

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module StoreFronts
   class Stock < ApplicationRecord
     include PgSearch::Model
@@ -5,16 +7,30 @@ module StoreFronts
     pg_search_scope :text_search, against: [:barcode], associated_against: { product: [:name] }
     belongs_to :store_front
     belongs_to :product
-    belongs_to :unit_of_measurement, class_name: 'StoreFrontModule::UnitOfMeasurement'
-    has_one    :purchase,            class_name: 'StoreFrontModule::LineItems::PurchaseOrderLineItem'
-    has_many   :sales,               class_name: 'StoreFrontModule::LineItems::SalesOrderLineItem',          extend: StockBalanceFinder
-    has_many   :stock_transfers,     class_name: 'StoreFrontModule::LineItems::StockTransferOrderLineItem',  extend: StockBalanceFinder
-    has_many   :internal_uses,       class_name: 'StoreFrontModule::LineItems::InternalUseOrderLineItem',    extend: StockBalanceFinder
-    has_many   :spoilages,           class_name: 'StoreFrontModule::LineItems::SpoilageOrderLineItem',       extend: StockBalanceFinder
-    has_many   :purchase_returns,    class_name: 'StoreFrontModule::LineItems::PurchaseReturnOrderLineItem', extend: StockBalanceFinder
-    has_many   :for_warranties,      class_name: 'StoreFrontModule::LineItems::ForWarrantyOrderLineItem',    extend: StockBalanceFinder
-    has_many   :sales_returns,       class_name: 'StoreFrontModule::LineItems::SalesReturnOrderLineItem',    extend: StockBalanceFinder
-    has_many   :line_items,          dependent: :nullify, extend: StockBalanceFinder
+    belongs_to :unit_of_measurement, class_name: "StoreFrontModule::UnitOfMeasurement"
+    has_one    :purchase,            class_name: "StoreFrontModule::LineItems::PurchaseOrderLineItem"
+    has_many   :sales,
+      class_name: "StoreFrontModule::LineItems::SalesOrderLineItem",
+      extend: StockBalanceFinder
+    has_many   :stock_transfers,
+      class_name: "StoreFrontModule::LineItems::StockTransferOrderLineItem",
+      extend: StockBalanceFinder
+    has_many   :internal_uses,
+      class_name: "StoreFrontModule::LineItems::InternalUseOrderLineItem",
+      extend: StockBalanceFinder
+    has_many   :spoilages,
+      class_name: "StoreFrontModule::LineItems::SpoilageOrderLineItem",
+      extend: StockBalanceFinder
+    has_many   :purchase_returns,
+      class_name: "StoreFrontModule::LineItems::PurchaseReturnOrderLineItem",
+      extend: StockBalanceFinder
+    has_many   :for_warranties,
+      class_name: "StoreFrontModule::LineItems::ForWarrantyOrderLineItem",
+      extend: StockBalanceFinder
+    has_many   :sales_returns,
+      class_name: "StoreFrontModule::LineItems::SalesReturnOrderLineItem",
+      extend: StockBalanceFinder
+    has_many   :line_items, dependent: :nullify, extend: StockBalanceFinder
 
     delegate :name,           to: :product
     delegate :unit_code,      to: :unit_of_measurement
@@ -41,7 +57,7 @@ module StoreFronts
     end
 
     def self.processed
-      joins(:purchase).where.not('line_items.order_id' => nil)
+      where(is_processed: true)
     end
 
     def balance_for_cart(cart)
@@ -53,14 +69,14 @@ module StoreFronts
     end
 
     def balance
-      purchase_quantity        +
-      sales_returns_balance    -
-      purchase_returns_balance -
-      stock_transfers_balance  -
-      sales_balance            -
-      internal_uses_balance    -
-      spoilages_balance        -
-      for_warranties_balance
+      purchase_quantity +
+        sales_returns_balance    -
+        purchase_returns_balance -
+        stock_transfers_balance  -
+        sales_balance            -
+        internal_uses_balance    -
+        spoilages_balance        -
+        for_warranties_balance
     end
 
     def sold?
@@ -116,7 +132,7 @@ module StoreFronts
     end
 
     def update_availability_for_cart(cart)
-      if balance_for_cart(cart).to_f <=0
+      if balance_for_cart(cart).to_f <= 0
         update!(available: false)
       else
         update!(available: true)

@@ -5,15 +5,19 @@ module StoreFrontModule
 
 
       def parse_for_records
-        product_spreadsheet = Roo::Spreadsheet.open(spreadsheet.path)
-        header = product_spreadsheet.row(1)
-        (2..product_spreadsheet.last_row).each do |i|
-          row = Hash[[header, product_spreadsheet.row(i)].transpose]
-          if row["Product Name"].present?
-            ApplicationRecord.transaction do
-              create_or_find_product(row)
-              create_or_find_line_item(row)
-              find_or_create_selling_price(row)
+        if spreadsheet.attached?
+          spreadsheet.blob.open do |tempfile|
+            product_spreadsheet = Roo::Spreadsheet.open(tempfile.path)
+            header = product_spreadsheet.row(1)
+            (2..product_spreadsheet.last_row).each do |i|
+              row = Hash[[header, product_spreadsheet.row(i)].transpose]
+              if row["Product Name"].present?
+                ApplicationRecord.transaction do
+                  create_or_find_product(row)
+                  create_or_find_line_item(row)
+                  find_or_create_selling_price(row)
+                end
+              end
             end
           end
         end
@@ -119,10 +123,10 @@ module StoreFrontModule
 
       def find_or_create_selling_price(row)
         lagawe          = StoreFront.find_by(name: "Lagawe")
-        alfonso_lista   = StoreFront.find_by(name: "Alfonso Lista")
-        lamut           = StoreFront.find_by(name: "Lamut")
-        maddela         = StoreFront.find_by(name: 'Maddela')
-        quirino_trading = StoreFront.find_by(name: "Quirino Consumer Goods Trading")
+        # alfonso_lista   = StoreFront.find_by(name: "Alfonso Lista")
+        # lamut           = StoreFront.find_by(name: "Lamut")
+        # maddela         = StoreFront.find_by(name: 'Maddela')
+        # quirino_trading = StoreFront.find_by(name: "Quirino Consumer Goods Trading")
 
 
         StoreFrontModule::SellingPrice.create!(
@@ -131,29 +135,29 @@ module StoreFrontModule
           store_front:         lagawe,
           unit_of_measurement: unit_of_measurement(row))
 
-        StoreFrontModule::SellingPrice.create!(
-          price:               alfonso_lista_selling_price(row),
-          product:             find_product(row),
-          store_front:         alfonso_lista,
-          unit_of_measurement: unit_of_measurement(row))
+        # StoreFrontModule::SellingPrice.create!(
+        #   price:               alfonso_lista_selling_price(row),
+        #   product:             find_product(row),
+        #   store_front:         alfonso_lista,
+        #   unit_of_measurement: unit_of_measurement(row))
 
-        StoreFrontModule::SellingPrice.create!(
-          price:               lamut_selling_price(row),
-          product:             find_product(row),
-          store_front:         lamut,
-          unit_of_measurement: unit_of_measurement(row))
+        # StoreFrontModule::SellingPrice.create!(
+        #   price:               lamut_selling_price(row),
+        #   product:             find_product(row),
+        #   store_front:         lamut,
+        #   unit_of_measurement: unit_of_measurement(row))
 
-        StoreFrontModule::SellingPrice.create!(
-          price:               maddela_selling_price(row),
-          product:             find_product(row),
-          store_front:         maddela,
-          unit_of_measurement: unit_of_measurement(row))
+        # StoreFrontModule::SellingPrice.create!(
+        #   price:               maddela_selling_price(row),
+        #   product:             find_product(row),
+        #   store_front:         maddela,
+        #   unit_of_measurement: unit_of_measurement(row))
 
-        StoreFrontModule::SellingPrice.create!(
-          price:               quirino_selling_price(row),
-          product:             find_product(row),
-          store_front:         quirino_trading,
-          unit_of_measurement: unit_of_measurement(row))
+        # StoreFrontModule::SellingPrice.create!(
+        #   price:               quirino_selling_price(row),
+        #   product:             find_product(row),
+        #   store_front:         quirino_trading,
+        #   unit_of_measurement: unit_of_measurement(row))
       end
 
       def find_unit_of_measurement(row)
