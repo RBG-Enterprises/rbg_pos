@@ -33,7 +33,12 @@ module Reports
     end
     bounding_box [0, 770], width: 400 do
       text "SALES REPORT", style: :bold, size: 12
-      text "Date Covered: #{from_date.strftime("%b. %e, %Y")} - #{to_date.strftime("%b. %e, %Y")}", size: 10
+      if from_date == to_date
+        text "Date: #{from_date.strftime("%b. %e, %Y")}", size: 10
+      else
+        text "Date Covered: #{from_date.strftime("%b. %e, %Y")} - #{to_date.strftime("%b. %e, %Y")}", size: 10
+      end
+
       if store_front.present?
         text "Branch: #{store_front.name}", style: :bold, size: 10
       end
@@ -51,13 +56,13 @@ module Reports
         table([["CASH ACCOUNT", "#{cash_on_hand_account.try(:name)}"]], cell_style: { size: 9, font: "Helvetica", :inline_format => true}, column_widths: [120, 150, 150, 100]) do
           cells.borders = []
         end
-        table([["BEGINNING BALANCE", "#{price(cash_on_hand_account.balance(to_date: to_date.beginning_of_day))}"]], cell_style: { size: 9, font: "Helvetica", :inline_format => true}, column_widths: [120, 150, 150, 100]) do
+        table([["BEGINNING BALANCE", "#{price(cash_on_hand_account.balance(to_date: (to_date.beginning_of_day - 1.second)))}"]], cell_style: { size: 9, font: "Helvetica", :inline_format => true}, column_widths: [120, 150, 150, 100]) do
           cells.borders = []
         end
         table([["ADD SALES", "#{price(cash_on_hand_account.debits_balance(from_date: from_date, to_date: to_date) - employee.received_cash_transfers(from_date: Date.today, to_date: Date.today).sum(&:amount)) }"]], cell_style: { size: 9, font: "Helvetica", :inline_format => true}, column_widths: [120, 150, 150, 100]) do
           cells.borders = []
         end
-        table([["LESS REMITTANCES", "#{price(cash_on_hand_account.credits_balance(from_date: from_date, to_date: to_date)) }"]], cell_style: { size: 9, font: "Helvetica", :inline_format => true}, column_widths: [120, 150, 150, 100]) do
+        table([["LESS RETURNS AND REMITTANCES", "#{price(cash_on_hand_account.credits_balance(from_date: from_date, to_date: to_date)) }"]], cell_style: { size: 9, font: "Helvetica", :inline_format => true}, column_widths: [120, 150, 150, 100]) do
           cells.borders = []
         end
         stroke_horizontal_rule
@@ -82,7 +87,7 @@ module Reports
           o.commercial_document.try(:name).try(:upcase),
           order_description(o),
           price(o.discount_amount),
-          price(o.try(:total_cost))] }
+          o.returned_at.present? ? 'SALES RETURN' : price(o.try(:total_cost))] }
       else
          [["DATE", "OR", "CUSTOMER", "ITEMS", "COGS", "DISCOUNT", "TOTAL COST", "INCOME"]] +
         @orders_data ||= @orders.ordered_on(from_date: (@from_date.beginning_of_day), to_date: @to_date.end_of_day).map{|o| [
@@ -92,7 +97,7 @@ module Reports
           order_description(o),
           price(o.cost_of_goods_sold),
           price(o.discount_amount),
-          price(o.try(:total_cost)),
+          o.returned_at.present? ? 'SALES RETURN' : price(o.try(:total_cost)),
           price(o.income)] }
           end
     end

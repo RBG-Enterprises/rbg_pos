@@ -44,7 +44,7 @@ module Reports
         table([["ADD SALES", "#{price employee.cash_on_hand_account.debits_balance(from_date: to_date.beginning_of_day, to_date: to_date.end_of_day)}"]], cell_style: { size: 9, font: "Helvetica", :inline_format => true}, column_widths: [120, 150, 150, 100]) do
           cells.borders = []
         end
-        table([["LESS REMITTANCES", "#{price employee.cash_on_hand_account.credits_balance(from_date: to_date.beginning_of_day, to_date: to_date.end_of_day) }"]], cell_style: { size: 9, font: "Helvetica", :inline_format => true}, column_widths: [120, 150, 150, 100]) do
+        table([["LESS RETURNS AND REMITTANCES", "#{price employee.cash_on_hand_account.credits_balance(from_date: to_date.beginning_of_day, to_date: to_date.end_of_day) }"]], cell_style: { size: 9, font: "Helvetica", :inline_format => true}, column_widths: [120, 150, 150, 100]) do
           cells.borders = []
         end
         stroke_horizontal_rule

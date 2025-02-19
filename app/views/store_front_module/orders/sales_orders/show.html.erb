@@ -5,6 +5,9 @@
         <center>
 
         <h3 class="subtitle-up"> Order Summary</h3>
+        <% if @order.returned_at %>
+          <span class="badge badge-warning float-left">SALES RETURN (<%= @order.returned_at.strftime("%B %e, %Y")%>)</span>
+        <% end %>
         <span class="float-right"><%= link_to 'Print(PDF)', order_path(@order, format: 'pdf'), class: "btn btn-default btn-sm" %></span>
 
         </center>
@@ -68,7 +71,9 @@
             <p class="title-up"> ITEMS </p>
           </div>
           <div class="col-md-6">
-            <%= link_to 'Add Additional Items', new_store_front_module_sales_order_additional_line_item_path(@order), class: "btn btn-outline-danger float-right" %>
+            <% if @order.returned_at.blank? %>
+              <%= link_to 'Add Additional Items', new_store_front_module_sales_order_additional_line_item_path(@order), class: "btn btn-outline-danger float-right" %>
+            <% end %>
           </div>
         </div>
         <br>
@@ -90,14 +95,16 @@
                   </div>
                   <div class="col-md-1">
                     <% if current_user.proprietor? %>
-                    <% if line_item.quantity == 1 %>
-                      <%= link_to store_front_module_sales_order_line_item_cancellations_path(sales_order_line_item_id: line_item.id), data: { confirm: 'Are you sure you want to delete this item?' }, method: :create do %>
-                        <span class="text-danger"><i class="fa fa-times"></i>
-                      <% end %>
-                    <% else %>
-                    <%= link_to new_store_front_module_sales_order_line_item_sales_return_path(sales_order_line_item_id: line_item.id), data: { confirm: 'Are you sure you want to return this item?' } do %>
-                        <span class="text-danger"><i class="fa fa-times"></i>
-                      <% end %>
+                    <% if @order.returned_at.blank? %>
+                      <% if line_item.quantity == 1 %>
+                        <%= link_to store_front_module_sales_order_line_item_cancellations_path(sales_order_line_item_id: line_item.id), data: { confirm: 'Are you sure you want to delete this item?' }, method: :create do %>
+                          <span class="text-danger"><i class="fa fa-times"></i>
+                        <% end %>
+                      <% else %>
+                      <%= link_to new_store_front_module_sales_order_line_item_sales_return_path(sales_order_line_item_id: line_item.id), data: { confirm: 'Are you sure you want to return this item?' } do %>
+                          <span class="text-danger"><i class="fa fa-times"></i>
+                        <% end %>
+                        <% end %>
                       <% end %>
                     <% end %>
                   </div>
@@ -109,7 +116,9 @@
                     <p class="title-up">OTHER ITEMS </p>
                   </div>
                   <div class="col-md-6">
-                    <%= link_to "Add Other Sales Item", new_store_front_module_sales_order_additional_other_sales_item_path(@order), class: "btn btn-outline-danger float-right" %>
+                    <% if @order.returned_at.blank? %>
+                      <%= link_to "Add Other Sales Item", new_store_front_module_sales_order_additional_other_sales_item_path(@order), class: "btn btn-outline-danger float-right" %>
+                    <% end %>
                   </div>
                 </div>
                 <br>
@@ -129,8 +138,10 @@
 
                     </div>
                     <div class='col-md-2'>
-                      <%= link_to store_front_module_sales_order_other_sales_line_item_cancellation_path(sales_order_id: @order.id, other_sales_line_item_id: line_item.id), method: :delete, data: { confirm: 'Are you sure you want to remove this item?' } do %>
-                        <span class="text-danger"><i class="fa fa-times"></i>
+                      <% if @order.returned_at.blank? %>
+                        <%= link_to store_front_module_sales_order_other_sales_line_item_cancellation_path(sales_order_id: @order.id, other_sales_line_item_id: line_item.id), method: :delete, data: { confirm: 'Are you sure you want to remove this item?' } do %>
+                          <span class="text-danger"><i class="fa fa-times"></i>
+                        <% end %>
                       <% end %>
 
                     </div>
@@ -157,12 +168,13 @@
                   <% end %>
                 <% end %>
                 <hr />
-                <%if current_user.proprietor? %>
-                <span class="text-red">
-                  Deleting this Order will remove it from Sales orders. The accounting entry will be deleted from records. In short, records for this order will be deleted forever.
-                </span>
-                <br>
+                <% if @order.returned_at.blank? %>
+                  <%if current_user.proprietor? %>
+                  <span class="text-red">
+                    NOTE: Returning an order will mark it as `Sales Return`. The items will be added back to inventory. The cash payment will also be deducted from the sales clerk's cash on hand account.
+                  </span>
+                  <br>
 
-          <%= link_to 'Delete Order', store_front_module_sales_order_path(@order), method: :delete, data: { confirm: "Are you sure you want to delete this Sales Order?" }, class: "btn btn-outline-danger" %>
+                   <%= link_to 'Return Order', store_front_module_sales_order_path(@order), method: :delete, data: { confirm: "Are you sure you want to delete this Sales Order?" }, class: "btn btn-outline-danger" %>
+                <% end %>
         <% end %>
-<%= number_to_currency @order.receivable_account.balance %>

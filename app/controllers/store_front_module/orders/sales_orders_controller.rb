@@ -33,7 +33,7 @@ module StoreFrontModule
       private
 
       def cancel_sales_order
-        ::StoreFronts::Orders::SalesOrders::Cancellation.new(sales_order: @order).cancel!
+        ::StoreFronts::SalesReturns::CreateService.run!(sales_order: @order, user: current_user)
       end
 
     end

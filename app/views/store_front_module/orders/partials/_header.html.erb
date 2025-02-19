@@ -3,8 +3,7 @@
     <div class="row">
       <div class="col-md-10">
         <h4 class="title-up text-dark"><%= order.try(:customer_name) %></h4>
-    <span class="badge bg-warning"><%= order.store_front_name %></span> &nbsp;
-
+    <span class="badge bg-success"><%= order.store_front_name %></span> &nbsp;
         <span class="text-muted">
         <i class="fa fa-calendar"></i> <%= order.date.strftime("%B %e, %Y") %>
         &nbsp; <i class="fa fa-user-circle"></i> <%= order.employee_full_name %>
@@ -61,7 +60,9 @@
         <b class="float-right"><%= number_to_currency order.total_cost %></b>
       </div>
         <% end %>
-
+<% if order.returned_at %>
+          <span class="badge badge-warning float-left">SALES RETURN (<%= order.returned_at.strftime("%B %e, %Y")%>)</span>
+        <% end %>
       </div>
 
     </div>
