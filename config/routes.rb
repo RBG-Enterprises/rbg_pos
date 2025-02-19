@@ -252,7 +252,6 @@ Rails.application.routes.draw do
 
       resources :repair_service_order_processings, only: [:new, :create]
     end
-    resources :service_payments, only: [:index, :show]
   end
   namespace :settings do
     resources :store_fronts, only: [:new, :create, :edit, :update]
