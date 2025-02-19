@@ -1,0 +1,8 @@
+wb = xlsx_package.workbook
+wb.add_worksheet(name: "Users Report") do |sheet|
+  sheet.add_row ["Date", "Reference #", "Description", "Employee"]
+
+  @entries.each do |entry|
+    sheet.add_row [entry.entry_date]
+  end
+end

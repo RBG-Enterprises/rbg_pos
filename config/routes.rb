@@ -181,6 +181,7 @@ Rails.application.routes.draw do
       resources :reports,     only: [:index],                module: :store_fronts
       resources :inventories, only: [:index],                module: :store_fronts
       resources :work_orders, only: [:index],                module: :store_fronts
+      resources :work_order_payments, only: [:index],        module: :store_fronts
     end
     resources :stock_registry_processings, only: [:create]
     resources :stock_transfer_registries, only: [:new, :create, :show], module: :registries

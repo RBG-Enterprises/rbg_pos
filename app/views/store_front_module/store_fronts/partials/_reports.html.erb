@@ -40,4 +40,23 @@
           </div>
         </div>
       <% end %>
+
+    <h3 class="title"> Work Order Service Payments </h3>
+      <%= form_tag({:action => "index", controller: "store_front_module/store_fronts/work_order_payments", format: 'xlsx'}, {:method => :get})  do %>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <%= text_field_tag :from_date, @from_date, :class => 'datepicker form-control border-input', :placeholder => "From " %>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div clasps="form-group">
+              <%= text_field_tag :to_date, @to_date, :class => 'form-control border-input datepicker', :placeholder => "To " %>
+            </div>
+          </div>
+          <div class="col-md-1">
+            <button type="submit" class="btn btn-success"> Generate</button>
+          </div>
+        </div>
+      <% end %>
 </div>
