@@ -10,7 +10,7 @@ module StoreFrontModule
       end
 
       def show
-        @order = current_store_front.sales_orders.find(params[:id])
+        @order = StoreFrontModule::Orders::SalesOrder.find(params[:id])
       end
 
       def destroy
