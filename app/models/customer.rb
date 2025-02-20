@@ -23,6 +23,8 @@ class Customer < ApplicationRecord
   before_validation :set_account_number
   before_save :set_default_image
 
+  validate :check_duplicate_full_name
+
   def self.receivable_accounts
     ids = pluck(:receivable_account_id)
     AccountingModule::Account.where(id: ids.uniq.compact.flatten)
@@ -52,14 +54,14 @@ class Customer < ApplicationRecord
 	end
 
   def accounts_receivable
-    total_sales_receivable + 
-    total_work_orders_receivable 
+    total_sales_receivable +
+    total_work_orders_receivable
     # other_credits_total +
     # credit_sales_order_accounts_receivable_total +
     # credit_repair_services_accounts_receivable_total
   end
-  def total_receivables 
-    total_sales_receivable + 
+  def total_receivables
+    total_sales_receivable +
     total_work_orders_receivable
   end
 
@@ -69,7 +71,7 @@ class Customer < ApplicationRecord
   def total_work_orders_receivable
     work_orders.total_receivables
   end
-  
+
 
   def credit_sales_order_accounts_receivable_total
     total = []
@@ -140,6 +142,17 @@ class Customer < ApplicationRecord
   def set_default_image
     if !avatar.attached?
       self.avatar.attach(io: File.open(Rails.root.join('app', 'assets', 'images', 'default.png')), filename: 'default-image.png', content_type: 'image/png')
+    end
+  end
+
+  # Check for similar names before saving
+  def check_duplicate_full_name
+    existing_users = User.where("LOWER(first_name) = ? AND LOWER(last_name) = ?", first_name.downcase, last_name.downcase)
+
+    if existing_users
+      errors.add(:first_name, "A similar customer already exists: #{first_name} #{last_name}. Please confirm if this is a duplicate.")
+      errors.add(:last_name, "A similar customer already exists: #{first_name} #{last_name}. Please confirm if this is a duplicate.")
+
     end
   end
 end

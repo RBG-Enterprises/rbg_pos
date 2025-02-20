@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Customers
   class AccountMerging
     include ActiveModel::Model
@@ -10,6 +12,7 @@ module Customers
     end
 
     private
+
     def merge_accounts
       old_customer = Customer.find_by_id(old_customer_id)
       new_customer = Customer.find_by_id(new_customer_id)
@@ -21,4 +24,3 @@ module Customers
     end
   end
 end
-

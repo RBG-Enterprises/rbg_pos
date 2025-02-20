@@ -4,9 +4,8 @@
       <div class="card card-solid">
         <div class="card-header">
           <h4 class="subtitle-up">New Customer</h4>
-          <p class="help-block">New customer details</p>
         </div>
-      <div class="content">
+      <div class="card-body">
 <%= simple_form_for @customer do |f| %>
   <%= f.error_notification %>
   <%= f.input :business_id, input_html: { value: current_business.id }, as: :hidden %>
