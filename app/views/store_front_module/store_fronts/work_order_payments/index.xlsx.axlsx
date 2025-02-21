@@ -9,6 +9,7 @@ wb.add_worksheet(name: "Users Report") do |sheet|
   work_order = WorkOrder.find_by(receivable_account_id: entry.credit_amounts.pluck(:account_id))
     sheet.add_row [entry.entry_date, work_order.customer.name, work_order.service_number, entry.description, entry.total, work_order.technicians.map{|a| a.full_name }.join(","), entry.recorder_name]
     total += entry.total
-    sheet.add_row ["","", "", "TOTAL", total]
   end
+
+   sheet.add_row ["","", "", "TOTAL", total]
 end
