@@ -3,10 +3,12 @@ wb.add_worksheet(name: "Users Report") do |sheet|
   sheet.add_row ["Service Payments - #{@store_front.name}"]
   sheet.add_row ["From #{@from_date} - To #{@to_date}"]
 
-  sheet.add_row ["Date", "Customer", "Service #",  "Description", "Amount", "Employee"]
+  sheet.add_row ["Date", "Customer", "Service #",  "Description", "Amount", "Technician", "Employee"]
+  total = 0
   @entries.each do |entry|
   work_order = WorkOrder.find_by(receivable_account_id: entry.credit_amounts.pluck(:account_id))
-
-    sheet.add_row [entry.entry_date, work_order.customer.name, work_order.service_number, entry.description, entry.total, entry.recorder_name]
+    sheet.add_row [entry.entry_date, work_order.customer.name, work_order.service_number, entry.description, entry.total, work_order.technicians.map{|a| a.full_name }.join(","), entry.recorder_name]
+    total += entry.total
+    sheet.add_row ["","", "", "TOTAL", total]
   end
 end

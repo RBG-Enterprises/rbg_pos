@@ -7,6 +7,7 @@
         <th> Customer </th>
         <th> Quantity </th>
         <th> REF # </th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -16,6 +17,7 @@
           <td><%= sale.customer_name %></td>
           <td><%= sale.quantity %></td>
           <td># <%= sale.reference_number %></td>
+          <td> <% if sale.order.returned_at %> <span class="badge badge-warning"> SALES RETURN </span><% end %></td>
         </tr>
       <% end %>
     </tbody>
