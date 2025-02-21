@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 module StoreFrontModule
   module LineItems
     class StockTransferOrderLineItemProcessingsController < ApplicationController
       def new
         if params[:search].present?
           @pagy, @products   = pagy(Product.text_search(params[:search]))
-          @pagy, @stocks     = pagy(current_store_front.stocks.processed.barcode_search(params[:search]))
+          @pagy, @stocks     = pagy(current_store_front.stocks.processed.available.barcode_search(params[:search]))
 
         end
         @cart = current_cart
@@ -23,6 +25,7 @@ module StoreFrontModule
           render :new, alert: "Error"
         end
       end
+
       def destroy
         @line_item = StoreFrontModule::LineItems::PurchaseOrderLineItem.find(params[:id])
         @line_item.destroy
@@ -33,9 +36,10 @@ module StoreFrontModule
       end
 
       private
+
       def line_item_params
-        params.require(:store_front_module_line_items_stock_transfer_order_line_item_processing).
-        permit(:quantity, :unit_of_measurement_id, :product_id, :bar_code, :cart_id, :stock_id, :selling_price)
+        params.require(:store_front_module_line_items_stock_transfer_order_line_item_processing)
+          .permit(:quantity, :unit_of_measurement_id, :product_id, :bar_code, :cart_id, :stock_id, :selling_price)
       end
     end
   end
