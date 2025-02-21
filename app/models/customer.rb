@@ -148,11 +148,9 @@ class Customer < ApplicationRecord
   # Check for similar names before saving
   def check_duplicate_full_name
     existing_users = User.where("LOWER(first_name) = ? AND LOWER(last_name) = ?", first_name.downcase, last_name.downcase)
+    return if existing_users.blank?
 
-    if existing_users
-      errors.add(:first_name, "A similar customer already exists: #{first_name} #{last_name}. Please confirm if this is a duplicate.")
-      errors.add(:last_name, "A similar customer already exists: #{first_name} #{last_name}. Please confirm if this is a duplicate.")
-
-    end
+    errors.add(:first_name, "A similar customer already exists: #{first_name} #{last_name}.")
+    errors.add(:last_name, "A similar customer already exists: #{first_name} #{last_name}.")
   end
 end
