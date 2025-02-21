@@ -57,7 +57,7 @@ module StoreFronts
     end
 
     def self.processed
-      where(is_processed: true)
+      joins(:purchase).where.not(purchase: { id: nil }).where(is_processed: true)
     end
 
     def balance_for_cart(cart)
