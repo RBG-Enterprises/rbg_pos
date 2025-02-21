@@ -7,7 +7,7 @@ module StoreFrontModule
           @additional_line_item = StoreFrontModule::LineItems::StockTransferOrderLineItemProcessing.new
           @additional_line_item_order_processing = StoreFrontModule::Orders::StockTransferOrders::AdditionalLineItemOrderProcessing.new
           if params[:search].present?
-            @pagy, @stocks   = pagy(current_store_front.stocks.processed.includes(:product, :purchase => [:unit_of_measurement]).text_search(params[:search]))
+            @pagy, @stocks   = pagy(current_store_front.stocks.processed.available.includes(:product, :purchase => [:unit_of_measurement]).text_search(params[:search]))
             @pagy, @products = pagy(Product.text_search(params[:search]))
           end
         end

@@ -1,0 +1,7 @@
+<% @products.each do |product| %>
+  <% product.stocks.processed.available.where(store_front: current_store_front).each do |stock| %>
+    <%= render 'store_front_module/orders/stock_transfer_orders/additional_line_items/stock', stock: stock %>
+  <hr>
+  <% end %>
+<% end %>
+<%== pagy_bootstrap_nav(@pagy) %>

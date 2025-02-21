@@ -10,6 +10,7 @@
        <b><%= stock.name.try(:upcase) %></b> <span class="badge bg-success"><%=stock.balance_for_cart_on_transfer(current_cart) %> IN STOCK</span>
        <br>
        <span class="text-muted"><%= stock.barcode %></span><br>
+       <span class="text-muted">IN STOCK <%= stock.available_quantity %></span><br>
 
      </div>
      <div class="col-md-4">
