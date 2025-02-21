@@ -18,12 +18,19 @@ class Customer < ApplicationRecord
   has_many :departments, dependent: :nullify
   has_many :sales_orders, class_name: "StoreFrontModule::Orders::SalesOrder", as: :commercial_document
 
+  before_validation :normalize_name
+
   validates :first_name, :last_name, :contact_number, presence: true
+  validates :first_name, uniqueness: {
+    scope: :last_name,
+    case_sensitive: false,
+    message: "customer already exists"
+  }
   scope :recent, ->(num) { order('created_at DESC').limit(num) }
   before_validation :set_account_number
   before_save :set_default_image
 
-  validate :check_duplicate_full_name
+
 
   def self.receivable_accounts
     ids = pluck(:receivable_account_id)
@@ -145,12 +152,8 @@ class Customer < ApplicationRecord
     end
   end
 
-  # Check for similar names before saving
-  def check_duplicate_full_name
-    existing_customers = Customer.where("LOWER(first_name) = ? AND LOWER(last_name) = ?", first_name.downcase, last_name.downcase)
-    return if existing_customers.blank?
-
-    errors.add(:first_name, "A similar customer already exists: #{first_name} #{last_name}.")
-    errors.add(:last_name, "A similar customer already exists: #{first_name} #{last_name}.")
+  def normalize_name
+    self.first_name = first_name.downcase.strip if first_name.present?
+    self.last_name = last_name.downcase.strip if last_name.present?
   end
 end
