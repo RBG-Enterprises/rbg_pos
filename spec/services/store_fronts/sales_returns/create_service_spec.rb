@@ -53,5 +53,20 @@ RSpec.describe StoreFronts::SalesReturns::CreateService, type: :service do
         expect(sales_order.reload.returned_at).not_to be_nil
       end
     end
+
+    context "when sales order is a credit" do
+      before do
+        entry = build(:entry)
+        entry.debit_amounts.build(amount:  sales_order.total_cost_less_discount, account: sales_order.receivable_account)
+        entry.credit_amounts.build(amount: sales_order.total_cost_less_discount, account: sales_order.sales_revenue_account)
+        entry.save!
+      end
+
+      it "credits sales order receivable account" do
+        service
+
+        expect(sales_order.receivable_account.reload.balance).to eq 0
+      end
+    end
   end
 end

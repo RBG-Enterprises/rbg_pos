@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class StoreFronts::SalesReturns::CreateService < ActiveInteraction::Base
-  object :sales_order, class: StoreFrontModule::Orders::SalesOrder
+class StoreFronts::SalesReturns::LineItems::CreateService < ActiveInteraction::Base
+  object :line_item, class: StoreFrontModule::Orders::SalesOrder
   object :user
 
   def execute
@@ -9,7 +9,7 @@ class StoreFronts::SalesReturns::CreateService < ActiveInteraction::Base
 
     ApplicationRecord.transaction do
       create_sales_return_order
-      return_line_items
+      return_line_item
       update_stocks
       create_entry
       return_sales_order
@@ -17,6 +17,10 @@ class StoreFronts::SalesReturns::CreateService < ActiveInteraction::Base
   end
 
   private
+
+  def sales_order
+    @sales_order ||= line_item.sales_order
+  end
 
   def return_line_items
     sales_order.sales_order_line_items.each do |line_item|
@@ -65,7 +69,7 @@ class StoreFronts::SalesReturns::CreateService < ActiveInteraction::Base
 
     entry.credit_amounts.build(
       amount: sales_order.total_cost_less_discount,
-      account: credit_account,
+      account: sales_order.employee.cash_on_hand_account,
     )
     entry.credit_amounts.build(
       amount: sales_order.discount_amount,
@@ -92,13 +96,5 @@ class StoreFronts::SalesReturns::CreateService < ActiveInteraction::Base
 
   def return_sales_order
     sales_order.update!(returned_at: DateTime.current)
-  end
-
-  def credit_account
-    if sales_order.receivable_account.balance.zero?
-      sales_order.employee.cash_on_hand_account
-    else
-      sales_order.receivable_account
-    end
   end
 end

@@ -52,7 +52,7 @@ module Orders
           if order.receivable_account.balance.zero?
             order.employee.cash_on_hand_account
           else
-            order.default_receivable_account
+            order.receivable_account
           end
         end
       end

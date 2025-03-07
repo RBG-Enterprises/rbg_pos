@@ -90,7 +90,7 @@ class Order < ApplicationRecord
 
 
   def line_items_name
-    line_items.map{|a| ["#{a.product_name} (#{a.try(:bar_code)})"] }.to_s.gsub("[", "").gsub("]", "").gsub('"', "")
+    line_items.map { |a| ["#{a.product_name} (#{a.try(:bar_code)})"] }.to_s.gsub("[", "").gsub("]", "").gsub('"', "")
   end
 
   def line_items_name_and_barcode
@@ -113,9 +113,6 @@ class Order < ApplicationRecord
   def discount_amount
     cash_payment.try(:discount_amount) || 0
   end
-
-
-
 
   private
   def set_date
