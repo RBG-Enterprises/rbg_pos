@@ -129,10 +129,10 @@ module StoreFrontModule
 
       def find_or_create_selling_price(row)
         lagawe = StoreFront.find_by(name: "Lagawe")
-        # alfonso_lista   = StoreFront.find_by(name: "Alfonso Lista")
-        # lamut           = StoreFront.find_by(name: "Lamut")
-        # maddela         = StoreFront.find_by(name: 'Maddela')
-        # quirino_trading = StoreFront.find_by(name: "Quirino Consumer Goods Trading")
+        alfonso_lista   = StoreFront.find_by(name: "Alfonso Lista")
+        lamut           = StoreFront.find_by(name: "Lamut")
+        maddela         = StoreFront.find_by(name: "Maddela")
+        quirino_trading = StoreFront.find_by(name: "Quirino Consumer Goods Trading")
 
         StoreFrontModule::SellingPrice.create!(
           price:               lagawe_selling_price(row),
