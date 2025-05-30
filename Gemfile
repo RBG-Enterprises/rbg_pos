@@ -6,8 +6,7 @@ ruby "3.3.0"
 
 gem "active_interaction", "~> 5.3"
 gem "prawn-icon"
-gem "rails", "6.1.7.7"
-gem "audited", "~> 4.7"
+gem "rails", "~> 7.1.3"
 gem "autonumeric-rails"
 gem "spreadsheet"
 gem "rqrcode"
@@ -85,3 +84,4 @@ gem "rubocop", require: false
 gem "rubocop-rails", require: false
 gem "rubocop-rspec", require: false
 gem "rubocop-shopify", require: false
+gem "sprockets-rails"
