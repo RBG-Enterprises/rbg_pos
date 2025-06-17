@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_02_19_131100) do
+ActiveRecord::Schema.define(version: 2025_06_17_095550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -366,6 +366,7 @@ ActiveRecord::Schema.define(version: 2025_02_19_131100) do
     t.datetime "returned_at"
     t.index ["account_number"], name: "index_orders_on_account_number", unique: true
     t.index ["commercial_document_type", "commercial_document_id"], name: "index_commercial_document_on_orders"
+    t.index ["created_at"], name: "index_orders_on_created_at"
     t.index ["department_id"], name: "index_orders_on_department_id"
     t.index ["destination_store_front_id"], name: "index_orders_on_destination_store_front_id"
     t.index ["employee_id"], name: "index_orders_on_employee_id"
