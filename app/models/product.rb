@@ -78,7 +78,7 @@ class Product < ApplicationRecord
   end
 
   def latest_purchase_order
-    Order.joins(line_items: :stock).where(stocks: { product_id: product.id }, supplier_type: 'Supplier').order(created_at: :desc).first
+    purchase_orders.where(supplier_type: 'Supplier').latest
   end
 
 
