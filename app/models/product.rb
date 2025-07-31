@@ -74,7 +74,7 @@ class Product < ApplicationRecord
   end
 
   def latest_purchase
-    purchases.last
+    purchases.order(created_at: :desc).first
   end
 
   def latest_purchase_order
@@ -115,11 +115,6 @@ class Product < ApplicationRecord
 		sales_returns_balance
 	end
 
-
-  ################################
-  def last_purchase_cost
-    purchases.order(created_at: :desc).last.try(:unit_cost)
-  end
   def available_quantity(args={})
     balance(args)
   end
