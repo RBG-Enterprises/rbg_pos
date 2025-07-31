@@ -3,7 +3,7 @@ module Products
   class StocksController < ApplicationController
     def index
       @product       = Product.find(params[:product_id])
-      @pagy, @stocks = pagy(@product.stocks.processed.where(store_front: current_store_front))
+      @pagy, @stocks = pagy(@product.stocks.processed.where(store_front: current_store_front).order(created_at: :desc))
     end
     def new
       @product = Product.find(params[:product_id])
