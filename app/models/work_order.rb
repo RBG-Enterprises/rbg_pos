@@ -44,6 +44,7 @@ class WorkOrder < ApplicationRecord
 
   after_commit :set_customer_name, :set_product_name,  on: [:create, :update]
   after_commit :set_release_date
+  after_commit :set_done_at
 
   def self.receivable_accounts
     ids = pluck(:receivable_account_id)
@@ -249,6 +250,13 @@ class WorkOrder < ApplicationRecord
   def set_release_date
     if released? && release_date.blank?
       self.release_date = Time.zone.now
+      self.save!
+    end
+  end
+
+  def set_done_at
+    if done? && done_at.blank?
+      self.done_at = Time.zone.now
       self.save!
     end
   end

@@ -60,6 +60,7 @@ class WorkOrderPdf < Prawn::Document
       "TOTAL COST",
       "RECEIVED DATE",
       "RELEASE DATE",
+      "DONE DATE",
     ]] +
       @table_data ||= @work_orders.map { |a|
         [
@@ -75,6 +76,7 @@ class WorkOrderPdf < Prawn::Document
           price(a.total_charges_cost),
           a.created_at.strftime("%B %e, %Y"),
           a.release_date.try(:strftime, "%B %e, %Y"),
+          a.done_at.try(:strftime, "%B %e, %Y"),
         ]
       } +
         [[
@@ -87,6 +89,7 @@ class WorkOrderPdf < Prawn::Document
           "#{price(@work_orders.total_spare_parts_cost(from_date: @from_date, to_date: @to_date))}",
           "#{price(@work_orders.total_service_charges_cost(from_date: @from_date, to_date: @to_date))}",
           "#{price(@work_orders.total_charges_cost(from_date: @from_date, to_date: @to_date))}",
+          "",
           "",
           "",
         ]]

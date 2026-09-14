@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_06_17_095550) do
+ActiveRecord::Schema.define(version: 2026_09_14_192008) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,6 +60,20 @@ ActiveRecord::Schema.define(version: 2025_06_17_095550) do
     t.index ["type"], name: "index_accounts_on_type"
   end
 
+  create_table "active_admin_comments", force: :cascade do |t|
+    t.string "namespace"
+    t.text "body"
+    t.string "resource_type"
+    t.bigint "resource_id"
+    t.string "author_type"
+    t.bigint "author_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
+    t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
+  end
+
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -100,11 +114,23 @@ ActiveRecord::Schema.define(version: 2025_06_17_095550) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["owner_id", "owner_type"], name: "index_activities_on_owner_id_and_owner_type"
-    t.index ["owner_type", "owner_id"], name: "index_activities_on_owner_type_and_owner_id"
+    t.index ["owner_type", "owner_id"], name: "index_activities_on_owner"
     t.index ["recipient_id", "recipient_type"], name: "index_activities_on_recipient_id_and_recipient_type"
-    t.index ["recipient_type", "recipient_id"], name: "index_activities_on_recipient_type_and_recipient_id"
+    t.index ["recipient_type", "recipient_id"], name: "index_activities_on_recipient"
     t.index ["trackable_id", "trackable_type"], name: "index_activities_on_trackable_id_and_trackable_type"
-    t.index ["trackable_type", "trackable_id"], name: "index_activities_on_trackable_type_and_trackable_id"
+    t.index ["trackable_type", "trackable_id"], name: "index_activities_on_trackable"
+  end
+
+  create_table "admin_users", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["email"], name: "index_admin_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
   create_table "amounts", force: :cascade do |t|
@@ -222,6 +248,10 @@ ActiveRecord::Schema.define(version: 2025_06_17_095550) do
     t.string "address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "avatar_file_name"
+    t.string "avatar_content_type"
+    t.bigint "avatar_file_size"
+    t.datetime "avatar_updated_at"
     t.boolean "enable_interest", default: false
     t.bigint "business_id"
     t.bigint "receivable_account_id"
@@ -283,6 +313,16 @@ ActiveRecord::Schema.define(version: 2025_06_17_095550) do
     t.datetime "updated_at", null: false
     t.index ["invoiceable_type", "invoiceable_id"], name: "index_invoices_on_invoiceable_type_and_invoiceable_id"
     t.index ["type"], name: "index_invoices_on_type"
+  end
+
+  create_table "ledger_accounts", force: :cascade do |t|
+    t.string "ledgerable_type"
+    t.bigint "ledgerable_id"
+    t.bigint "account_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_ledger_accounts_on_account_id"
+    t.index ["ledgerable_type", "ledgerable_id"], name: "index_ledger_accounts_on_ledgerable_type_and_ledgerable_id"
   end
 
   create_table "level_one_account_categories", force: :cascade do |t|
@@ -406,6 +446,19 @@ ActiveRecord::Schema.define(version: 2025_06_17_095550) do
     t.index ["type"], name: "index_parent_account_categories_on_type"
   end
 
+  create_table "payments", force: :cascade do |t|
+    t.bigint "order_id"
+    t.integer "mode_of_payment"
+    t.decimal "discount_amount", default: "0.0"
+    t.decimal "cash_tendered"
+    t.decimal "change"
+    t.decimal "total_cost"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.decimal "total_cost_less_discount"
+    t.index ["order_id"], name: "index_payments_on_order_id"
+  end
+
   create_table "pg_search_documents", force: :cascade do |t|
     t.text "content"
     t.string "searchable_type"
@@ -451,6 +504,10 @@ ActiveRecord::Schema.define(version: 2025_06_17_095550) do
     t.decimal "wholesale_price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "avatar_file_name"
+    t.string "avatar_content_type"
+    t.bigint "avatar_file_size"
+    t.datetime "avatar_updated_at"
     t.bigint "category_id"
     t.decimal "low_stock_count", default: "0.0"
     t.bigint "business_id"
@@ -493,12 +550,23 @@ ActiveRecord::Schema.define(version: 2025_06_17_095550) do
   end
 
   create_table "registries", force: :cascade do |t|
+    t.string "spreadsheet_file_name"
+    t.string "spreadsheet_content_type"
+    t.bigint "spreadsheet_file_size"
+    t.datetime "spreadsheet_updated_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "type"
     t.bigint "employee_id"
     t.index ["employee_id"], name: "index_registries_on_employee_id"
     t.index ["type"], name: "index_registries_on_type"
+  end
+
+  create_table "repairs", force: :cascade do |t|
+    t.text "symptoms_observed"
+    t.text "repair_description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "sections", force: :cascade do |t|
@@ -555,6 +623,15 @@ ActiveRecord::Schema.define(version: 2025_06_17_095550) do
     t.index ["store_front_id"], name: "index_store_front_accounts_on_store_front_id"
   end
 
+  create_table "store_front_configs", force: :cascade do |t|
+    t.bigint "accounts_receivable_account_id"
+    t.bigint "store_front_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["accounts_receivable_account_id"], name: "index_store_front_configs_on_accounts_receivable_account_id"
+    t.index ["store_front_id"], name: "index_store_front_configs_on_store_front_id"
+  end
+
   create_table "store_fronts", force: :cascade do |t|
     t.bigint "business_id"
     t.bigint "merchandise_inventory_account_id"
@@ -607,6 +684,10 @@ ActiveRecord::Schema.define(version: 2025_06_17_095550) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "payable_account_id"
+    t.string "avatar_file_name"
+    t.string "avatar_content_type"
+    t.bigint "avatar_file_size"
+    t.datetime "avatar_updated_at"
     t.index ["business_name"], name: "index_suppliers_on_business_name", unique: true
     t.index ["payable_account_id"], name: "index_suppliers_on_payable_account_id"
   end
@@ -648,6 +729,10 @@ ActiveRecord::Schema.define(version: 2025_06_17_095550) do
     t.integer "role"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "avatar_file_name"
+    t.string "avatar_content_type"
+    t.bigint "avatar_file_size"
+    t.datetime "avatar_updated_at"
     t.string "designation"
     t.bigint "section_id"
     t.bigint "cash_on_hand_account_id"
@@ -753,6 +838,7 @@ ActiveRecord::Schema.define(version: 2025_06_17_095550) do
     t.bigint "sales_revenue_account_id"
     t.bigint "department_id"
     t.bigint "technician_id"
+    t.datetime "done_at"
     t.index ["account_number"], name: "index_work_orders_on_account_number", unique: true
     t.index ["customer_id"], name: "index_work_orders_on_customer_id"
     t.index ["department_id"], name: "index_work_orders_on_department_id"
@@ -802,6 +888,7 @@ ActiveRecord::Schema.define(version: 2025_06_17_095550) do
   add_foreign_key "employee_cash_accounts", "users", column: "employee_id"
   add_foreign_key "entries", "users"
   add_foreign_key "entries", "users", column: "recorder_id"
+  add_foreign_key "ledger_accounts", "accounts"
   add_foreign_key "level_one_account_categories", "store_fronts"
   add_foreign_key "line_items", "carts"
   add_foreign_key "line_items", "line_items", column: "purchase_order_line_item_id"
@@ -827,6 +914,7 @@ ActiveRecord::Schema.define(version: 2025_06_17_095550) do
   add_foreign_key "other_sales_line_items", "carts"
   add_foreign_key "other_sales_line_items", "orders"
   add_foreign_key "parent_account_categories", "businesses"
+  add_foreign_key "payments", "orders"
   add_foreign_key "posts", "users"
   add_foreign_key "product_units", "customers"
   add_foreign_key "products", "businesses"
@@ -846,6 +934,8 @@ ActiveRecord::Schema.define(version: 2025_06_17_095550) do
   add_foreign_key "stocks", "unit_of_measurements"
   add_foreign_key "store_front_accounts", "accounts"
   add_foreign_key "store_front_accounts", "store_fronts"
+  add_foreign_key "store_front_configs", "accounts", column: "accounts_receivable_account_id"
+  add_foreign_key "store_front_configs", "store_fronts"
   add_foreign_key "store_fronts", "account_categories", column: "sales_revenue_account_category_id"
   add_foreign_key "store_fronts", "account_categories", column: "service_receivable_account_category_id"
   add_foreign_key "store_fronts", "accounts", column: "cost_of_goods_sold_account_id"

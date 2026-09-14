@@ -60,6 +60,7 @@ class WorkOrdersController < ApplicationController
         "TOTAL COST",
         "RECEIVED DATE",
         "RELEASE DATE",
+        "DONE DATE",
       ])
       @work_orders.each do |work_order|
         yielder << CSV.generate_line([
@@ -75,6 +76,7 @@ class WorkOrdersController < ApplicationController
           work_order.total_charges_cost,
           work_order.created_at.strftime("%B %e, %Y"),
           work_order.release_date.try(:strftime, "%B %e, %Y"),
+          work_order.done_at.try(:strftime, "%B %e, %Y"),
         ])
       end
       yielder << CSV.generate_line([
@@ -82,6 +84,7 @@ class WorkOrdersController < ApplicationController
         @work_orders.total_spare_parts_cost(from_date: @from_date, to_date: @to_date),
         @work_orders.total_service_charges_cost(from_date: @from_date, to_date: @to_date),
         @work_orders.total_charges_cost(from_date: @from_date, to_date: @to_date),
+        "",
         "",
         "",
       ])
