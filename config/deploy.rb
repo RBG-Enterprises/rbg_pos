@@ -4,7 +4,7 @@ require "mina/rails"
 require "mina/bundler"
 require "mina/git"
 require "mina/rbenv"
-# require 'mina/puma'
+require "mina/puma"
 
 Dir["/lib/mina/*.rb"].each { |file| require file }
 

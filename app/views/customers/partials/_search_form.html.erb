@@ -1,0 +1,17 @@
+<%# Locals:
+    url          - form action (required)
+    field_name   - query param symbol, e.g. :search or :customer_search (required)
+    value        - current field value (required)
+    input_id     - id for the text field (default: "customer-search-form")
+    placeholder  - input placeholder (default: "Search customer")
+%>
+<%= form_tag url, method: :get, remote: true, id: "search-form" do %>
+  <div class="input-group stylish-input-group mb-3">
+    <%= text_field_tag field_name, value, id: local_assigns[:input_id] || "customer-search-form", class: "form-control border-input", placeholder: local_assigns[:placeholder] || "Search customer", type: "search", autocomplete: "off", data: { live_search: true } %>
+    <span class="input-group-btn">
+      <%= button_tag(type: 'submit', class: "btn btn-outline-primary") do %>
+        <i class="fa fa-search"></i> Search
+      <% end %>
+    </span>
+  </div>
+<% end %>

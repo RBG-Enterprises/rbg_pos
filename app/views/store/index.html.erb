@@ -91,16 +91,7 @@
             <%= link_to 'New Customer', new_store_customer_registration_path, class: 'btn btn-link btn-sm' %>
           </div>
 
-          <%= form_tag store_index_path, method: :get, remote: true, id: "search-form" do %>
-            <div class="input-group stylish-input-group mb-3">
-              <%= text_field_tag :customer_search, params[:customer_search], id: "customer-search-form", class: "form-control border-input", placeholder: "Search customer", type: "search", autocomplete: "off" %>
-              <span class="input-group-btn">
-                <%= button_tag(type: 'submit', class: "btn btn-outline-primary", id: "customer-search-btn") do %>
-                  <i class="fa fa-search"></i> Search
-                <% end %>
-              </span>
-            </div>
-          <% end %>
+          <%= render 'customers/partials/search_form', url: store_index_path, field_name: :customer_search, value: params[:customer_search] %>
 
           <div id="customer-search-results">
             <%= render 'store/searched_customers_results' %>
@@ -193,25 +184,4 @@ function calculateLineItemTotalCost() {
   var result = quantity * unitCost;
   totalCost.value = result;
 }
-
-document.addEventListener('turbolinks:load', function() {
-  var customerSearchInput = document.getElementById('customer-search-form');
-  if (!customerSearchInput) { return; }
-
-  var customerSearchTimeout;
-  var submitCustomerSearch = function() {
-    var form = document.getElementById('search-form');
-    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-  };
-
-  customerSearchInput.addEventListener('keyup', function() {
-    clearTimeout(customerSearchTimeout);
-    customerSearchTimeout = setTimeout(submitCustomerSearch, 300);
-  });
-
-  customerSearchInput.addEventListener('search', function() {
-    clearTimeout(customerSearchTimeout);
-    submitCustomerSearch();
-  });
-});
 </script>

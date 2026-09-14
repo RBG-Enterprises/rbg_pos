@@ -30,6 +30,24 @@ document.addEventListener("turbolinks:load", () => {
 
     }).datepicker("setDate", "0");;
   $('.chosen-select').chosen({width: "95%"});
+
+  document.querySelectorAll('[data-live-search]').forEach((input) => {
+    var delay = parseInt(input.dataset.liveSearchDelay, 10) || 300
+    var timeout
+    var submitForm = () => {
+      if (input.form) {
+        input.form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+      }
+    }
+    input.addEventListener('keyup', () => {
+      clearTimeout(timeout)
+      timeout = setTimeout(submitForm, delay)
+    })
+    input.addEventListener('search', () => {
+      clearTimeout(timeout)
+      submitForm()
+    })
+  })
 })
 
 // Uncomment to copy all static images under ../images to the output folder and reference
