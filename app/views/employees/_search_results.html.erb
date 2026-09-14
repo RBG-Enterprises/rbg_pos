@@ -3,6 +3,7 @@
     <thead>
       <tr>
         <th>Name</th>
+        <th>Email</th>
         <th>Role</th>
         <th>Designation</th>
         <th>Store Front</th>
@@ -13,6 +14,7 @@
       <% @employees.each do |employee| %>
         <tr>
           <td><%= link_to employee.name, employee_path(employee) %></td>
+          <td><%= employee.email %></td>
           <td><%= employee.role.try(:titleize) %></td>
           <td><%= employee.designation %></td>
           <td><%= employee.store_front.try(:name) %></td>

@@ -5,6 +5,40 @@
       <%= link_to 'Withdraw Capital', new_capital_withdrawal_path, class: "btn btn-warning btn-sm" %>
     <% end %>
     <hr>
+    <div class="employee-detail-panel bg-light rounded p-4 mb-4">
+      <div class="row">
+        <div class="col-sm-6 col-lg-4 mb-4">
+          <small class="text-muted text-uppercase d-block mb-1" style="letter-spacing: .05em; font-size: 11px;">Email</small>
+          <span class="font-weight-bold"><%= @employee.email %></span>
+        </div>
+        <div class="col-sm-6 col-lg-4 mb-4">
+          <small class="text-muted text-uppercase d-block mb-1" style="letter-spacing: .05em; font-size: 11px;">Designation</small>
+          <span class="font-weight-bold"><%= @employee.designation.presence || "—" %></span>
+        </div>
+        <div class="col-sm-6 col-lg-4 mb-4">
+          <small class="text-muted text-uppercase d-block mb-1" style="letter-spacing: .05em; font-size: 11px;">Status</small>
+          <span>
+            <% if @employee.active? %>
+              <span class="badge badge-success">Active</span>
+            <% else %>
+              <span class="badge badge-danger">Inactive</span>
+            <% end %>
+          </span>
+        </div>
+        <div class="col-sm-6 col-lg-4 mb-4 mb-lg-0">
+          <small class="text-muted text-uppercase d-block mb-1" style="letter-spacing: .05em; font-size: 11px;">Store Front</small>
+          <span class="font-weight-bold"><%= @employee.store_front.try(:name) || "—" %></span>
+        </div>
+        <div class="col-sm-6 col-lg-4 mb-4 mb-lg-0">
+          <small class="text-muted text-uppercase d-block mb-1" style="letter-spacing: .05em; font-size: 11px;">Section</small>
+          <span class="font-weight-bold"><%= @employee.section.try(:name) || "—" %></span>
+        </div>
+        <div class="col-sm-6 col-lg-4 mb-4 mb-lg-0">
+          <small class="text-muted text-uppercase d-block mb-1" style="letter-spacing: .05em; font-size: 11px;">Member Since</small>
+          <span class="font-weight-bold"><%= @employee.created_at.strftime("%B %e, %Y") %></span>
+        </div>
+      </div>
+    </div>
     <div class="row">
       <div class="col-md-5">
         <% if @employee.cash_on_hand_account.present? %>
