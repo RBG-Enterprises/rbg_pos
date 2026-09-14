@@ -69,7 +69,8 @@ module StoreFronts
     end
 
     def balance
-      purchase_quantity +
+      count_adjustment +
+        purchase_quantity +
         sales_returns_balance    -
         purchase_returns_balance -
         stock_transfers_balance  -

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_14_192008) do
+ActiveRecord::Schema.define(version: 2026_09_14_200000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -607,6 +607,7 @@ ActiveRecord::Schema.define(version: 2026_09_14_192008) do
     t.boolean "available", default: false
     t.decimal "available_quantity", default: "0.0"
     t.boolean "is_processed", default: false, null: false
+    t.decimal "count_adjustment", default: "0.0", null: false
     t.index ["barcode"], name: "index_stocks_on_barcode"
     t.index ["is_processed"], name: "index_stocks_on_is_processed"
     t.index ["product_id"], name: "index_stocks_on_product_id"

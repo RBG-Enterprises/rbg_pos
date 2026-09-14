@@ -33,7 +33,7 @@ module Products
       @purchase.update(purchase_params)
       if @purchase.valid?
         @purchase.save!
-        @stock.update(barcode: @purchase.bar_code)
+        @stock.update(barcode: @purchase.bar_code, **stock_params)
         @stock.save
         redirect_to product_stocks_url(@product), notice: 'Stock updated successfully.'
       else
@@ -56,6 +56,10 @@ module Products
     private
     def purchase_params
       params.require(:store_front_module_line_items_purchase_order_line_item).permit(:unit_of_measurement_id, :unit_cost, :total_cost, :quantity, :bar_code)
+    end
+
+    def stock_params
+      params.fetch(:stock, {}).permit(:count_adjustment)
     end
   end
 end

@@ -15,5 +15,9 @@
   <%= f.input :unit_cost %>
   <%= f.input :total_cost %>
 
+  <%= simple_fields_for :stock, @stock do |s| %>
+    <%= s.input :count_adjustment, label: "Count Adjustment", hint: "Use this to correct the stock balance when the physical count doesn't match the system count." %>
+  <% end %>
+
   <%= f.submit "Save Stock", class: "btn btn-primary float-right" %>
 <% end %>
