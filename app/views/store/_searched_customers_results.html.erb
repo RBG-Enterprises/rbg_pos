@@ -1,0 +1,18 @@
+<% if @customers.present? %>
+  <% @customers.each do |customer| %>
+    <div class="row align-items-center mb-2">
+      <div class="col-md-8">
+        <b><%= customer.full_name %></b><br>
+        <small class="text-muted"><i class="fa fa-phone"></i> <%= customer.contact_number %></small>
+        <small class="text-muted ml-2"><i class="fa fa-map-marker"></i> <%= customer.address %></small>
+      </div>
+      <div class="col-md-4 text-right">
+        <%= link_to 'Select', store_index_path(customer_id: customer.id), class: 'btn btn-outline-primary btn-sm', id: "#{customer.id}-select-customer" %>
+      </div>
+    </div>
+    <hr class="mt-2 mb-2">
+  <% end %>
+  <center><%==pagy_bootstrap_nav(@pagy) %></center>
+<% elsif params[:customer_search].present? %>
+  <p class="text-muted small">No customers found for <b><%= params[:customer_search] %></b>.</p>
+<% end %>

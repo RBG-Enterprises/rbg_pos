@@ -2,262 +2,177 @@
 
 <div class="row">
   <div class="col-md-7">
-    <div class="card card-default">
-      <div class="card-header with-border">
-        <div class="row">
-          <div class="col-md-6">
-            <h4 class="title-up"> RBG Computers, Cellshop & Enterprises </h4>
-          </div>
-          <div class="col-md-6">
-            <%=link_to 'New Other Sales', new_other_sale_path, class: "btn btn-primary float-right" %>
-          </div>
-        </div>
+    <div class="card card-default mb-4">
+      <div class="card-header with-border d-flex justify-content-between align-items-center">
+        <h4 class="title-up mb-0">RBG Computers, Cellshop &amp; Enterprises</h4>
+        <%= link_to 'New Other Sales', new_other_sale_path, class: "btn btn-primary" %>
       </div>
       <div class="card-body">
-      <% if params[:search].present? %>
-        <%=form_tag store_index_path, method: :get do %>
-           <div class="input-group">
-             <%= text_field_tag :search, params[:search], id: 'stock-search-form', class: "search-query form-control border-input", placeholder: "Search for items", type: "search" %>
-             <span class="input-group-btn">
-               <%= button_tag(type: 'submit', class: "btn btn-default", id: 'store-search-button') do %>
-                 <i class="icon-magnifier"></i> Browse Products
-               <% end %>
-             </span>
-           </div>
-         <% end %>
-      <% else %>
-        <%=form_tag store_index_path, method: :get do %>
-          <div class="input-group">
-            <%= text_field_tag :search, params[:search], id: "stock-search-form", class: "search-query form-control border-input", autofocus: true, placeholder: "Search for items", type: "search" %>
+        <%= form_tag store_index_path, method: :get do %>
+          <div class="input-group mb-3">
+            <%= text_field_tag :search, params[:search], id: 'stock-search-form', class: "search-query form-control border-input", autofocus: params[:search].blank?, placeholder: "Search for items", type: "search" %>
             <span class="input-group-btn">
-              <%= button_tag(type: 'submit', class: "btn btn-default", id: 'stock-search-btn') do %>
+              <%= button_tag(type: 'submit', class: "btn btn-default", id: params[:search].present? ? 'store-search-button' : 'stock-search-btn') do %>
                 <i class="icon-magnifier"></i> Browse Products
               <% end %>
             </span>
           </div>
         <% end %>
-      <% end %>
-      <br>
 
-      <% if @stocks.present? %>
-        <%= render 'store/searched_stocks_results' %>
-      <% elsif @products.present? %>
-        <%= render 'store/searched_products_results' %>
-      <% elsif params[:search].present? && (@stocks.blank? || @products.blank?) %>
-        <p class='alert alert-danger'> No products found for <b><%=params[:search]%></b> or out of stock. </p>
-      <% end %>
+        <% if @stocks.present? %>
+          <%= render 'store/searched_stocks_results' %>
+        <% elsif @products.present? %>
+          <%= render 'store/searched_products_results' %>
+        <% elsif params[:search].present? %>
+          <p class="alert alert-danger">No products found for <b><%= params[:search] %></b> or out of stock.</p>
+        <% end %>
+      </div>
     </div>
-  </div>
 
-      <% if @cart.sales_order_line_items.present? %>
-        <div class="card">
-    <div class="card-body">
-      <h4 class="subtitle-up">Order Details </h4>
-      <br>
-        <div class="row">
-          <div class="col-md-2">
-            <b class="condensed-text"> QTY </b>
+    <% if @cart.sales_order_line_items.present? %>
+      <div class="card card-default">
+        <div class="card-body">
+          <h4 class="subtitle-up mb-3">Order Details</h4>
+          <div class="row condensed-text text-muted small text-uppercase">
+            <div class="col-md-2">Qty</div>
+            <div class="col-md-5">Description</div>
+            <div class="col-md-4 text-right">Total Cost</div>
           </div>
-          <div class="col-md-5">
-            <b class="condensed-text"> DESCRIPTION</b>
-          </div>
-          <div class="col-md-4">
-            <b class="float-right condensed-text"> TOTAL COST </b>
-          </div>
-        </div>
-        <hr>
-        <% @cart.sales_order_line_items.each do |line_item| %>
-          <div class="row">
-            <div class="col-md-2">
-              <%= line_item.quantity %>
-            </div>
-            <div class="col-md-5">
-
-              <b><%= line_item.name.try(:upcase) %></b>  <span class="badge badge-warning"><%= number_to_currency line_item.unit_cost %></span> <br>
-              <span class="text-muted">
+          <hr class="mt-2 mb-2">
+          <% @cart.sales_order_line_items.each do |line_item| %>
+            <div class="row align-items-center">
+              <div class="col-md-2">
+                <%= line_item.quantity %>
+              </div>
+              <div class="col-md-5">
+                <b><%= line_item.name.try(:upcase) %></b>
+                <span class="badge badge-warning"><%= number_to_currency line_item.unit_cost %></span>
                 <% if line_item.bar_code.present? %>
-                  <small><i class="fa fa-barcode"></i> <%= line_item.bar_code.truncate(30) %></small>
+                  <br>
+                  <small class="text-muted"><i class="fa fa-barcode"></i> <%= line_item.bar_code.truncate(30) %></small>
                 <% end %>
-              </span>
-            </div>
-            <div class="col-md-4">
-              <span class="float-right">
-                <%= number_to_currency line_item.total_cost %> &nbsp;
-                <%= link_to store_front_module_sales_order_line_item_processing_path(line_item), method: :delete do %>
+              </div>
+              <div class="col-md-4 text-right">
+                <%= number_to_currency line_item.total_cost %>
+                <%= link_to store_front_module_sales_order_line_item_processing_path(line_item), method: :delete, class: "ml-2" do %>
                   <span class="fa fa-times text-danger" data-toggle="tooltip" title="Remove Item"></span>
                 <% end %>
-              </span>
-            </div>
-          </div>
-          <hr />
-        <% end %>
-        <div class="row">
-          <div class="col-md-2">
-          </div>
-          <div class="col-md-6">
-            <h4 class="subtitle-up"><b>TOTAL</b> </h4>
-          </div>
-          <div class="col-md-3">
-            <span class="float-right">
-              <h4 class="subtitle-up"><b><%= number_to_currency @cart.sales_order_line_items.sum(&:total_cost) %></b></h4>
-            </span>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </div>
-</div>
-  <% if @cart.sales_order_line_items.present? %>
-    <div class="col-md-5">
-      <div class="card card-default">
-        <div class="card-header">
-          <div class="row">
-            <div class="col-md-7">
-              <h4 class="title-up"><span class="fa fa-shopping-cart"></span> Order Summary</h4>
-            </div>
-            <div class="col-md-5">
-              <%=link_to cart_path(@cart), method: :delete do %>
-                <span class="btn btn-sm btn-outline-danger float-right" data-toggle="tooltip" title="Remove Cart"><i class="fa fa-times"></i> Cancel Order</span>
-              <% end %>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-        <div class="row">
-              <div class="col-md-10 offset-md-1">
-                <div class="row">
-              <div class="col-md-6">
-                <h4 class="title-up"><b> TOTAL </b> </h4>
-              </div>
-              <div class="col-md-6">
-                <h4 class="title-up">
-                  <b class="float-right"><%= number_to_currency @cart.sales_order_line_items.total_cost %></b>
-                </h4>
               </div>
             </div>
-            <hr>
-            <div class='row'>
-              <div class='col-md-6'>
-                <h4 class='title-up'>Customers </h4>
-              </div>
-              <div class='col-md-6'>
-                <%= link_to 'New Customer', new_store_customer_registration_path, class: 'btn btn-link float-right' %>
-              </div>
-            </div>
-
-            <%= form_tag store_index_path, method: :get, id: "search-form" do %>
-                <div class="input-group stylish-input-group">
-                  <%= text_field_tag :customer_search, params[:customer_search], id: "customer-search-form", class: "form-control border-input", placeholder: "Search customer", type: "search" %>
-                  <span class="input-group-btn">
-                    <%= button_tag(type: 'submit',  class: "btn btn-outline-primary", id: "customer-search-btn") do %>
-                      <i class="fa fa-search"></i> Search
-                    <% end %>
-                  </span>
-                </div>
-              <% end %>
-              <br>
-              <% if @customers.present? %>
-                <% @customers.each do |customer| %>
-
-                  <div class='row'>
-                    <div class='col-md-8'>
-                      <b><%= customer.full_name %></b><br>
-                      <small class="text-muted"><i class="fa fa-phone"></i> <%= customer.contact_number %></small>&nbsp; &nbsp;
-                      <small class="text-muted"><i class="fa fa-map-marker"></i> <%= customer.address %></small>
-                    </div>
-                    <div class='col-md-4'>
-                      <%= link_to 'Select', store_index_path(customer_id: customer.id), class: 'btn btn-outline-primary btn-sm float-right', id: "#{customer.id}-select-customer" %>
-                    </div>
-                  </div>
-                  <hr>
-                <% end %>
-                <%==pagy_bootstrap_nav(@pagy) %>
-              <% end %>
-          <% if @customer.present? %>
-          <div class='row'>
-                    <div class='col-md-8'>
-                      <b><%= @customer.full_name %></b><br>
-                      <small class="text-muted"><i class="fa fa-phone"></i> <%= @customer.contact_number %></small>&nbsp; &nbsp;
-                      <small class="text-muted"><i class="fa fa-map-marker"></i> <%= @customer.address %></small>
-                    </div>
-                    <div class='col-md-4'>
-
-                    </div>
-                  </div>
-                  <br>
-            <%= simple_form_for @sales_order, url: :store_front_module_sales_order_processings do |f| %>
-
-                <%= f.input :date, as: :string, input_html: { id: 'sale-order-date', class: "datepicker" } %>
-                <%= f.input :customer_id, input_html: { value: @customer.id }, as: :hidden %>
-                <div class="row">
-                  <div class="col-md-7">
-                    <% if @customer.present? %>
-                      <%= f.input :cash_tendered, autofocus: true, input_html: { id: 'cash_tendered', oninput: 'calculateOrderTotalCost()',  class: "input-lg" } %>
-                    <% else %>
-                      <%= f.input :cash_tendered, input_html: { id: 'cash_tendered', oninput: 'calculateOrderTotalCost()',  class: "input-lg" } %>
-                    <% end %>
-                  </div>
-                  <div class="col-md-5">
-                    <%= f.input :discount_amount, label: "Discount", input_html: { id: 'discount_amount', oninput: 'calculateOrderTotalCost()', value: 0} %>
-                  </div>
-                </div>
-                <%= f.input :order_change, readonly: true, input_html: { id: 'change', class: "input-lg", value: 0 } %>
-                <%= f.input :reference_number %>
-                <%= f.input :total_cost, input_html: { id: 'total_cost', value: @cart.total_cost }, as: :hidden %>
-                <%= f.input :employee_id, input_html: { value: current_user.id }, as: :hidden  %>
-                <%= f.input :cart_id, input_html: { value: @cart.id }, as: :hidden %>
-                <%= f.input :account_number, input_html: { value: SecureRandom.uuid }, as: :hidden %>
-
-                <%= f.submit "Save Order", class: "btn btn-lg btn-primary btn-block", data: { disable_with: 'Processing...' } %>
-              </div>
-            </div>
-            <% end %>
-            <br>
+            <hr class="mt-2 mb-2">
+          <% end %>
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="subtitle-up mb-0"><b>Total</b></h4>
+            <h4 class="subtitle-up mb-0"><b><%= number_to_currency @cart.sales_order_line_items.sum(&:total_cost) %></b></h4>
           </div>
-        </div>
-      </div>
-      <% end %>
-
-    <% elsif @cart.sales_order_line_items.blank? %>
-      <div class="col-md-7">
-        <div class="card card-default">
-          <div class="card-header">
-            <div class="row">
-              <div class="col-md-7">
-                <h4 class="title-up"><span class="fa fa-users"></span> Cash Sales for <%= Date.current.strftime("%D") %> </h4>
-              </div>
-            </div>
-          </div>
-            <div class="card-body">
-              <% if current_user.proprietor? %>
-                <% User.sales_clerk.includes(:store_front, :cash_on_hand_account).where(email: ['elmie@rbg.com','analyn.perez@rbg.com','nova@rbg.com', 'jenelyn.lamut@rbg.com', 'jonalyn.lagawe@rbgtech.co', 'nathalie@rbg.com', 'ronald.quirino.sales_clerk@rbg.com']).each do |sales_clerk| %>
-                  <div class="row">
-                    <div class="col-md-4">
-                      <%= sales_clerk.full_name %>
-                    </div>
-                    <div class="col-md-3">
-                      <%= sales_clerk.store_front.try(:name) %>
-                    </div>
-                    <div class="col-md-4">
-                      <span class="pull-right">
-                        <b><%= number_to_currency sales_clerk.cash_on_hand_account.debits_balance(from_date: Date.current.beginning_of_day, to_date: Date.current.end_of_day) %></b>
-                      </span>
-                    </div>
-                  </div>
-                  <hr />
-                <% end %>
-              <% elsif current_user.sales_clerk? %>
-                <h4 class="title-up">
-                  <%= number_to_currency current_user.cash_on_hand_account.debits_balance(from_date: Date.current.beginning_of_day, to_date: Date.current.end_of_day) %>
-                </h4>
-              <% end %>
-            </div>
         </div>
       </div>
     <% end %>
+  </div>
+
+  <% if @cart.sales_order_line_items.present? %>
+    <div class="col-md-5">
+      <div class="card card-default">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="title-up mb-0"><i class="fa fa-shopping-cart"></i> Order Summary</h4>
+          <%= link_to cart_path(@cart), method: :delete, class: "btn btn-sm btn-outline-danger", data: { toggle: "tooltip", title: "Remove Cart" } do %>
+            <i class="fa fa-times"></i> Cancel Order
+          <% end %>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="title-up mb-0"><b>Total</b></h4>
+            <h4 class="title-up mb-0"><b><%= number_to_currency @cart.sales_order_line_items.total_cost %></b></h4>
+          </div>
+          <hr>
+
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="title-up mb-0">Customers</h4>
+            <%= link_to 'New Customer', new_store_customer_registration_path, class: 'btn btn-link btn-sm' %>
+          </div>
+
+          <%= form_tag store_index_path, method: :get, remote: true, id: "search-form" do %>
+            <div class="input-group stylish-input-group mb-3">
+              <%= text_field_tag :customer_search, params[:customer_search], id: "customer-search-form", class: "form-control border-input", placeholder: "Search customer", type: "search", autocomplete: "off" %>
+              <span class="input-group-btn">
+                <%= button_tag(type: 'submit', class: "btn btn-outline-primary", id: "customer-search-btn") do %>
+                  <i class="fa fa-search"></i> Search
+                <% end %>
+              </span>
+            </div>
+          <% end %>
+
+          <div id="customer-search-results">
+            <%= render 'store/searched_customers_results' %>
+          </div>
+
+          <% if @customer.present? %>
+            <div class="mb-3">
+              <b><%= @customer.full_name %></b><br>
+              <small class="text-muted"><i class="fa fa-phone"></i> <%= @customer.contact_number %></small>
+              <small class="text-muted ml-2"><i class="fa fa-map-marker"></i> <%= @customer.address %></small>
+            </div>
+
+            <%= simple_form_for @sales_order, url: :store_front_module_sales_order_processings do |f| %>
+              <%= f.input :date, as: :string, input_html: { id: 'sale-order-date', class: "datepicker" } %>
+              <%= f.input :customer_id, input_html: { value: @customer.id }, as: :hidden %>
+              <div class="row">
+                <div class="col-md-7">
+                  <%= f.input :cash_tendered, autofocus: true, input_html: { id: 'cash_tendered', oninput: 'calculateOrderTotalCost()', class: "input-lg" } %>
+                </div>
+                <div class="col-md-5">
+                  <%= f.input :discount_amount, label: "Discount", input_html: { id: 'discount_amount', oninput: 'calculateOrderTotalCost()', value: 0 } %>
+                </div>
+              </div>
+              <%= f.input :order_change, readonly: true, input_html: { id: 'change', class: "input-lg", value: 0 } %>
+              <%= f.input :reference_number %>
+              <%= f.input :total_cost, input_html: { id: 'total_cost', value: @cart.total_cost }, as: :hidden %>
+              <%= f.input :employee_id, input_html: { value: current_user.id }, as: :hidden %>
+              <%= f.input :cart_id, input_html: { value: @cart.id }, as: :hidden %>
+              <%= f.input :account_number, input_html: { value: SecureRandom.uuid }, as: :hidden %>
+
+              <%= f.submit "Save Order", class: "btn btn-lg btn-primary btn-block", data: { disable_with: 'Processing...' } %>
+            <% end %>
+          <% end %>
+        </div>
       </div>
     </div>
+  <% end %>
 </div>
+
+<% if @cart.sales_order_line_items.blank? %>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-default">
+        <div class="card-header">
+          <h4 class="title-up mb-0"><i class="fa fa-users"></i> Cash Sales for <%= Date.current.strftime("%D") %></h4>
+        </div>
+        <div class="card-body">
+          <% if current_user.proprietor? %>
+            <% User.sales_clerk.includes(:store_front, :cash_on_hand_account).where(email: ['elmie@rbg.com','analyn.perez@rbg.com','nova@rbg.com', 'jenelyn.lamut@rbg.com', 'jonalyn.lagawe@rbgtech.co', 'nathalie@rbg.com', 'ronald.quirino.sales_clerk@rbg.com']).each do |sales_clerk| %>
+              <div class="row align-items-center">
+                <div class="col-md-4">
+                  <%= sales_clerk.full_name %>
+                </div>
+                <div class="col-md-3 text-muted">
+                  <%= sales_clerk.store_front.try(:name) %>
+                </div>
+                <div class="col-md-4 offset-md-1 text-right">
+                  <b><%= number_to_currency sales_clerk.cash_on_hand_account.debits_balance(from_date: Date.current.beginning_of_day, to_date: Date.current.end_of_day) %></b>
+                </div>
+              </div>
+              <hr class="mt-2 mb-2">
+            <% end %>
+          <% elsif current_user.sales_clerk? %>
+            <h4 class="title-up mb-0">
+              <%= number_to_currency current_user.cash_on_hand_account.debits_balance(from_date: Date.current.beginning_of_day, to_date: Date.current.end_of_day) %>
+            </h4>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
 
 <script type="text/javascript">
 function calculateOrderTotalCost() {
@@ -279,4 +194,24 @@ function calculateLineItemTotalCost() {
   totalCost.value = result;
 }
 
+document.addEventListener('turbolinks:load', function() {
+  var customerSearchInput = document.getElementById('customer-search-form');
+  if (!customerSearchInput) { return; }
+
+  var customerSearchTimeout;
+  var submitCustomerSearch = function() {
+    var form = document.getElementById('search-form');
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+  };
+
+  customerSearchInput.addEventListener('keyup', function() {
+    clearTimeout(customerSearchTimeout);
+    customerSearchTimeout = setTimeout(submitCustomerSearch, 300);
+  });
+
+  customerSearchInput.addEventListener('search', function() {
+    clearTimeout(customerSearchTimeout);
+    submitCustomerSearch();
+  });
+});
 </script>
