@@ -21,6 +21,37 @@ set :stage, "production"
 set :shared_paths, ["config/database.yml", "log", "tmp/log", "public/system", "tmp/pids", "tmp/sockets"]
 set :shared_dirs, fetch(:shared_dirs, []).push("public/assets").push("public/packs").push("public/storage")
 
+# mina-puma (untitledkingdom/mina-puma) still passes `-d`/`--daemon` to `puma`,
+# a flag Puma removed in 5.0. Puma 6.6.0 rejects it with
+# `OptionParser::AmbiguousOption`, so `puma:start` never boots. Re-declare the
+# task without `-d`, backgrounding it with `nohup ... &` instead so it survives
+# the SSH session ending.
+Rake::Task["puma:start"].clear_actions
+namespace :puma do
+  task start: :remote_environment do
+    puma_port_option = "-p #{fetch(:puma_port)}" if set?(:puma_port)
+
+    comment "Starting Puma..."
+    command %[
+      if [ -e "#{fetch(:pumactl_socket)}" ]; then
+        echo 'Puma is already running!';
+      else
+        if [ -e "#{fetch(:puma_config)}" ]; then
+          cd #{fetch(:puma_root_path)} && \
+            nohup #{fetch(:puma_cmd)} -q -e #{fetch(:puma_env)} -C #{fetch(:puma_config)} \
+            >> "#{fetch(:puma_stdout)}" 2>> "#{fetch(:puma_stderr)}" < /dev/null &
+        else
+          cd #{fetch(:puma_root_path)} && \
+            nohup #{fetch(:puma_cmd)} -q -e #{fetch(:puma_env)} -b "unix://#{fetch(:puma_socket)}" #{puma_port_option} \
+            -S #{fetch(:puma_state)} --pidfile #{fetch(:puma_pid)} --control 'unix://#{fetch(:pumactl_socket)}' \
+            >> "#{fetch(:puma_stdout)}" 2>> "#{fetch(:puma_stderr)}" < /dev/null &
+        fi
+        disown
+      fi
+    ]
+  end
+end
+
 # Optional settings:
 #   set :user, 'foobar'    # Username in the server to SSH to.
 #   set :port, '30000'     # SSH port number.

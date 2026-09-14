@@ -2,27 +2,23 @@
   <div class="col-md-12">
     <div class="card card-solid">
       <div class="card-header">
-        <h3 class="subtitle-up">Employees </h3>
+        <div class="row">
+          <div class="col-md-4">
+            <h3 class="subtitle-up">Employees </h3>
+          </div>
+          <div class="col-md-5">
+            <%= render 'customers/partials/search_form', url: employees_path, field_name: :search, value: params[:search], input_id: "employee-search-form", placeholder: "Search employee" %>
+          </div>
+          <div class="col-md-3">
+            <% if policy(:user).new? %>
+              <%= link_to 'New Employee', new_user_registration_path, class: "btn btn-danger btn-sm float-right" %>
+            <% end %>
+          </div>
+        </div>
       </div>
       <div class="card-body">
-        <div class="table table-responsive">
-          <table class="table table-hover table-striped">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Role</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @employees.each do |employee| %>
-                <tr>
-                  <td><%= link_to employee.name, employee_path(employee) %></td>
-                  <td><%= employee.role.try(:titleize) %></td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-          <center><%= will_paginate @employees %></center>
+        <div id="employee-search-results">
+          <%= render 'search_results' %>
         </div>
       </div>
     </div>

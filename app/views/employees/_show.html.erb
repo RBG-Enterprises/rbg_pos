@@ -25,6 +25,11 @@
       <li class="nav-item">
         <%= link_to "Journal Entries", employee_entries_path(@employee), class: "nav-link #{ 'active' if current_page?(employee_entries_path(@employee)) }" %>
       </li>
+      <% if current_user.proprietor? %>
+        <li class="nav-item">
+          <%= link_to "Settings", employee_settings_path(@employee), class: "nav-link #{ 'active' if current_page?(employee_settings_path(@employee)) }" %>
+        </li>
+      <% end %>
     </ul>
     <br>
         <% if current_page? employee_path(@employee) %>
@@ -38,6 +43,9 @@
         <% end %>
         <% if current_page? employee_reports_path(@employee) %>
           <%= render 'employees/partials/reports' %>
+        <% end %>
+        <% if current_page? employee_settings_path(@employee) %>
+          <%= render 'employees/partials/settings' %>
         <% end %>
       </div>
     </div>

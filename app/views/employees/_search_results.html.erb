@@ -1,0 +1,34 @@
+<div class="table table-responsive">
+  <table class="table table-hover table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Designation</th>
+        <th>Store Front</th>
+        <th>Active</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @employees.each do |employee| %>
+        <tr>
+          <td><%= link_to employee.name, employee_path(employee) %></td>
+          <td><%= employee.role.try(:titleize) %></td>
+          <td><%= employee.designation %></td>
+          <td><%= employee.store_front.try(:name) %></td>
+          <td>
+            <% if employee.active? %>
+              <span class="badge badge-success">Active</span>
+            <% else %>
+              <span class="badge badge-danger">Inactive</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <% if @employees.empty? && params[:search].present? %>
+    <p class="text-muted small">No employees found for <b><%= params[:search] %></b>.</p>
+  <% end %>
+  <center><%= will_paginate @employees %></center>
+</div>

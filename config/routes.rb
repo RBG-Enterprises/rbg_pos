@@ -113,6 +113,7 @@ Rails.application.routes.draw do
     resources :reports, only: [:index], module: :employees
     resources :sales, only: [:index], module: :employees
     resources :entries, only: [:index], module: :employees
+    resources :settings, only: [:index], module: :employees
     resources :cash_counts, only: [:new, :create], module: :employees
     resources :bill_counts, only: [:create], module: :employees
     resources :cash_on_hand_accounts, only: [:show], module: :employees do

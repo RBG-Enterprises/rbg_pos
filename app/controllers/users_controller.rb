@@ -8,7 +8,7 @@ class UsersController < ApplicationController
 		authorize @user
 		if @user.valid?
 			@user.save
-			redirect_to settings_url, notice: "Employee registered successfully."
+			redirect_to employees_url, notice: "Employee registered successfully."
 		else
 			render :new
 		end

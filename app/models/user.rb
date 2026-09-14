@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  include PgSearch::Model
   has_one_attached :avatar
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -22,6 +23,8 @@ class User < ApplicationRecord
   has_many :cash_counts,            class_name: "CashCounts::CashCount", foreign_key: 'employee_id'
 
   enum role: [:proprietor, :sales_clerk, :technician, :accountant, :warehouse_clerk]
+
+  pg_search_scope :text_search, against: [:first_name, :last_name, :email]
 
   delegate :balance, to: :default_cash_on_hand_account, prefix: true, allow_nil: true
   before_save :set_default_image

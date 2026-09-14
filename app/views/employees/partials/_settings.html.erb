@@ -1,0 +1,32 @@
+<div class="tab-pane <%= 'active' if current_page? employee_settings_path(@employee) %>" id="employee-settings">
+  <div class="content">
+    <% if current_user.proprietor? %>
+      <h4 class="title-up">Account Status</h4>
+      <% if @employee.active? %>
+        <p class="text-muted">This employee's account is currently <b class="text-success">active</b> and can sign in.</p>
+        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deactivate-employee-modal">
+          Deactivate Account
+        </button>
+      <% else %>
+        <p class="text-muted">This employee's account is currently <b class="text-danger">deactivated</b> and cannot sign in.</p>
+      <% end %>
+
+      <div class="modal fade" id="deactivate-employee-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Deactivate <%= @employee.full_name %>?</h4>
+            </div>
+            <div class="modal-body">
+              <p>This will prevent <b><%= @employee.full_name %></b> from signing in. Are you sure you want to continue?</p>
+            </div>
+            <div class="modal-footer">
+              <%= link_to "Cancel", "#", class: "btn btn-default", data: { dismiss: "modal" } %>
+              <%= button_to "Yes, Deactivate", employee_account_deactivations_path(employee_id: @employee.id), class: "btn btn-danger" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

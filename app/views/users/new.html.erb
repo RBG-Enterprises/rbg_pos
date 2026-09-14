@@ -1,30 +1,69 @@
 <div class="content">
   <div class="row">
-    <div class="col-md-6 offset-md-3">
-      <div class="card">
-        <div class="header">
-           <h4 class="title">New Employee</h4>
-          <p class="category">Details for this new employee</p>
+    <div class="col-md-8 offset-md-2">
+      <div class="card card-danger">
+        <div class="card-header">
+          <h4 class="subtitle-up">New Employee</h4>
+          <p class="category">Create a login and profile for a new employee</p>
         </div>
-        <div class="content">
-<%= simple_form_for @user, url: :user_registration do |f| %>
-  <%= f.error_notification %>
-  <%if @user.avatar.blank? %>
-            <center><%=image_tag("default.png", height: 80, width: 80, :class=>"img-square") %></center>
-          <% else %>
-            <center><%= image_tag @user.avatar.url(:large), class: 'center-block img-responsive img-rounded'%></center>
-          <% end %>
-          <center><%= f.input :avatar, as: :file, label: "Upload photo" %></center>
-  <%= f.input :first_name %>
-  <%= f.input :last_name %>
-  <%= f.input :email %>
-  <%= f.input :password %>
-  <%= f.input :password_confirmation, label: "Comfirm Password" %>
-  <%= f.input :role, collection: User.roles.keys.to_a.map{|a| [a.titleize, a] }, as: :radio_buttons %>
-  <%= f.input :designation %>
-  <%= f.input :business_id, input_html: { value: current_business.id }, as: :hidden %>
-  <%= f.input :store_front_id, collection: current_business.store_fronts.map{ |a| [a.name, a.id] } %>
+        <div class="card-body">
+          <%= simple_form_for @user, url: :user_registration do |f| %>
+            <%= f.error_notification %>
+            <%= f.input :business_id, input_html: { value: current_business.id }, as: :hidden %>
 
-  <%= f.input :section_id, collection: Section.all.map{|a| [a.name, a.id] }, as: :radio_buttons %>
-  <%= f.submit "Save", class: "btn btn-danger" %>
-<% end %>
+            <div class="text-center" style="margin-bottom: 20px;">
+              <% if @user.avatar.blank? %>
+                <%= image_tag("default.png", height: 80, width: 80, class: "img-circle") %>
+              <% else %>
+                <%= image_tag @user.avatar.url(:large), height: 80, width: 80, class: "img-circle" %>
+              <% end %>
+              <div style="margin-top: 10px;">
+                <%= f.input :avatar, as: :file, label: "Upload photo" %>
+              </div>
+            </div>
+
+            <h5 class="title-up">Personal Details</h5>
+            <div class="row">
+              <div class="col-md-6"><%= f.input :first_name %></div>
+              <div class="col-md-6"><%= f.input :last_name %></div>
+            </div>
+
+            <h5 class="title-up">Account Login</h5>
+            <div class="row">
+              <div class="col-md-12"><%= f.input :email %></div>
+            </div>
+            <div class="row">
+              <div class="col-md-6"><%= f.input :password %></div>
+              <div class="col-md-6"><%= f.input :password_confirmation, label: "Confirm Password" %></div>
+            </div>
+
+            <h5 class="title-up">Role &amp; Assignment</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <%= f.input :role, collection: User.roles.keys.to_a.map{|a| [a.titleize, a] }, input_html: { class: "chosen-select" } %>
+              </div>
+              <div class="col-md-6">
+                <%= f.input :designation %>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <%= f.input :store_front_id, collection: current_business.store_fronts.map{ |a| [a.name, a.id] }, input_html: { class: "chosen-select" } %>
+              </div>
+              <div class="col-md-6">
+                <%= f.input :section_id, collection: Section.all.map{|a| [a.name, a.id] }, input_html: { class: "chosen-select" } %>
+              </div>
+            </div>
+
+            <div class="row" style="margin-top: 20px;">
+              <div class="col-md-12 text-right">
+                <%= link_to "Cancel", employees_path, class: "btn btn-default" %>
+                <%= f.submit "Save Employee", class: "btn btn-danger" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
