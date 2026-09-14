@@ -9,7 +9,7 @@
         <div class="card-body">
           <h4 class="title"> Services </h4>
           <p class="category">Generate report for services</p><br>
-          <%= form_tag({:action => "index", controller: "work_orders", format: 'pdf'}, {:method => :get})  do %>
+          <%= form_tag({:action => "index", controller: "work_orders"}, {:method => :get})  do %>
             <div class="row">
               <div class="col-md-3">
                 <div class="form-group">
@@ -19,6 +19,11 @@
               <div class="col-md-3">
                 <div clasps="form-group">
                   <%= text_field_tag :to_date, @to_date, :class => 'form-control border-input datepicker', :placeholder => "To " %>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <%= select_tag :format, options_for_select([['PDF', 'pdf'], ['CSV', 'csv']], 'pdf'), class: 'form-control border-input' %>
                 </div>
               </div>
               <div class="col-md-1">
