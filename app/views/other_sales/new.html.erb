@@ -7,10 +7,26 @@
         <p class="text-muted">Details for this other sales</p>
       </div>
     <div class="card-body">
+      <% preselected_customer = current_business.customers.find_by(id: @other_sale.customer_id) %>
+      <div class="form-group">
+        <span><label class="mb-0">Customer</label><span class="float-right"><%= link_to 'New Customer', new_customer_registration_path, remote: true %></span></span>
+
+        <div id="selected-customer" class="customer-typeahead-selected mb-2<%= ' d-none' unless preselected_customer %>">
+          <span class="badge badge-light border p-2">
+            <i class="fa fa-user"></i> <span id="selected-customer-name"><%= preselected_customer&.full_name %></span>
+            <a href="#" id="clear-selected-customer" class="ml-2 text-danger" title="Change customer"><i class="fa fa-times"></i></a>
+          </span>
+        </div>
+
+        <div id="customer-typeahead" class="customer-typeahead<%= ' d-none' if preselected_customer %>">
+          <%= render 'customers/partials/search_form', url: new_other_sale_path, field_name: :customer_search, value: params[:customer_search], input_id: 'other-sale-customer-search', placeholder: 'Type to search customer' %>
+          <div id="customer-search-results" class="customer-typeahead-results-wrapper"></div>
+        </div>
+      </div>
+
       <%= simple_form_for @other_sale, url: :other_sales do |f| %>
         <%= f.input :date, input_html: { class: "datepicker" } %>
-        <span><label>Customer</label><span class="float-right"><%= link_to 'New Customer', new_customer_registration_path, remote: true %></span></span>
-        <%= f.input :customer_id, collection: Customer.all.map{|a| [a.full_name, a.id] }, label: false, input_html: { class: 'chosen-select' } %>
+        <%= f.input :customer_id, as: :hidden, input_html: { id: 'other-sale-customer-id', value: preselected_customer&.id } %>
         <%= f.input :reference_number %>
         <%= f.input :description %>
         <%= f.input :amount %>
@@ -22,3 +38,42 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+document.addEventListener("turbolinks:load", function () {
+  var typeahead = document.getElementById('customer-typeahead');
+  var selected = document.getElementById('selected-customer');
+  var selectedName = document.getElementById('selected-customer-name');
+  var hiddenField = document.getElementById('other-sale-customer-id');
+  var searchInput = document.getElementById('other-sale-customer-search');
+  var resultsWrapper = document.getElementById('customer-search-results');
+  var clearLink = document.getElementById('clear-selected-customer');
+
+  if (!typeahead) { return; }
+
+  function selectCustomer(id, name) {
+    hiddenField.value = id;
+    selectedName.textContent = name;
+    selected.classList.remove('d-none');
+    typeahead.classList.add('d-none');
+    resultsWrapper.innerHTML = '';
+    searchInput.value = '';
+  }
+
+  function clearCustomer(event) {
+    event.preventDefault();
+    hiddenField.value = '';
+    selected.classList.add('d-none');
+    typeahead.classList.remove('d-none');
+    searchInput.focus();
+  }
+
+  resultsWrapper.addEventListener('click', function (event) {
+    var option = event.target.closest('.customer-typeahead-option');
+    if (!option) { return; }
+    selectCustomer(option.dataset.customerId, option.dataset.customerName);
+  });
+
+  clearLink.addEventListener('click', clearCustomer);
+});
+</script>

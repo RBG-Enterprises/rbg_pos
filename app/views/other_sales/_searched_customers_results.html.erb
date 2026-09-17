@@ -1,0 +1,15 @@
+<% if @customers.present? %>
+  <div class="list-group customer-typeahead-results">
+    <% @customers.each do |customer| %>
+      <button type="button" class="list-group-item list-group-item-action customer-typeahead-option" data-customer-id="<%= customer.id %>" data-customer-name="<%= customer.full_name %>">
+        <b><%= customer.full_name %></b>
+        <br>
+        <small class="text-muted"><i class="fa fa-phone"></i> <%= customer.contact_number %></small>
+      </button>
+    <% end %>
+  </div>
+<% elsif params[:customer_search].present? %>
+  <div class="customer-typeahead-results">
+    <p class="text-muted small mb-0 p-2">No customers found for <b><%= params[:customer_search] %></b>.</p>
+  </div>
+<% end %>

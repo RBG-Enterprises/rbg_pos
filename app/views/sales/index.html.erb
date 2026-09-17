@@ -1,0 +1,88 @@
+<% total_cash   = @sales_by_cashier.values.sum { |v| v[:cash] } %>
+<% total_credit = @sales_by_cashier.values.sum { |v| v[:credit] } %>
+
+<div class="sales-page-header mb-4">
+  <h3 class="title-up mb-1"><i class="fa fa-chart-line"></i> Sales</h3>
+  <p class="text-muted mb-3"><%= @from_date.strftime("%B %e, %Y") %> &ndash; <%= @to_date.strftime("%B %e, %Y") %></p>
+
+  <div class="sales-toolbar d-flex flex-wrap align-items-center">
+    <div class="btn-group mr-2 mb-2" role="group">
+      <%= link_to 'Today', sales_path(range: 'today'), class: "btn btn-sm btn-outline-primary#{' active' if @range == 'today'}" %>
+      <%= link_to 'This Week', sales_path(range: 'week'), class: "btn btn-sm btn-outline-primary#{' active' if @range == 'week'}" %>
+      <%= link_to 'This Month', sales_path(range: 'month'), class: "btn btn-sm btn-outline-primary#{' active' if @range == 'month'}" %>
+      <%= link_to 'This Quarter', sales_path(range: 'quarter'), class: "btn btn-sm btn-outline-primary#{' active' if @range == 'quarter'}" %>
+      <%= link_to 'Year to Date', sales_path(range: 'ytd'), class: "btn btn-sm btn-outline-primary#{' active' if @range == 'ytd'}" %>
+    </div>
+
+    <div class="btn-group mb-2" role="group">
+      <%= link_to 'Yesterday', sales_path(range: 'yesterday'), class: "btn btn-sm btn-outline-secondary#{' active' if @range == 'yesterday'}" %>
+      <%= link_to 'Last Week', sales_path(range: 'last_week'), class: "btn btn-sm btn-outline-secondary#{' active' if @range == 'last_week'}" %>
+      <%= link_to 'Last Month', sales_path(range: 'last_month'), class: "btn btn-sm btn-outline-secondary#{' active' if @range == 'last_month'}" %>
+      <%= link_to 'Last Quarter', sales_path(range: 'last_quarter'), class: "btn btn-sm btn-outline-secondary#{' active' if @range == 'last_quarter'}" %>
+      <%= link_to 'Last Year', sales_path(range: 'last_year'), class: "btn btn-sm btn-outline-secondary#{' active' if @range == 'last_year'}" %>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4 mb-4">
+    <div class="card stat-card h-100">
+      <div class="card-body">
+        <div class="stat-card__label">Cash Sales</div>
+        <div class="stat-card__value"><%= number_to_currency total_cash %></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card stat-card h-100">
+      <div class="card-body">
+        <div class="stat-card__label">Credit Sales</div>
+        <div class="stat-card__value"><%= number_to_currency total_credit %></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card stat-card stat-card--highlight h-100">
+      <div class="card-body">
+        <div class="stat-card__label">Total Sales</div>
+        <div class="stat-card__value"><%= number_to_currency total_cash + total_credit %></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card card-default">
+  <div class="card-body p-4">
+    <div class="row">
+      <div class="col-lg-7">
+        <h6 class="condensed-text text-muted text-uppercase mb-3">Sales by Cashier</h6>
+
+        <div class="sales-table">
+          <div class="row sales-table__head">
+            <div class="col-3">Cashier</div>
+            <div class="col-3 text-right">Cash</div>
+            <div class="col-3 text-right">Credit</div>
+            <div class="col-3 text-right">Total</div>
+          </div>
+          <% @sales_clerks.each do |sales_clerk| %>
+            <% data = @sales_by_cashier[sales_clerk.full_name] %>
+            <div class="row align-items-center sales-table__row">
+              <div class="col-3">
+                <div class="sales-table__cashier text-truncate"><%= sales_clerk.full_name %></div>
+                <div class="sales-table__store-front text-muted text-truncate" title="<%= sales_clerk.store_front.try(:name) %>"><%= sales_clerk.store_front.try(:name) %></div>
+              </div>
+              <div class="col-3 text-right sales-table__figure"><%= number_to_currency data[:cash] %></div>
+              <div class="col-3 text-right sales-table__figure"><%= number_to_currency data[:credit] %></div>
+              <div class="col-3 text-right sales-table__figure"><b><%= number_to_currency data[:total] %></b></div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="col-lg-5 mt-4 mt-lg-0">
+        <h6 class="condensed-text text-muted text-uppercase mb-3">Total Sales per Cashier</h6>
+        <%= bar_chart @sales_by_cashier.transform_values { |v| v[:total] }, prefix: 'P', thousands: ',', colors: ['#007bff'], legend: false, height: "#{[@sales_clerks.size * 45 + 40, 220].max}px" %>
+      </div>
+    </div>
+  </div>
+</div>

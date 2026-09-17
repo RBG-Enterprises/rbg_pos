@@ -1,6 +1,9 @@
 class OtherSalesController < ApplicationController
   def new
     @other_sale = OtherSalesForm.new
+    if params[:customer_search].present?
+      @customers = current_business.customers.text_search(params[:customer_search]).limit(8)
+    end
   end
   def create
     @other_sale = OtherSalesForm.new(other_sale_params)

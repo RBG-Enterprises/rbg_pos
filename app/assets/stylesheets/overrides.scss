@@ -1,9 +1,9 @@
 .title-up {
-  font-weight: 100 !important;
+  font-weight: 600 !important;
 }
 
 .subtitle-up {
-  font-weight: 40 !important;
+  font-weight: 500 !important;
 }
 
 
@@ -138,5 +138,184 @@ $nav-pills-underline-border-width:    3px !default;
     text-transform: uppercase;
     color: #6c757d;
     margin-bottom: 0.25rem;
+  }
+}
+
+// Store index / POS screen (app/views/store/index.html.erb)
+.card-default {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.15rem 1.75rem rgba(33, 40, 50, 0.08);
+
+  .card-header {
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 0.75rem 0.75rem 0 0;
+    padding: 1rem 1.25rem;
+  }
+}
+
+.condensed-text {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.stock-result-item {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  .form-group {
+    margin-bottom: 0;
+  }
+}
+
+.cashier-row {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+// Type-ahead customer search (app/views/other_sales/new.html.erb, app/views/store/index.html.erb)
+.customer-typeahead {
+  position: relative;
+}
+
+.customer-typeahead-results-wrapper {
+  position: relative;
+}
+
+.customer-typeahead-results {
+  position: absolute;
+  z-index: 10;
+  top: 0.25rem;
+  left: 0;
+  right: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  box-shadow: 0 0.25rem 1.5rem rgba(33, 40, 50, 0.15);
+}
+
+.customer-typeahead-option {
+  border: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  text-align: left;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &:hover, &:focus {
+    background-color: rgba(0, 123, 255, 0.06);
+  }
+}
+
+.customer-typeahead-selected {
+  .badge {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+}
+
+// Sales page (app/views/sales/index.html.erb)
+.sales-page-header {
+  h3 {
+    font-size: 1.35rem;
+  }
+}
+
+.sales-toolbar {
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+
+  .btn-group .btn {
+    box-shadow: none;
+  }
+}
+
+.stat-card {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.15rem 1.75rem rgba(33, 40, 50, 0.08);
+
+  &__label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6c757d;
+    margin-bottom: 0.35rem;
+  }
+
+  &__value {
+    font-size: 1.85rem;
+    font-weight: 600;
+    color: #212529;
+  }
+
+  &--highlight {
+    background-color: #212529 !important;
+
+    .stat-card__label {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .stat-card__value {
+      color: #fff;
+    }
+  }
+}
+
+.sales-table {
+  &__head {
+    background-color: rgba(0, 0, 0, 0.025);
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6c757d;
+  }
+
+  &__row {
+    padding: 1rem 0.75rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background-color: rgba(0, 123, 255, 0.04);
+      border-radius: 0.5rem;
+    }
+  }
+
+  &__cashier {
+    font-weight: 600;
+  }
+
+  &__store-front {
+    font-size: 0.8rem;
+    max-width: 100%;
+  }
+
+  &__figure {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }

@@ -12,8 +12,8 @@
           <div class="input-group mb-3">
             <%= text_field_tag :search, params[:search], id: 'stock-search-form', class: "search-query form-control border-input", autofocus: params[:search].blank?, placeholder: "Search for items", type: "search" %>
             <span class="input-group-btn">
-              <%= button_tag(type: 'submit', class: "btn btn-default", id: params[:search].present? ? 'store-search-button' : 'stock-search-btn') do %>
-                <i class="icon-magnifier"></i> Browse Products
+              <%= button_tag(type: 'submit', class: "btn btn-outline-primary", id: params[:search].present? ? 'store-search-button' : 'stock-search-btn') do %>
+                <i class="fa fa-search"></i> Browse Products
               <% end %>
             </span>
           </div>
@@ -131,7 +131,7 @@
   <% end %>
 </div>
 
-<% if @cart.sales_order_line_items.blank? %>
+<% if @cart.sales_order_line_items.blank? && current_user.sales_clerk? %>
   <div class="row">
     <div class="col-md-12">
       <div class="card card-default">
@@ -139,26 +139,9 @@
           <h4 class="title-up mb-0"><i class="fa fa-users"></i> Cash Sales for <%= Date.current.strftime("%D") %></h4>
         </div>
         <div class="card-body">
-          <% if current_user.proprietor? %>
-            <% User.sales_clerk.includes(:store_front, :cash_on_hand_account).where(email: ['elmie@rbg.com','analyn.perez@rbg.com','nova@rbg.com', 'jenelyn.lamut@rbg.com', 'jonalyn.lagawe@rbgtech.co', 'nathalie@rbg.com', 'ronald.quirino.sales_clerk@rbg.com']).each do |sales_clerk| %>
-              <div class="row align-items-center">
-                <div class="col-md-4">
-                  <%= sales_clerk.full_name %>
-                </div>
-                <div class="col-md-3 text-muted">
-                  <%= sales_clerk.store_front.try(:name) %>
-                </div>
-                <div class="col-md-4 offset-md-1 text-right">
-                  <b><%= number_to_currency sales_clerk.cash_on_hand_account.debits_balance(from_date: Date.current.beginning_of_day, to_date: Date.current.end_of_day) %></b>
-                </div>
-              </div>
-              <hr class="mt-2 mb-2">
-            <% end %>
-          <% elsif current_user.sales_clerk? %>
-            <h4 class="title-up mb-0">
-              <%= number_to_currency current_user.cash_on_hand_account.debits_balance(from_date: Date.current.beginning_of_day, to_date: Date.current.end_of_day) %>
-            </h4>
-          <% end %>
+          <h4 class="title-up mb-0">
+            <%= number_to_currency current_user.cash_on_hand_account.debits_balance(from_date: Date.current.beginning_of_day, to_date: Date.current.end_of_day) %>
+          </h4>
         </div>
       </div>
     </div>

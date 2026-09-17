@@ -278,6 +278,7 @@ Rails.application.routes.draw do
   end
   resources :inventories, only: [:index, :show]
   resources :dashboard, only: [:index]
+  resources :sales, only: [:index]
   namespace :admin do
     resources :employees, only: [:show] do
       resources :reports,  only: [:index], module: :employees
