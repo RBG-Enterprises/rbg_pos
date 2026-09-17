@@ -1,0 +1,9 @@
+# Inventory report rebuild schedule.
+# Consumed by a scheduler (e.g. sidekiq-cron / sidekiq-scheduler).
+# Frequency is configurable here without touching inventory transaction code.
+# Initial implementation: hourly rebuild (derived reports are intentionally stale).
+inventory_report_rebuilder:
+  cron: "0 * * * *"
+  class: "InventoryReportRebuilderJob"
+  queue: default
+  description: "Rebuild per-stock InventoryReport totals from LineItem history"

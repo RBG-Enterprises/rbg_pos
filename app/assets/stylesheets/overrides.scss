@@ -76,3 +76,67 @@ $nav-pills-underline-border-width:    3px !default;
   margin-top: 4px !important;
   margin-bottom: 4px !important;
 }
+
+// Reports page (store_front_module/store_fronts/partials/_reports)
+.reports-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  &__icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6c757d, #343a40);
+    color: #fff;
+    font-size: 1.15rem;
+    margin-right: 1rem;
+  }
+}
+
+.report-card {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.15rem 1.75rem rgba(33, 40, 50, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 2rem rgba(33, 40, 50, 0.12);
+  }
+
+  &__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #6c757d;
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__title {
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+
+  &__description {
+    font-size: 0.85rem;
+  }
+
+  .form-group label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+  }
+}

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_14_200000) do
+ActiveRecord::Schema.define(version: 2026_09_18_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -301,6 +301,26 @@ ActiveRecord::Schema.define(version: 2026_09_14_200000) do
     t.index ["entry_type"], name: "index_entries_on_entry_type"
     t.index ["recorder_id"], name: "index_entries_on_recorder_id"
     t.index ["user_id"], name: "index_entries_on_user_id"
+  end
+
+  create_table "inventory_reports", force: :cascade do |t|
+    t.bigint "stock_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "store_front_id", null: false
+    t.decimal "purchases", default: "0.0", null: false
+    t.decimal "sales", default: "0.0", null: false
+    t.decimal "spoilage", default: "0.0", null: false
+    t.decimal "internal_use", default: "0.0", null: false
+    t.decimal "transfers", default: "0.0", null: false
+    t.decimal "available", default: "0.0", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.decimal "sales_returns", default: "0.0", null: false
+    t.decimal "purchase_returns", default: "0.0", null: false
+    t.decimal "for_warranties", default: "0.0", null: false
+    t.index ["product_id"], name: "index_inventory_reports_on_product_id"
+    t.index ["stock_id"], name: "index_inventory_reports_on_stock_id", unique: true
+    t.index ["store_front_id"], name: "index_inventory_reports_on_store_front_id"
   end
 
   create_table "invoices", force: :cascade do |t|
@@ -889,6 +909,9 @@ ActiveRecord::Schema.define(version: 2026_09_14_200000) do
   add_foreign_key "employee_cash_accounts", "users", column: "employee_id"
   add_foreign_key "entries", "users"
   add_foreign_key "entries", "users", column: "recorder_id"
+  add_foreign_key "inventory_reports", "products"
+  add_foreign_key "inventory_reports", "stocks"
+  add_foreign_key "inventory_reports", "store_fronts"
   add_foreign_key "ledger_accounts", "accounts"
   add_foreign_key "level_one_account_categories", "store_fronts"
   add_foreign_key "line_items", "carts"

@@ -16,12 +16,12 @@ wb.add_worksheet(name: "Products") do |sheet|
 sheet.add_row [
   stock.name,
   stock.barcode.to_s,
-  stock.purchase_quantity,
-  stock.sales.balance,
-  stock.stock_transfers.balance,
-  stock.spoilages.balance,
-  stock.internal_uses.balance,
-  stock.purchase_returns.balance,
+  @purchase_quantities[stock.id] || 0,
+  @sales_balances[stock.id] || 0,
+  @stock_transfer_balances[stock.id] || 0,
+  @spoilage_balances[stock.id] || 0,
+  @internal_use_balances[stock.id] || 0,
+  @purchase_return_balances[stock.id] || 0,
   stock.available_quantity
 ]
   end

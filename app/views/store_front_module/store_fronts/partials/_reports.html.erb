@@ -1,62 +1,150 @@
-<div class="card card-solid">
-  <div class="card-body">
-    <h3 class="title"> Reports </h3>
-    <p>Inventory Report</p>
-    Generate inventory reports for <%= @store_front.name %>
-    <%= form_tag({:action => "index", controller: "/store_front_module/store_fronts/inventories", format: 'xlsx'}, {:method => :get})  do %>
-        <div class="row">
-          <div class="col-md-3">
-            <div class="form-group">
-              <%= text_field_tag :from_date, @from_date, :class => 'datepicker form-control border-input', :placeholder => "From " %>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div clasps="form-group">
-
-              <%= text_field_tag :to_date, @to_date, :class => 'form-control border-input datepicker', :placeholder => "To " %>
-            </div>
-          </div>
-          <div class="col-md-1">
-            <button type="submit" class="btn btn-success"> Generate</button>
-          </div>
-        </div>
-      <% end %>
-      <hr>
-      <h3 class="title"> Repair Services </h3>
-      <%= form_tag({:action => "index", controller: "store_front_module/store_fronts/work_orders", format: 'xlsx'}, {:method => :get})  do %>
-        <div class="row">
-          <div class="col-md-3">
-            <div class="form-group">
-              <%= text_field_tag :from_date, @from_date, :class => 'datepicker form-control border-input', :placeholder => "From " %>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div clasps="form-group">
-              <%= text_field_tag :to_date, @to_date, :class => 'form-control border-input datepicker', :placeholder => "To " %>
-            </div>
-          </div>
-          <div class="col-md-1">
-            <button type="submit" class="btn btn-success"> Generate</button>
-          </div>
-        </div>
-      <% end %>
-
-    <h3 class="title"> Work Order Service Payments </h3>
-      <%= form_tag({:action => "index", controller: "store_front_module/store_fronts/work_order_payments", format: 'xlsx'}, {:method => :get})  do %>
-        <div class="row">
-          <div class="col-md-3">
-            <div class="form-group">
-              <%= text_field_tag :from_date, @from_date, :class => 'datepicker form-control border-input', :placeholder => "From " %>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div clasps="form-group">
-              <%= text_field_tag :to_date, @to_date, :class => 'form-control border-input datepicker', :placeholder => "To " %>
-            </div>
-          </div>
-          <div class="col-md-1">
-            <button type="submit" class="btn btn-success"> Generate</button>
-          </div>
-        </div>
-      <% end %>
+<div class="reports-header">
+  <div class="reports-header__icon"><i class="fas fa-chart-bar"></i></div>
+  <div>
+    <h3 class="title-up mb-0">Reports</h3>
+    <p class="text-muted mb-0">Generate reports for <%= @store_front.name %></p>
+  </div>
 </div>
+
+<div class="row">
+  <div class="col-12 col-md-6 col-lg-4 mb-4">
+    <div class="card report-card h-100">
+      <div class="card-body d-flex flex-column">
+        <div class="report-card__icon">
+          <i class="fas fa-boxes"></i>
+        </div>
+        <h5 class="report-card__title">Inventory Report</h5>
+        <p class="report-card__description text-muted flex-grow-1">
+          Purchases, sales, transfers, and adjustments as of a specific date.
+        </p>
+
+        <%= form_tag({ action: "index", controller: "/store_front_module/store_fronts/inventories", store_front_id: @store_front.id, format: "csv" }, method: :get, class: "js-report-form") do %>
+          <%= hidden_field_tag :download_token, "" %>
+          <div class="form-group">
+            <%= label_tag :as_of_date, "As of Date" %>
+            <%= text_field_tag :as_of_date, @as_of_date, class: "datepicker form-control", placeholder: "Today" %>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block js-report-submit">
+            <i class="fas fa-download mr-1"></i> Generate
+          </button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-6 col-lg-4 mb-4">
+    <div class="card report-card h-100">
+      <div class="card-body d-flex flex-column">
+        <div class="report-card__icon">
+          <i class="fas fa-tools"></i>
+        </div>
+        <h5 class="report-card__title">Repair Services</h5>
+        <p class="report-card__description text-muted flex-grow-1">
+          Work orders received within a date range.
+        </p>
+
+        <%= form_tag({ action: "index", controller: "store_front_module/store_fronts/work_orders", store_front_id: @store_front.id, format: "csv" }, method: :get, class: "js-report-form") do %>
+          <%= hidden_field_tag :download_token, "" %>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <%= label_tag :from_date, "From" %>
+              <%= text_field_tag :from_date, @from_date, class: "datepicker form-control", placeholder: "From" %>
+            </div>
+            <div class="form-group col-6">
+              <%= label_tag :to_date, "To" %>
+              <%= text_field_tag :to_date, @to_date, class: "datepicker form-control", placeholder: "To" %>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block js-report-submit">
+            <i class="fas fa-download mr-1"></i> Generate
+          </button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-6 col-lg-4 mb-4">
+    <div class="card report-card h-100">
+      <div class="card-body d-flex flex-column">
+        <div class="report-card__icon">
+          <i class="fas fa-file-invoice-dollar"></i>
+        </div>
+        <h5 class="report-card__title">Work Order Service Payments</h5>
+        <p class="report-card__description text-muted flex-grow-1">
+          Service payments received within a date range.
+        </p>
+
+        <%= form_tag({ action: "index", controller: "store_front_module/store_fronts/work_order_payments", store_front_id: @store_front.id, format: "csv" }, method: :get, class: "js-report-form") do %>
+          <%= hidden_field_tag :download_token, "" %>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <%= label_tag :from_date, "From" %>
+              <%= text_field_tag :from_date, @from_date, class: "datepicker form-control", placeholder: "From" %>
+            </div>
+            <div class="form-group col-6">
+              <%= label_tag :to_date, "To" %>
+              <%= text_field_tag :to_date, @to_date, class: "datepicker form-control", placeholder: "To" %>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block js-report-submit">
+            <i class="fas fa-download mr-1"></i> Generate
+          </button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var COOKIE_NAME = "report_download_token";
+
+    function getCookie(name) {
+      var match = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)"));
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+
+    function clearCookie(name) {
+      document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
+
+    document.querySelectorAll(".js-report-form").forEach(function (form) {
+      form.addEventListener("submit", function () {
+        var button = form.querySelector(".js-report-submit");
+        var tokenField = form.querySelector('input[name="download_token"]');
+        if (!button || !tokenField) return;
+
+        var token = Date.now().toString(36) + Math.random().toString(36).slice(2);
+        tokenField.value = token;
+
+        var originalHtml = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Generating&hellip;';
+
+        function restore() {
+          button.disabled = false;
+          button.innerHTML = originalHtml;
+        }
+
+        function finish() {
+          button.innerHTML = '<i class="fas fa-check mr-1"></i> Report Generated';
+          setTimeout(restore, 3000);
+        }
+
+        var elapsed = 0;
+        var interval = setInterval(function () {
+          elapsed += 500;
+          if (getCookie(COOKIE_NAME) === token) {
+            clearCookie(COOKIE_NAME);
+            clearInterval(interval);
+            finish();
+          } else if (elapsed >= 120000) {
+            // Safety net: don't leave the button stuck disabled forever.
+            clearInterval(interval);
+            restore();
+          }
+        }, 500);
+      });
+    });
+  })();
+</script>

@@ -8,6 +8,7 @@ module StoreFronts
     belongs_to :store_front
     belongs_to :product
     belongs_to :unit_of_measurement, class_name: "StoreFrontModule::UnitOfMeasurement"
+    has_one    :inventory_report, class_name: "InventoryReport", dependent: :destroy
     has_one    :purchase,            class_name: "StoreFrontModule::LineItems::PurchaseOrderLineItem"
     has_many   :sales,
       class_name: "StoreFrontModule::LineItems::SalesOrderLineItem",

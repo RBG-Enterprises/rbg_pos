@@ -27,4 +27,14 @@ class ApplicationController < ActionController::Base
   def current_business
     current_user.business
   end
+
+  # Pairs with the js-report-form/js-report-submit behavior in
+  # store_front_module/store_fronts/partials/_reports: the browser polls for
+  # this cookie to know the file response has started and stop showing its
+  # "Generating..." spinner. Call right before assigning self.response_body.
+  def signal_report_download_started
+    return if params[:download_token].blank?
+
+    cookies[:report_download_token] = { value: params[:download_token], path: "/" }
+  end
 end
