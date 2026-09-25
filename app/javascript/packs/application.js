@@ -31,6 +31,18 @@ document.addEventListener("turbolinks:load", () => {
     }).datepicker("setDate", "0");;
   $('.chosen-select').chosen({width: "95%"});
 
+  var tabsNav = document.getElementById('session-detail-tabs')
+  if (tabsNav) {
+    var hash = window.location.hash
+    if (hash) {
+      var trigger = tabsNav.querySelector('a[href="' + hash + '"]')
+      if (trigger) { $(trigger).tab('show') }
+    }
+    $(tabsNav).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
+      history.replaceState(null, null, e.target.getAttribute('href'))
+    })
+  }
+
   document.querySelectorAll('[data-live-search]').forEach((input) => {
     var delay = parseInt(input.dataset.liveSearchDelay, 10) || 300
     var timeout

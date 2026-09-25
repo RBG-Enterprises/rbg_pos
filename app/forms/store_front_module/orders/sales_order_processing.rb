@@ -10,7 +10,8 @@ module StoreFrontModule
                      :employee_id,
                      :cart_id,
                      :reference_number,
-                     :account_number
+                     :account_number,
+                     :cash_register_session_id
       validates :cart_id,
                 :employee_id,
                 :customer_id,
@@ -43,7 +44,8 @@ module StoreFrontModule
           commercial_document: find_customer,
           account_number:      account_number,
           search_term:         find_customer.name,
-          reference_number:    reference_number)
+          reference_number:    reference_number,
+          cash_register_session_id: cash_register_session_id)
 
           CashPayment.create!(
             cash_paymentable: order,

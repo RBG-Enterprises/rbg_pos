@@ -56,6 +56,11 @@ Rails.application.routes.draw do
   resources :line_items, only: [:new, :create, :edit, :update]
   resources :orders, only: [:index, :show, :new, :create, :destroy]
   resources :carts, only: [:destroy]
+  resources :cash_register_sessions, only: [:index, :show, :update] do
+    member do
+      patch :close
+    end
+  end
   resources :categories, only: [:new, :create]
   resources :reports, only: [:index]
   resources :customer_registrations, only: [:new, :create]
@@ -149,7 +154,7 @@ Rails.application.routes.draw do
   end
 
   resources :sections, only: [:new, :create]
-  resources :other_sales, only: [:new, :create]
+  resources :other_sales, only: [:new, :create, :show]
   resources :entries, only: [:destroy]
   resources :capital_withdrawals, only: [:new, :create]
   resources :accessories, only: [:destroy]
@@ -196,7 +201,7 @@ Rails.application.routes.draw do
       resources :credit_sales_order_processings, only: [:create], module: :order_processings
     end
     resources :credit_sales_orders, only: [:show] do
-      resources :payments, only: [:new, :create], module: :credit_sales_orders
+      resources :payments, only: [:new, :create, :show], module: :credit_sales_orders
     end
     resources :line_items, only: [:show]
     resources :spoilages, only: [:index, :show], module: :orders
@@ -232,14 +237,14 @@ Rails.application.routes.draw do
     resources :internal_use_order_line_item_processings, only: [:new, :create, :destroy], module: :line_items
     resources :purchase_order_processings, only: [:create], module: :orders
     resources :purchase_return_order_processings, only: [:create], module: :orders
-    resources :sales_order_processings, only: [:create], module: :orders
+    resources :sales_order_processings, only: [:create, :show], module: :orders
     resources :stock_transfer_order_processings, only: [:create], module: :orders
     resources :sales_return_order_processings, only: [:create], module: :orders
     resources :internal_use_order_processings, only: [:create], module: :orders
   end
 
   resources :voucher_amounts, only: [:destroy]
-  resources :vouchers, only: [:index, :show] do
+  resources :vouchers, only: [:index, :show, :destroy] do
     resources :disbursements, only: [:new, :create], module: :vouchers
     resources :confirmations, only: [:create], module: :vouchers
   end

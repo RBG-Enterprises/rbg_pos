@@ -1,0 +1,45 @@
+<div class="row">
+  <div class="col-md-6 offset-md-3">
+    <div class="card card-solid">
+      <div class="card-header">
+        <h4 class="subtitle-up">Other Sale Details</h4>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="text-muted mb-1">Date</p>
+            <p><%= @order.date.try(:strftime, "%B %e, %Y") %></p>
+          </div>
+          <div class="col-md-6">
+            <p class="text-muted mb-1">Reference #</p>
+            <p><%= @order.reference_number %></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="text-muted mb-1">Customer</p>
+            <p><%= @voucher.payee_name %></p>
+          </div>
+          <div class="col-md-6">
+            <p class="text-muted mb-1">Amount</p>
+            <p class="font-weight-bold"><%= number_to_currency @voucher.payable_amount %></p>
+          </div>
+        </div>
+        <% if @order.description.present? %>
+          <p class="text-muted mb-1">Description</p>
+          <p><%= @order.description %></p>
+        <% end %>
+        <hr>
+
+        <% if !@voucher.disbursed? %>
+          <div class="card-footer">
+            <%= link_to 'Confirm Transaction', voucher_confirmations_path(voucher_id: @voucher.id, return_to: store_index_path), method: :post, class: 'btn btn-primary float-right' %>
+            <%= link_to 'Cancel', voucher_path(@voucher, return_to: store_index_path), method: :delete, class: 'btn btn-outline-secondary float-right mr-2', data: { confirm: 'Cancel this other sale?' } %>
+          </div>
+        <% else %>
+          <span class="badge badge-success">Confirmed</span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

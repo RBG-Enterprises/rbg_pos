@@ -70,7 +70,9 @@ module StoreFrontModule
       def total_cost
         if line_items.present? || other_sales_line_items.present?
           total_line_items_cost +
-          other_sales_line_items.total_cost
+          # to_a: sum the (possibly preloaded) records in Ruby instead of
+          # firing a fresh query per order via the OtherSalesLineItem.total_cost scope.
+          other_sales_line_items.to_a.sum(&:amount)
         elsif cash_payment.present?
           cash_payment.cash_tendered
         else

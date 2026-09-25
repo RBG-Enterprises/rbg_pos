@@ -5,6 +5,7 @@ module AccountingModule
     enum entry_type: [:cash_order, :credit_order, :cash_stock, :credit_stock, :customer_credit_payment, :expense, :supplier_credit_payment,
       :work_order_credit, :work_order_payment, :work_order_service_charge, :stock_transfer, :fund_transfer, :other_sale, :owner_withdraw]
     belongs_to :commercial_document, :polymorphic => true, optional: true
+    belongs_to :cash_register_session, optional: true
     belongs_to :user,          optional: true
     belongs_to :recorder,      class_name: "User", optional: true
     has_many :amounts,         class_name: "AccountingModule::Amount", dependent: :destroy
@@ -22,6 +23,7 @@ module AccountingModule
     accepts_nested_attributes_for :credit_amounts, :debit_amounts, allow_destroy: true
 
     before_save :set_default_date
+    before_validation :assign_cash_register_session, on: :create
 
     delegate :first_and_last_name, :name, to: :recorder, prefix: true, allow_nil: true
     delegate :name, to: :commercial_document, prefix: true, allow_nil: true
@@ -47,6 +49,19 @@ module AccountingModule
     end
 
     private
+      def assign_cash_register_session
+        return if cash_register_session_id.present?
+
+        actor = recorder || user
+        return if actor.blank?
+
+        record_date = (entry_date.presence && entry_date.to_date) || Date.current
+        self.cash_register_session =
+          actor.cash_register_sessions.open.for_day(record_date).first ||
+          actor.cash_register_sessions.open.recent.first
+      rescue StandardError
+        nil
+      end
       def set_default_date
         todays_date = ActiveRecord::Base.default_timezone == :utc ? Time.now.utc : Time.now
         self.entry_date ||= todays_date

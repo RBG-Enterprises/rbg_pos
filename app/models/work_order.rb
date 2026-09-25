@@ -2,6 +2,8 @@ class WorkOrder < ApplicationRecord
   include PgSearch::Model
   enum status: [:received, :work_in_progress, :done,  :released, :return_to_owner]
 
+  has_one_attached :signature
+
   pg_search_scope :text_search, against: [:service_number, :reported_problem, :physical_condition, :customer_name, :product_name],
   :associated_against => { :charge_invoice => [:number], product_unit: [:description, :model_number, :serial_number] }
   multisearchable :against => [:description, :model_number, :serial_number, :reported_problem, :physical_condition, :service_number, :customer_name, :product_name]

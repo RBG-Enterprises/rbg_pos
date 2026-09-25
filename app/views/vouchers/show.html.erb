@@ -35,6 +35,7 @@
           <% end %>
           <div class="card-footer">
             <%= link_to 'Confirm Transaction', voucher_confirmations_path(voucher_id: @voucher.id), method: :post, class: 'btn btn-primary float-right' %>
+            <%= link_to 'Cancel', voucher_path(@voucher), method: :delete, class: 'btn btn-outline-secondary float-right mr-2', data: { confirm: 'Cancel this pending voucher?' } %>
         </div>
       </div>
     </div>

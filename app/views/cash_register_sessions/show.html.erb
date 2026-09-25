@@ -1,0 +1,253 @@
+<% session = @cash_register_session %>
+<% can_manage = session.employee_id == current_user.id || current_user.proprietor? %>
+<% variance_ok = (session.variance_amount || 0) == 0 %>
+<% show_close_tab = session.open? && can_manage %>
+
+<div class="row">
+  <!-- LEFT: session identity card, AdminLTE profile pattern -->
+  <div class="col-md-3">
+    <div class="card">
+      <div class="card-body text-center">
+        <% if session.employee.present? %>
+          <%= image_tag(session.employee.avatar, class: "profile-user-img img-fluid img-circle") %>
+        <% end %>
+        <h3 class="profile-username"><%= session.employee.try(:full_name) %></h3>
+        <p class="text-muted mb-3"><%= session.cash_account.try(:name) %></p>
+
+        <ul class="list-group list-group-unbordered mb-3">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <b>Status</b> <span><%= session.status %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <b>Opened</b> <span><%= session.opened_at.try(:strftime, "%b %e, %I:%M %p") %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <b>Closed</b> <span><%= session.closed_at.try(:strftime, "%b %e, %I:%M %p") || '—' %></span>
+          </li>
+          <% if session.store_front.present? %>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <b>Branch</b> <span><%= session.store_front.name %></span>
+            </li>
+          <% end %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <b><%= session.open? ? 'Expected in drawer' : 'Ending balance' %></b>
+            <span class="font-weight-bold"><%= number_to_currency(session.open? ? session.expected_cash : session.ending_balance) %></span>
+          </li>
+        </ul>
+
+        <% if session.open? && can_manage %>
+          <%= link_to new_employee_remittance_path(employee_id: session.employee_id, cash_account_id: session.cash_account_id), class: "btn btn-outline-secondary btn-block" do %>
+            <i class="fa-solid fa-money-bill-transfer mr-1"></i> Transfer
+          <% end %>
+        <% end %>
+        <div class="btn-group btn-block">
+          <%= link_to cash_register_session_path(session, format: :pdf), class: "btn btn-outline-secondary" do %>
+            <i class="fa-solid fa-file-pdf mr-1"></i> PDF
+          <% end %>
+          <%= link_to cash_register_session_path(session, format: :csv), class: "btn btn-outline-secondary" do %>
+            <i class="fa-solid fa-file-csv mr-1"></i> CSV
+          <% end %>
+        </div>
+        <%= link_to cash_register_sessions_path, class: "btn btn-outline-secondary btn-block" do %>
+          <i class="fa-solid fa-list mr-1"></i> All sessions
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: tabbed detail card, AdminLTE profile pattern -->
+  <div class="col-md-9">
+    <div class="card">
+      <div class="card-header p-2">
+        <ul class="nav nav-pills" id="session-detail-tabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="summary-tab" data-toggle="tab" href="#summary-pane" role="tab" aria-controls="summary-pane" aria-selected="true">
+              Summary
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="items-tab" data-toggle="tab" href="#items-pane" role="tab" aria-controls="items-pane" aria-selected="false">
+              Items <span class="badge badge-light ml-1"><%= @items_summary.size %></span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="cash-receipts-tab" data-toggle="tab" href="#cash-receipts-pane" role="tab" aria-controls="cash-receipts-pane" aria-selected="false">
+              Cash Receipts <span class="badge badge-light ml-1"><%= @cash_receipts.count %></span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="credit-sales-tab" data-toggle="tab" href="#credit-sales-pane" role="tab" aria-controls="credit-sales-pane" aria-selected="false">
+              Credit sales <span class="badge badge-light ml-1"><%= @credit_sales_orders.count %></span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="transfers-tab" data-toggle="tab" href="#transfers-pane" role="tab" aria-controls="transfers-pane" aria-selected="false">
+              Transfers <span class="badge badge-light ml-1"><%= @transfer_entries.count %></span>
+            </a>
+          </li>
+          <% if show_close_tab %>
+            <li class="nav-item">
+              <a class="nav-link" id="close-tab" data-toggle="tab" href="#close-pane" role="tab" aria-controls="close-pane" aria-selected="false">
+                Close shift
+              </a>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+      <div class="card-body">
+        <div class="tab-content" id="session-detail-tabs-content">
+          <div class="tab-pane fade show active" id="summary-pane" role="tabpanel" aria-labelledby="summary-tab">
+            <div class="table-responsive">
+              <table class="table table-striped mb-0">
+                <tbody>
+                  <tr>
+                    <td>Beginning balance</td>
+                    <td class="text-right"><%= number_to_currency(session.beginning_balance) %></td>
+                  </tr>
+                  <tr>
+                    <td>Add: Cash receipts <span class="text-muted">(<%= @cash_receipts.count %>)</span></td>
+                    <td class="text-right"><%= number_to_currency(session.cash_receipts_total) %></td>
+                  </tr>
+                  <tr>
+                    <td>Add: Transfers in <span class="text-muted">(<%= @transfer_entries.count %>)</span></td>
+                    <td class="text-right"><%= number_to_currency(session.transfers_in_total) %></td>
+                  </tr>
+                  <tr>
+                    <td>Less: Transfers (out) &amp; refunds</td>
+                    <td class="text-right">(<%= number_to_currency(session.cash_credits_total) %>)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Ending balance</strong></td>
+                    <td class="text-right"><strong><%= number_to_currency(session.expected_cash) %></strong></td>
+                  </tr>
+                  <% if session.closing_declared_amount.present? %>
+                    <tr>
+                      <td>Counted</td>
+                      <td class="text-right"><%= number_to_currency(session.closing_declared_amount) %></td>
+                    </tr>
+                    <tr>
+                      <td>Variance <span class="text-muted">(short / over)</span></td>
+                      <td class="text-right <%= variance_ok ? '' : 'text-danger font-weight-bold' %>">
+                        <%= number_to_currency(session.variance_amount || 0) %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+            <% if session.opening_note.present? %>
+              <p class="mb-0 mt-3"><b>Opening Note</b><br><span class="text-muted"><%= session.opening_note %></span></p>
+            <% end %>
+            <% if session.closing_note.present? %>
+              <p class="mb-0 mt-3"><b>Closing Note</b><br><span class="text-muted"><%= session.closing_note %></span></p>
+            <% end %>
+          </div>
+
+          <div class="tab-pane fade" id="items-pane" role="tabpanel" aria-labelledby="items-tab">
+            <% if @items_summary.blank? %>
+              <p class="text-muted text-center mb-0 py-4"><i class="fa-solid fa-basket-shopping mr-1"></i>No items sold in this session yet.</p>
+            <% else %>
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead><tr><th>Item</th><th class="text-right">Qty</th><th class="text-right">Amount</th></tr></thead>
+                  <tbody>
+                    <% @items_summary.each do |row| %>
+                      <tr>
+                        <td class="font-weight-bold"><%= row[:name] %></td>
+                        <td class="text-right"><%= row[:quantity] %></td>
+                        <td class="text-right"><%= number_to_currency(row[:amount]) %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="tab-pane fade" id="cash-receipts-pane" role="tabpanel" aria-labelledby="cash-receipts-tab">
+            <% if @cash_receipts.blank? %>
+              <p class="text-muted text-center mb-0 py-4"><i class="fa-solid fa-receipt mr-1"></i>No cash receipts recorded yet.</p>
+            <% else %>
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead><tr><th>Time</th><th>Type</th><th>Customer</th><th class="text-right">Amount</th></tr></thead>
+                  <tbody>
+                    <% @cash_receipts.each do |row| %>
+                      <% source_path = cash_receipt_source_path(row[:order]) %>
+                      <tr class="<%= 'clickable-row' if source_path.present? %>" <%= "onclick=\"window.location='#{source_path}'\"".html_safe if source_path.present? %>>
+                        <td class="text-muted"><%= row[:date].try(:strftime, "%I:%M %p") %></td>
+                        <td><%= row[:kind] %></td>
+                        <td><%= row[:customer_name] %></td>
+                        <td class="text-right font-weight-bold"><%= number_to_currency(row[:amount]) %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="tab-pane fade" id="credit-sales-pane" role="tabpanel" aria-labelledby="credit-sales-tab">
+            <% if @credit_sales_orders.blank? %>
+              <p class="text-muted text-center mb-0 py-4"><i class="fa-solid fa-credit-card mr-1"></i>No credit sales in this session.</p>
+            <% else %>
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead><tr><th>Time</th><th>OR</th><th>Customer</th><th class="text-right">Total</th></tr></thead>
+                  <tbody>
+                    <% @credit_sales_orders.each do |order| %>
+                      <tr>
+                        <td class="text-muted"><%= order.date.try(:strftime, "%I:%M %p") %></td>
+                        <td><%= order.reference_number %></td>
+                        <td><%= order.commercial_document.try(:name) %></td>
+                        <td class="text-right font-weight-bold"><%= number_to_currency(order.total_cost_less_discount) %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="tab-pane fade" id="transfers-pane" role="tabpanel" aria-labelledby="transfers-tab">
+            <% if @transfer_entries.blank? %>
+              <p class="text-muted text-center mb-0 py-4"><i class="fa-solid fa-money-bill-transfer mr-1"></i>No transfers in this session.</p>
+            <% else %>
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead><tr><th>Time</th><th>Description</th><th class="text-right">In</th><th class="text-right">Out</th></tr></thead>
+                  <tbody>
+                    <% @transfer_entries.each do |entry| %>
+                      <tr>
+                        <td class="text-muted"><%= entry.entry_date.try(:strftime, "%I:%M %p") %></td>
+                        <td><%= entry.description %></td>
+                        <td class="text-right"><%= number_to_currency(entry.debit_amounts.where(account: session.cash_account).sum(:amount)) %></td>
+                        <td class="text-right"><%= number_to_currency(entry.credit_amounts.where(account: session.cash_account).sum(:amount)) %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            <% end %>
+          </div>
+
+          <% if show_close_tab %>
+            <div class="tab-pane fade" id="close-pane" role="tabpanel" aria-labelledby="close-tab">
+              <%= form_tag close_cash_register_session_path(session), method: :patch, class: "col-md-6 px-0" do %>
+                <div class="form-group">
+                  <label for="closing_declared_amount">Counted cash</label>
+                  <%= number_field_tag :closing_declared_amount, session.closing_declared_amount, step: 0.01, min: 0, placeholder: "0.00", class: "form-control form-control-lg", required: true, id: "closing_declared_amount" %>
+                </div>
+                <div class="form-group">
+                  <label for="closing_note">Closing note</label>
+                  <%= text_field_tag :closing_note, session.closing_note, placeholder: "Optional note…", class: "form-control", id: "closing_note" %>
+                </div>
+                <%= submit_tag "Close Shift & Generate Report", class: "btn btn-primary", data: { confirm: "Close this cash session and generate the EOD report?" } %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

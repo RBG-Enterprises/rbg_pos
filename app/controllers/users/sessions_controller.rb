@@ -8,14 +8,21 @@ class Users::SessionsController < Devise::SessionsController
   # end
 
   # POST /resource/sign_in
-  # def create
-  #   super
-  # end
+  def create
+    super do |user|
+      CashRegisterSessions::OpenForDay.call(employee: user, date: Date.current)
+    end
+  end
 
   # DELETE /resource/sign_out
-  # def destroy
-  #   super
-  # end
+  def destroy
+    if current_user && (open_session = current_user.current_cash_register_session)
+      redirect_to cash_register_session_path(open_session),
+                  alert: "Close your cash register session before logging out." and return
+    end
+
+    super
+  end
 
   # protected
 

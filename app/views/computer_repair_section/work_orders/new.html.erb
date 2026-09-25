@@ -87,6 +87,39 @@
 
     <%= f.input :expiry_date, as: :string, input_html: { class: "datepicker" } %>
   </div>
+
+  <div class="form-group">
+    <label>Accessories</label>
+    <table class="table table-sm" id="accessories-table">
+      <thead>
+        <tr>
+          <th style="width: 15%">Qty</th>
+          <th>Description</th>
+          <th>Serial Number</th>
+          <th style="width: 5%"></th>
+        </tr>
+      </thead>
+      <tbody id="accessories-rows">
+        <tr class="accessory-row">
+          <td><input type="number" step="1" min="0" name="work_orders_registration[accessories][][quantity]" class="form-control form-control-sm"></td>
+          <td><input type="text" name="work_orders_registration[accessories][][description]" class="form-control form-control-sm"></td>
+          <td><input type="text" name="work_orders_registration[accessories][][serial_number]" class="form-control form-control-sm"></td>
+          <td><button type="button" class="btn btn-outline-danger btn-sm remove-accessory-btn">&times;</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <button type="button" id="add-accessory-btn" class="btn btn-outline-primary btn-sm">+ Add Accessory</button>
+  </div>
+
+  <%= f.input :signature, as: :hidden, input_html: { id: 'signature-data' } %>
+  <div class="form-group">
+    <label>Client Signature</label>
+    <div>
+      <canvas id="signature-pad" width="600" height="150" style="border: 1px solid #ccc; background-color: #fff; touch-action: none;"></canvas>
+    </div>
+    <button type="button" id="clear-signature-btn" class="btn btn-outline-secondary btn-sm mt-1">Clear Signature</button>
+  </div>
+
   <hr>
     <%= f.submit "Save Work Order", class: "btn btn-primary float-right" %>
 
@@ -131,4 +164,99 @@
       theme: "bootstrap"
     });
   });
+</script>
+
+<script>
+  (function() {
+    var canvas = document.getElementById('signature-pad');
+    var context = canvas.getContext('2d');
+    context.lineWidth = 2;
+    context.lineJoin = 'round';
+    context.lineCap = 'round';
+    context.strokeStyle = '#000';
+
+    var drawing = false;
+    var hasSignature = false;
+
+    function getPosition(event) {
+      var rect = canvas.getBoundingClientRect();
+      var point = event.touches ? event.touches[0] : event;
+      return {
+        x: point.clientX - rect.left,
+        y: point.clientY - rect.top
+      };
+    }
+
+    function startDrawing(event) {
+      drawing = true;
+      hasSignature = true;
+      var position = getPosition(event);
+      context.beginPath();
+      context.moveTo(position.x, position.y);
+      event.preventDefault();
+    }
+
+    function draw(event) {
+      if (!drawing) { return; }
+      var position = getPosition(event);
+      context.lineTo(position.x, position.y);
+      context.stroke();
+      event.preventDefault();
+    }
+
+    function stopDrawing(event) {
+      drawing = false;
+    }
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseleave', stopDrawing);
+    canvas.addEventListener('touchstart', startDrawing);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stopDrawing);
+
+    document.getElementById('clear-signature-btn').addEventListener('click', function() {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      hasSignature = false;
+      document.getElementById('signature-data').value = '';
+    });
+
+    canvas.closest('form').addEventListener('submit', function() {
+      document.getElementById('signature-data').value = hasSignature ? canvas.toDataURL('image/png') : '';
+    });
+  })();
+</script>
+
+<script>
+  (function() {
+    var rowsContainer = document.getElementById('accessories-rows');
+    var addBtn = document.getElementById('add-accessory-btn');
+
+    function buildRow() {
+      var row = document.createElement('tr');
+      row.className = 'accessory-row';
+      row.innerHTML =
+        '<td><input type="number" step="1" min="0" name="work_orders_registration[accessories][][quantity]" class="form-control form-control-sm"></td>' +
+        '<td><input type="text" name="work_orders_registration[accessories][][description]" class="form-control form-control-sm"></td>' +
+        '<td><input type="text" name="work_orders_registration[accessories][][serial_number]" class="form-control form-control-sm"></td>' +
+        '<td><button type="button" class="btn btn-outline-danger btn-sm remove-accessory-btn">&times;</button></td>';
+      return row;
+    }
+
+    addBtn.addEventListener('click', function() {
+      rowsContainer.appendChild(buildRow());
+    });
+
+    rowsContainer.addEventListener('click', function(event) {
+      if (!event.target.classList.contains('remove-accessory-btn')) { return; }
+
+      var row = event.target.closest('tr');
+      if (rowsContainer.querySelectorAll('.accessory-row').length > 1) {
+        row.remove();
+      } else {
+        row.querySelectorAll('input').forEach(function(input) { input.value = ''; });
+      }
+    });
+  })();
 </script>

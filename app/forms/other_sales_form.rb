@@ -1,6 +1,6 @@
 class OtherSalesForm
   include ActiveModel::Model
-  attr_accessor :description, :reference_number, :recorder_id, :amount, :date, :customer_id, :account_number, :sales_order_id
+  attr_accessor :description, :reference_number, :recorder_id, :amount, :date, :customer_id, :account_number, :sales_order_id, :cash_register_session_id
   validates :amount, :description, :customer_id, :date, presence: true
 
   def find_order
@@ -22,7 +22,8 @@ class OtherSalesForm
       employee_id: recorder_id,
       reference_number: reference_number,
       store_front: find_employee.store_front,
-      account_number: account_number)
+      account_number: account_number,
+      cash_register_session_id: cash_register_session_id)
       create_accounts(order)
       order.save!
     order.create_cash_payment(cash_tendered: amount)

@@ -6,6 +6,7 @@ module Vouchers
     def initialize(args)
       @order                 = args.fetch(:order)
       @employee              = args.fetch(:employee)
+      @voucher_class         = args[:voucher_class] || Voucher
       @store_front           = @employee.store_front
       @cash_on_hand          = @employee.cash_on_hand_account
       @sales_discount        = @store_front.sales_discount_account
@@ -14,14 +15,15 @@ module Vouchers
       @cost_of_goods_sold    = @store_front.cost_of_goods_sold_account
     end
     def create_voucher!
-      voucher = Voucher.new(
+      voucher = @voucher_class.new(
         description: order.line_items_name,
-        date: order.date,
+        date: Voucher.transaction_time_for(order.date),
         payee: order.customer,
         preparer: order.employee,
         reference_number: SecureRandom.uuid,
         commercial_document: order,
-        account_number: order.account_number
+        account_number: order.account_number,
+        cash_register_session: order.cash_register_session
       )
 
       voucher.voucher_amounts.debit.build(

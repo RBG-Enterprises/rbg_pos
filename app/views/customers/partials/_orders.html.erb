@@ -1,7 +1,9 @@
 <div class="tab-pane <%= 'active' if current_page? customer_orders_path(@customer)%>" id="customer-orders">
   <div class="content">
-    <%= link_to 'New Credit Sales', new_store_front_module_customer_credit_sales_order_line_item_processing_path(@customer), class: "btn btn-primary" %>
-    <%= link_to 'New Credit(Others)', new_customer_other_credit_path(@customer), class: "btn btn-warning" %>
+    <% if cash_register_session_open? %>
+      <%= link_to 'New Credit Sales', new_store_front_module_customer_credit_sales_order_line_item_processing_path(@customer), class: "btn btn-primary" %>
+      <%= link_to 'New Credit(Others)', new_customer_other_credit_path(@customer), class: "btn btn-warning" %>
+    <% end %>
     <br>
     <br>
     <%=form_tag customer_orders_path(@customer), method: :get, id: "search-form" do %>
@@ -52,7 +54,7 @@
                 </td>
 	            <td><%= number_to_currency order.total_cost %></td>
               <td width='100px'><%= number_to_currency order.balance %><br>
-                <% if order.has_balance? %>
+                <% if order.has_balance? && cash_register_session_open? %>
                   <%= link_to 'New Payment', new_store_front_module_credit_sales_order_payment_path(order), class: "btn btn-primary btn-sm" %>
                 <% end %>
               </td>

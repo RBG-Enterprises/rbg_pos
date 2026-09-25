@@ -9,11 +9,18 @@ module RepairServicesModule
       @payment = RepairServicesModule::PaymentProcessing.new(payment_params)
       if @payment.valid?
         @payment.process!
-        redirect_to computer_repair_section_work_order_url(@work_order), notice: "Payment saved successfully"
+        redirect_to repair_services_module_work_order_payment_processing_path(@work_order, @payment.voucher),
+                    notice: "Review and confirm the payment."
       else
         render :new
       end
     end
+
+    def show
+      @work_order = WorkOrder.find(params[:work_order_id])
+      @voucher = Voucher.find(params[:id])
+    end
+
     private
     def payment_params
       params.require(:repair_services_module_payment_processing).permit(:description, :amount, :date, :employee_id, :customer_id, :work_order_id, :expense_amount, :expense_account_id)

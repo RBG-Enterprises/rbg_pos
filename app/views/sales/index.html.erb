@@ -68,8 +68,9 @@
             <% data = @sales_by_cashier[sales_clerk.full_name] %>
             <div class="row align-items-center sales-table__row">
               <div class="col-3">
-                <div class="sales-table__cashier text-truncate"><%= sales_clerk.full_name %></div>
-                <div class="sales-table__store-front text-muted text-truncate" title="<%= sales_clerk.store_front.try(:name) %>"><%= sales_clerk.store_front.try(:name) %></div>
+                <div class="sales-table__cashier-cell">
+                  <%= render "users/partials/cashier_identity", cashier: sales_clerk %>
+                </div>
               </div>
               <div class="col-3 text-right sales-table__figure"><%= number_to_currency data[:cash] %></div>
               <div class="col-3 text-right sales-table__figure"><%= number_to_currency data[:credit] %></div>

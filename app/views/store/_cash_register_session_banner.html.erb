@@ -1,0 +1,57 @@
+<% if @cash_register_session.present? %>
+  <div class="card cash-register-banner mb-4">
+    <div class="card-body">
+      <div class="d-flex align-items-center flex-wrap">
+        <div class="cash-register-banner__icon">
+          <i class="fa-solid fa-cash-register"></i>
+        </div>
+        <div class="mr-3">
+          <div class="d-flex align-items-center flex-wrap">
+            <span class="cash-register-banner__date mr-2">
+              <%= @cash_register_session.session_date.strftime("%B %e, %Y") %>
+            </span>
+          </div>
+          <small class="text-muted cash-register-banner__account"><%= @cash_register_session.cash_account.try(:name) %></small>
+        </div>
+
+        <% if @cash_register_session.open? && @cash_register_session.opening_declared_amount.present? %>
+          <div class="text-right ml-auto mr-3 mb-2 mb-md-0">
+            <div class="cash-register-banner__balance-label">Opening balance</div>
+            <div class="cash-register-banner__balance-value"><%= number_to_currency(@cash_register_session.opening_declared_amount) %></div>
+          </div>
+
+          <div class="d-flex flex-wrap">
+            <%= link_to cash_register_session_path(@cash_register_session), class: "btn btn-primary mr-2 mb-1" do %>
+              <i class="fa-solid fa-arrow-right-to-bracket"></i> Open session
+            <% end %>
+            <%= link_to cash_register_session_path(@cash_register_session, format: :pdf), class: "btn btn-outline-secondary mr-2 mb-1" do %>
+              <i class="fa-solid fa-file-pdf"></i> PDF
+            <% end %>
+            <%= link_to cash_register_session_path(@cash_register_session, format: :csv), class: "btn btn-outline-secondary mb-1" do %>
+              <i class="fa-solid fa-file-csv"></i> CSV
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <% if @cash_register_session.open? && @cash_register_session.opening_declared_amount.blank? %>
+        <div class="cash-register-banner__setup mt-3">
+          <div class="cash-register-banner__setup-title">Declare your starting cash</div>
+          <%= simple_form_for @cash_register_session, url: cash_register_session_path(@cash_register_session), method: :patch do |f| %>
+            <div class="form-row align-items-end">
+              <div class="col-md-3">
+                <%= f.input :opening_declared_amount, label: "Opening cash", input_html: { autofocus: true } %>
+              </div>
+              <div class="col-md-6">
+                <%= f.input :opening_note, as: :string, label: "Note (optional)" %>
+              </div>
+              <div class="col-md-3">
+                <%= f.submit "Open shift", class: "btn btn-primary btn-block" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

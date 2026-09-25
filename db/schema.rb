@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_18_000000) do
+ActiveRecord::Schema.define(version: 2026_09_25_212250) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -220,6 +220,8 @@ ActiveRecord::Schema.define(version: 2026_09_18_000000) do
     t.datetime "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "cash_register_session_id"
+    t.index ["cash_register_session_id"], name: "index_cash_counts_on_cash_register_session_id"
     t.index ["employee_id"], name: "index_cash_counts_on_employee_id"
   end
 
@@ -232,6 +234,33 @@ ActiveRecord::Schema.define(version: 2026_09_18_000000) do
     t.datetime "updated_at", null: false
     t.decimal "discount_amount"
     t.index ["cash_paymentable_type", "cash_paymentable_id"], name: "index_paymentable_on_cash_payments"
+  end
+
+  create_table "cash_register_sessions", force: :cascade do |t|
+    t.bigint "employee_id", null: false
+    t.bigint "cash_account_id", null: false
+    t.bigint "store_front_id"
+    t.bigint "business_id"
+    t.date "session_date", null: false
+    t.datetime "opened_at"
+    t.datetime "closed_at"
+    t.integer "status", default: 0, null: false
+    t.decimal "opening_declared_amount", precision: 15, scale: 2
+    t.decimal "opening_system_amount", precision: 15, scale: 2
+    t.decimal "closing_declared_amount", precision: 15, scale: 2
+    t.decimal "closing_system_amount", precision: 15, scale: 2
+    t.decimal "variance_amount", precision: 15, scale: 2
+    t.boolean "auto_closed", default: false, null: false
+    t.text "opening_note"
+    t.text "closing_note"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["business_id"], name: "index_cash_register_sessions_on_business_id"
+    t.index ["cash_account_id"], name: "index_cash_register_sessions_on_cash_account_id"
+    t.index ["employee_id", "session_date"], name: "index_cash_register_sessions_on_employee_id_and_session_date", unique: true
+    t.index ["employee_id", "status"], name: "index_cash_register_sessions_on_employee_id_and_status"
+    t.index ["employee_id"], name: "index_cash_register_sessions_on_employee_id"
+    t.index ["store_front_id"], name: "index_cash_register_sessions_on_store_front_id"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -297,6 +326,8 @@ ActiveRecord::Schema.define(version: 2026_09_18_000000) do
     t.integer "entry_type"
     t.bigint "user_id"
     t.bigint "recorder_id"
+    t.bigint "cash_register_session_id"
+    t.index ["cash_register_session_id"], name: "index_entries_on_cash_register_session_id"
     t.index ["commercial_document_type", "commercial_document_id"], name: "index_on_commercial_document_entry"
     t.index ["entry_type"], name: "index_entries_on_entry_type"
     t.index ["recorder_id"], name: "index_entries_on_recorder_id"
@@ -424,7 +455,9 @@ ActiveRecord::Schema.define(version: 2026_09_18_000000) do
     t.bigint "payable_account_id"
     t.bigint "department_id"
     t.datetime "returned_at"
+    t.bigint "cash_register_session_id"
     t.index ["account_number"], name: "index_orders_on_account_number", unique: true
+    t.index ["cash_register_session_id"], name: "index_orders_on_cash_register_session_id"
     t.index ["commercial_document_type", "commercial_document_id"], name: "index_commercial_document_on_orders"
     t.index ["created_at"], name: "index_orders_on_created_at"
     t.index ["department_id"], name: "index_orders_on_department_id"
@@ -804,7 +837,9 @@ ActiveRecord::Schema.define(version: 2026_09_18_000000) do
     t.bigint "commercial_document_id"
     t.string "account_number"
     t.bigint "entry_id"
+    t.bigint "cash_register_session_id"
     t.index ["account_number"], name: "index_vouchers_on_account_number", unique: true
+    t.index ["cash_register_session_id"], name: "index_vouchers_on_cash_register_session_id"
     t.index ["commercial_document_type", "commercial_document_id"], name: "index_commercial_document_on_vouchers"
     t.index ["entry_id"], name: "index_vouchers_on_entry_id"
     t.index ["payee_type", "payee_id"], name: "index_vouchers_on_payee_type_and_payee_id"
@@ -898,7 +933,12 @@ ActiveRecord::Schema.define(version: 2026_09_18_000000) do
   add_foreign_key "businesses", "parent_account_categories", column: "sales_revenue_parent_account_category_id"
   add_foreign_key "businesses", "parent_account_categories", column: "service_receivable_parent_account_category_id"
   add_foreign_key "businesses", "parent_account_categories", column: "service_revenue_parent_account_category_id"
+  add_foreign_key "cash_counts", "cash_register_sessions"
   add_foreign_key "cash_counts", "users", column: "employee_id"
+  add_foreign_key "cash_register_sessions", "accounts", column: "cash_account_id"
+  add_foreign_key "cash_register_sessions", "businesses"
+  add_foreign_key "cash_register_sessions", "store_fronts"
+  add_foreign_key "cash_register_sessions", "users", column: "employee_id"
   add_foreign_key "customers", "accounts", column: "receivable_account_id"
   add_foreign_key "customers", "accounts", column: "sales_discount_account_id"
   add_foreign_key "customers", "accounts", column: "sales_revenue_account_id"
@@ -907,6 +947,7 @@ ActiveRecord::Schema.define(version: 2026_09_18_000000) do
   add_foreign_key "departments", "customers"
   add_foreign_key "employee_cash_accounts", "accounts", column: "cash_account_id"
   add_foreign_key "employee_cash_accounts", "users", column: "employee_id"
+  add_foreign_key "entries", "cash_register_sessions"
   add_foreign_key "entries", "users"
   add_foreign_key "entries", "users", column: "recorder_id"
   add_foreign_key "inventory_reports", "products"
@@ -930,6 +971,7 @@ ActiveRecord::Schema.define(version: 2026_09_18_000000) do
   add_foreign_key "orders", "accounts", column: "receivable_account_id"
   add_foreign_key "orders", "accounts", column: "sales_discount_account_id"
   add_foreign_key "orders", "accounts", column: "sales_revenue_account_id"
+  add_foreign_key "orders", "cash_register_sessions"
   add_foreign_key "orders", "departments"
   add_foreign_key "orders", "store_fronts"
   add_foreign_key "orders", "store_fronts", column: "destination_store_front_id"
@@ -987,6 +1029,7 @@ ActiveRecord::Schema.define(version: 2026_09_18_000000) do
   add_foreign_key "voucher_amounts", "carts"
   add_foreign_key "voucher_amounts", "users", column: "recorder_id"
   add_foreign_key "voucher_amounts", "vouchers"
+  add_foreign_key "vouchers", "cash_register_sessions"
   add_foreign_key "vouchers", "entries"
   add_foreign_key "vouchers", "users", column: "preparer_id"
   add_foreign_key "work_order_service_charges", "service_charges"

@@ -2,6 +2,10 @@
   font-weight: 600 !important;
 }
 
+.clickable-row {
+  cursor: pointer;
+}
+
 .subtitle-up {
   font-weight: 500 !important;
 }
@@ -183,6 +187,74 @@ $nav-pills-underline-border-width:    3px !default;
   }
 }
 
+// Cash register session banner (app/views/store/_cash_register_session_banner.html.erb)
+.cash-register-banner {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.15rem 1.75rem rgba(33, 40, 50, 0.08);
+
+  &__icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6c757d, #343a40);
+    color: #fff;
+    font-size: 1.15rem;
+    margin-right: 1rem;
+  }
+
+  &__date {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #212529;
+  }
+
+  &__status {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.35em 0.65em;
+  }
+
+  &__account {
+    font-size: 0.85rem;
+  }
+
+  &__balance-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6c757d;
+    margin-bottom: 0.15rem;
+  }
+
+  &__balance-value {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #212529;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__setup {
+    background-color: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 0.6rem;
+    padding: 1rem 1.25rem;
+  }
+
+  &__setup-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.65rem;
+  }
+}
+
 // Type-ahead customer search (app/views/other_sales/new.html.erb, app/views/store/index.html.erb)
 .customer-typeahead {
   position: relative;
@@ -301,6 +373,22 @@ $nav-pills-underline-border-width:    3px !default;
       background-color: rgba(0, 123, 255, 0.04);
       border-radius: 0.5rem;
     }
+  }
+
+  &__cashier-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+
+  &__cashier-info {
+    min-width: 0;
   }
 
   &__cashier {

@@ -21,6 +21,7 @@ class User < ApplicationRecord
   has_many :cash_accounts,          through: :employee_cash_accounts, class_name: "AccountingModule::Account", foreign_key: 'cash_account_id'
   has_many :voucher_amounts,        class_name: "Vouchers::VoucherAmount", foreign_key: 'recorder_id'
   has_many :cash_counts,            class_name: "CashCounts::CashCount", foreign_key: 'employee_id'
+  has_many :cash_register_sessions, class_name: "CashRegisterSession", foreign_key: 'employee_id'
 
   enum role: [:proprietor, :sales_clerk, :technician, :accountant, :warehouse_clerk]
 
@@ -40,6 +41,12 @@ class User < ApplicationRecord
 
   def active?
     deactivated_at.blank?
+  end
+
+  # A cashier is anyone entrusted with a cash drawer, i.e. anyone with a
+  # cash-on-hand account assigned — regardless of role name.
+  def cashier?
+    cash_on_hand_account.present?
   end
 
   def name_and_store_front
@@ -78,6 +85,15 @@ class User < ApplicationRecord
 
   def cash_on_hand_account_balance
     default_cash_on_hand_account.balance(recorder_id: self.id)
+  end
+
+  def current_cash_register_session
+    cash_register_sessions.open.for_day(Date.current).first ||
+      cash_register_sessions.open.recent.first
+  end
+
+  def cash_register_session_for(date = Date.current)
+    cash_register_sessions.for_day(date).first
   end
 
   def default_cash_on_hand_account

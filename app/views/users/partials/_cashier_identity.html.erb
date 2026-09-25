@@ -1,0 +1,10 @@
+<%# Locals:
+    cashier      - the User (required)
+    store_front  - override for the displayed store front (default: cashier.store_front)
+%>
+<% display_store_front = local_assigns[:store_front] || cashier.store_front %>
+<%= image_tag(cashier.avatar, class: "img-circle sales-table__avatar", height: 32, width: 32) %>
+<div class="sales-table__cashier-info text-truncate">
+  <div class="sales-table__cashier text-truncate"><%= cashier.full_name %></div>
+  <div class="sales-table__store-front text-muted text-truncate" title="<%= display_store_front.try(:name) %>"><%= display_store_front.try(:name) %></div>
+</div>

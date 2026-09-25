@@ -5,4 +5,10 @@ class VouchersController < ApplicationController
   def show
     @voucher = Voucher.find(params[:id])
   end
+
+  def destroy
+    @voucher = Voucher.find(params[:id])
+    Vouchers::Cancellation.run(voucher: @voucher)
+    redirect_to safe_return_to(vouchers_path), notice: "Voucher cancelled."
+  end
 end

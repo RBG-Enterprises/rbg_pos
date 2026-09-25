@@ -11,14 +11,15 @@ module Vouchers
       @sales_revenue_account = @order.sales_revenue_account
     end
     def create_voucher!
-      voucher = Voucher.new(
+      voucher = Vouchers::OtherSaleVoucher.new(
         description: "Sales",
-        date: order.date,
+        date: Voucher.transaction_time_for(order.date),
         payee: order.customer,
         preparer: order.employee,
         reference_number: SecureRandom.uuid,
         commercial_document: order,
-        account_number: order.account_number
+        account_number: order.account_number,
+        cash_register_session: order.cash_register_session
       )
       voucher.voucher_amounts.debit.build(
         amount: amount,

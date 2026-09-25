@@ -9,6 +9,7 @@ class Order < ApplicationRecord
   multisearchable against: [:reference_number, :description]
 
   belongs_to :store_front
+  belongs_to :cash_register_session, optional: true
   belongs_to :commercial_document,     polymorphic: true, optional: true
   belongs_to :employee,                class_name: "User", foreign_key: 'employee_id'
   has_one :cash_payment,               as: :cash_paymentable, class_name: "StoreFrontModule::CashPayment"
@@ -23,6 +24,11 @@ class Order < ApplicationRecord
   delegate :name, to: :store_front, prefix: true
 
   before_validation :set_date
+  before_validation :assign_cash_register_session, on: :create
+  # Must run before the `line_items: dependent: :destroy` callback removes
+  # the rows this association is built on, so register it to run first.
+  before_destroy :capture_stocks_for_availability_refresh, prepend: true
+  after_destroy :refresh_stock_availability
 
   validates :account_number,  presence: true, uniqueness: true
   validates :store_front_id, presence: true
@@ -115,7 +121,29 @@ class Order < ApplicationRecord
   end
 
   private
+  def assign_cash_register_session
+    return if cash_register_session_id.present?
+    return if employee.blank?
+
+    record_date = (date.presence && date.to_date) || Date.current
+    self.cash_register_session =
+      employee.cash_register_sessions.open.for_day(record_date).first ||
+      employee.cash_register_sessions.open.recent.first
+  rescue StandardError
+    nil
+  end
   def set_date
   	self.date ||= Time.zone.now
+  end
+
+  # If a sale is cancelled after reserving stock (e.g. its voucher was
+  # cancelled before confirmation), recompute availability for the stocks
+  # it referenced so the reservation doesn't leak.
+  def capture_stocks_for_availability_refresh
+    @stocks_to_refresh = stocks.to_a
+  end
+
+  def refresh_stock_availability
+    @stocks_to_refresh&.each(&:update_available_quantity!)
   end
 end

@@ -1,0 +1,13 @@
+<% if @cashiers.present? %>
+  <div class="list-group customer-typeahead-results">
+    <% @cashiers.each do |cashier| %>
+      <button type="button" class="list-group-item list-group-item-action customer-typeahead-option sales-table__cashier-cell" data-cashier-id="<%= cashier.id %>" data-cashier-name="<%= cashier.full_name %>">
+        <%= render "users/partials/cashier_identity", cashier: cashier %>
+      </button>
+    <% end %>
+  </div>
+<% elsif params[:cashier_search].present? %>
+  <div class="customer-typeahead-results">
+    <p class="text-muted small mb-0 p-2">No cashiers found for <b><%= params[:cashier_search] %></b>.</p>
+  </div>
+<% end %>

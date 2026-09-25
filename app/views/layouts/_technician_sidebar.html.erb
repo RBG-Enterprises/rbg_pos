@@ -1,20 +1,42 @@
 <div class="sidebar">
-  <!-- Sidebar user (optional) -->
-  <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-    <div class="image">
-    </div>
-    <div class="info">
-      <a href="#" class="d-block"><%= current_user.first_name %></a>
-    </div>
-  </div>
   <!-- Sidebar Menu -->
   <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-    <% if current_user.cash_on_hand_account.present? %>
-    <%= link_to cash_account_path(current_user.cash_on_hand_account)  do %>
-    <h4 class="subtitle-up"><b>&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;<%= number_to_currency current_user.cash_on_hand_account.balance %></b></h4>
-    &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;<small>CASH BALANCE</small>
+    <% if current_cash_register_session.present? %>
+    <% session = current_cash_register_session %>
+    <%= link_to cash_register_session_path(session), class: "d-block text-decoration-none text-dark" do %>
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+          <%= image_tag(current_user.avatar, class: "img-circle", style: "width: 40px; height: 40px; object-fit: cover;") %>
+        </div>
+        <div class="info">
+          <span class="d-block"><%= current_user.full_name %></span>
+          <small class="text-muted"><%= session.cash_account.try(:name) %></small>
+        </div>
+      </div>
+      <div class="px-3 pb-3 mb-3" style="font-size: 0.8rem;">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="text-muted">Status</span>
+          <span class="badge badge-<%= session.open? ? 'success' : 'secondary' %>"><%= session.status %></span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="text-muted">Opened</span>
+          <span><%= session.opened_at.try(:strftime, "%I:%M %p") %></span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="text-muted"><%= session.open? ? 'Expected' : 'Ending' %></span>
+          <span class="font-weight-bold"><%= number_to_currency(session.open? ? session.expected_cash : session.ending_balance) %></span>
+        </div>
+      </div>
     <% end %>
+    <% else %>
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <div class="image">
+      </div>
+      <div class="info">
+        <a href="#" class="d-block"><%= current_user.first_name %></a>
+      </div>
+    </div>
     <% end %>
     <hr>
       <li class="nav-item">
@@ -24,6 +46,12 @@
         </a>
       </li>
 
+      <li class="nav-item active">
+        <a href="/cash_register_sessions" class="nav-link <%= 'active' if current_page? cash_register_sessions_path %>">
+          <i class="nav-icon fa fa-cash-register"></i>
+          <p>Cash Sessions</p>
+        </a>
+      </li>
       <li class="nav-item active">
         <a href="/knowledge_center" class="nav-link <%= 'active' if current_page? knowledge_center_index_path %>">
           <i class="nav-icon fa fa-info-circle"></i>

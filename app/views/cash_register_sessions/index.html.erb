@@ -1,0 +1,145 @@
+<section class="content-header">
+  <h1><i class="fa-solid fa-cash-register"></i> Cash Sessions</h1>
+  <p class="text-muted mb-0">One session per cashier per day — every sale, transfer and count, accounted for.</p>
+</section>
+
+<% if @can_filter_by_employee %>
+  <% filters_active = params[:employee_id].presence || params[:date].presence %>
+  <div class="card card-outline card-secondary">
+    <div class="card-body">
+      <div class="d-flex flex-wrap align-items-end" style="gap: 1rem;">
+        <div style="min-width: 15rem;">
+          <label class="mb-1" for="cash-sessions-cashier-search">Cashier</label>
+
+          <div id="selected-cashier" class="customer-typeahead-selected<%= ' d-none' unless @selected_cashier %>">
+            <span class="badge badge-light border p-2">
+              <i class="fa fa-user"></i> <span id="selected-cashier-name"><%= @selected_cashier&.full_name %></span>
+              <a href="#" id="clear-selected-cashier" class="ml-2 text-danger" title="Change cashier"><i class="fa fa-times"></i></a>
+            </span>
+          </div>
+
+          <div id="cashier-typeahead" class="customer-typeahead<%= ' d-none' if @selected_cashier %>">
+            <%= render 'customers/partials/search_form', url: cash_register_sessions_path, field_name: :cashier_search, value: params[:cashier_search], input_id: 'cash-sessions-cashier-search', placeholder: 'Type to search cashier' %>
+            <div id="cashier-search-results" class="customer-typeahead-results-wrapper"></div>
+          </div>
+        </div>
+
+        <%= form_tag cash_register_sessions_path, method: :get, id: "cash-sessions-filter-form", class: "d-flex flex-wrap align-items-end", style: "gap: 1rem;" do %>
+          <%= hidden_field_tag :employee_id, params[:employee_id], id: "cash-sessions-employee-id" %>
+          <div class="form-group mb-0">
+            <label class="mb-1" for="date">Date</label>
+            <%= date_field_tag :date, params[:date], class: "form-control" %>
+          </div>
+          <div class="form-group mb-0">
+            <%= submit_tag "Filter", class: "btn btn-primary" %>
+            <% if filters_active %>
+              <%= link_to "Clear", cash_register_sessions_path, class: "btn btn-outline-secondary" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+  document.addEventListener("turbolinks:load", function () {
+    var typeahead = document.getElementById('cashier-typeahead');
+    var selected = document.getElementById('selected-cashier');
+    var selectedName = document.getElementById('selected-cashier-name');
+    var hiddenField = document.getElementById('cash-sessions-employee-id');
+    var searchInput = document.getElementById('cash-sessions-cashier-search');
+    var resultsWrapper = document.getElementById('cashier-search-results');
+    var clearLink = document.getElementById('clear-selected-cashier');
+
+    if (!typeahead) { return; }
+
+    function selectCashier(id, name) {
+      hiddenField.value = id;
+      selectedName.textContent = name;
+      selected.classList.remove('d-none');
+      typeahead.classList.add('d-none');
+      resultsWrapper.innerHTML = '';
+      searchInput.value = '';
+    }
+
+    function clearCashier(event) {
+      event.preventDefault();
+      hiddenField.value = '';
+      selected.classList.add('d-none');
+      typeahead.classList.remove('d-none');
+      searchInput.focus();
+    }
+
+    resultsWrapper.addEventListener('click', function (event) {
+      var option = event.target.closest('.customer-typeahead-option');
+      if (!option) { return; }
+      selectCashier(option.dataset.cashierId, option.dataset.cashierName);
+    });
+
+    clearLink.addEventListener('click', clearCashier);
+  });
+  </script>
+<% end %>
+
+<div class="card card-solid">
+  <div class="card-body">
+    <% if @cash_register_sessions.blank? %>
+      <p class="text-muted text-center mb-0 py-4">
+        <i class="fa-solid fa-cash-register fa-2x mb-2 d-block"></i>
+        <strong>No cash sessions yet.</strong><br>Sessions open automatically the next time a cashier signs in.
+      </p>
+    <% else %>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Cashier</th>
+              <th>Drawer</th>
+              <th>Status</th>
+              <th class="text-right">Expected</th>
+              <th class="text-right">Counted</th>
+              <th class="text-right">Variance</th>
+              <th class="text-right">Report</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @cash_register_sessions.each do |session| %>
+              <tr>
+                <td>
+                  <%= link_to session.session_date.strftime("%b %e, %Y"), cash_register_session_path(session), class: "font-weight-bold" %>
+                </td>
+                <td>
+                  <div class="sales-table__cashier-cell">
+                    <%= render "users/partials/cashier_identity", cashier: session.employee, store_front: session.store_front %>
+                  </div>
+                </td>
+                <td class="text-muted"><%= session.cash_account.try(:name) %></td>
+                <td><span class="badge badge-<%= session.open? ? 'success' : 'secondary' %>"><%= session.status %></span></td>
+                <td class="text-right"><%= number_to_currency(session.expected_cash) %></td>
+                <td class="text-right"><%= number_to_currency(session.closing_declared_amount || 0) %></td>
+                <td class="text-right <%= (session.variance_amount || 0) == 0 ? '' : 'text-danger font-weight-bold' %>">
+                  <%= number_to_currency(session.variance_amount || 0) %>
+                </td>
+                <td class="text-right text-nowrap">
+                  <%= link_to cash_register_session_path(session), class: "btn btn-outline-secondary btn-sm mr-1", title: "Open session" do %>
+                    <i class="fa-solid fa-arrow-right"></i>
+                  <% end %>
+                  <%= link_to cash_register_session_path(session, format: :pdf), class: "btn btn-outline-secondary btn-sm mr-1", title: "Download PDF" do %>
+                    <i class="fa-solid fa-file-pdf"></i>
+                  <% end %>
+                  <%= link_to cash_register_session_path(session, format: :csv), class: "btn btn-outline-secondary btn-sm", title: "Download CSV" do %>
+                    <i class="fa-solid fa-file-csv"></i>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-center mt-3">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% end %>
+  </div>
+</div>

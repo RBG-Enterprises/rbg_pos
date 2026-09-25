@@ -10,10 +10,16 @@ module StoreFrontModule
         @payment = StoreFrontModule::Payments::CreditSalesOrderPaymentProcessing.new(payment_params)
         if @payment.valid?
           @payment.process!
-          redirect_to customer_url(@order.customer), notice: "Payment saved successfully."
+          redirect_to store_front_module_credit_sales_order_payment_path(@order, @payment.voucher),
+                      notice: "Review and confirm the payment."
         else
           render :new
         end
+      end
+
+      def show
+        @order = StoreFrontModule::Orders::SalesOrder.find(params[:credit_sales_order_id])
+        @voucher = Voucher.find(params[:id])
       end
 
       private
