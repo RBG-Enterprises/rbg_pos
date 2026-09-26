@@ -16,11 +16,9 @@ gem "sidekiq"
 # gem 'activerecord-postgis-adapter'
 gem "pg_search"
 gem "chronic"
-gem "paperclip"
 gem "pg", ">= 0.18", "< 2.0"
 gem "puma"
 gem "rubyzip", ">= 1.2.1"
-gem "axlsx", git: "https://github.com/randym/axlsx.git", ref: "c8ac844"
 gem "caxlsx_rails"
 gem "mina", require: false
 gem "mina-puma", require: false, github: "untitledkingdom/mina-puma"
