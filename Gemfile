@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
-ruby "3.3.0"
+ruby "3.4.4"
 
 gem "active_interaction", "~> 5.3"
 gem "prawn-icon"
@@ -53,8 +53,7 @@ gem "net-smtp", require: false
 gem "net-imap", require: false
 gem "net-pop", require: false
 gem "csv", require: false
-# connection_pool 3.x uses syntax unparseable on Ruby 3.3. Unpin on Ruby 3.4+.
-gem "connection_pool", "< 3"
+gem "ostruct", require: false
 gem "listen", "~> 3.8"
 gem "bullet"
 

@@ -2,9 +2,7 @@ class Order < ApplicationRecord
   include PgSearch::Model
   pg_search_scope :text_search, against: [:reference_number, :search_term]
   pg_search_scope :text_search_with_stocks, against: [:reference_number, :search_term],
-  associated_against: { line_items: [:bar_code] },
-  associated_against: { stocks: [:barcode] },
-  associated_against: { products: [:name] }
+  associated_against: { line_items: [:bar_code], stocks: [:barcode], products: [:name] }
 
   multisearchable against: [:reference_number, :description]
 
