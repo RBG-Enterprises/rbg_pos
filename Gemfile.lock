@@ -81,6 +81,7 @@ GEM
     autonumeric-rails (2.0.0.1)
       jquery-rails (>= 2.0.2)
     barby (0.6.9)
+    base64 (0.3.0)
     bcrypt (3.1.20)
     bigdecimal (3.1.8)
     bootsnap (1.18.3)
@@ -170,6 +171,7 @@ GEM
     listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
+    logger (1.7.0)
     loofah (2.22.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -301,7 +303,7 @@ GEM
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
-    rexml (3.2.6)
+    rexml (3.4.4)
     roo (2.7.0)
       nokogiri (~> 1)
       rubyzip (~> 1.1, < 2.0.0)
@@ -367,9 +369,11 @@ GEM
       google-protobuf (>= 3.25, < 5.0)
     sass-embedded (1.77.0-x86_64-linux-gnu)
       google-protobuf (>= 3.25, < 5.0)
-    selenium-webdriver (4.10.0)
+    selenium-webdriver (4.49.0)
+      base64 (~> 0.2)
+      logger (~> 1.4)
       rexml (~> 3.2, >= 3.2.5)
-      rubyzip (>= 1.2.2, < 3.0)
+      rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
     semantic_range (3.0.0)
     shoulda-matchers (6.2.0)
@@ -387,10 +391,6 @@ GEM
     spreadsheet (1.3.1)
       bigdecimal
       ruby-ole
-    spring (2.1.1)
-    spring-watcher-listen (2.0.1)
-      listen (>= 2.7, < 4.0)
-      spring (>= 1.2, < 3.0)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -413,16 +413,12 @@ GEM
     uniform_notifier (1.16.0)
     warden (1.2.9)
       rack (>= 2.0.9)
-    webdrivers (5.3.1)
-      nokogiri (~> 1.6)
-      rubyzip (>= 1.3.0)
-      selenium-webdriver (~> 4.0, < 4.11)
     webpacker (5.4.4)
       activesupport (>= 5.2)
       rack-proxy (>= 0.6.1)
       railties (>= 5.2)
       semantic_range (>= 2.3.0)
-    websocket (1.2.10)
+    websocket (1.2.11)
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -495,17 +491,15 @@ DEPENDENCIES
   rubocop-rspec
   rubocop-shopify
   rubyzip (>= 1.2.1)
+  selenium-webdriver
   shoulda-matchers
   sidekiq
   simple_calendar
   simple_form
   spreadsheet
-  spring
-  spring-watcher-listen (~> 2.0.0)
   turbolinks (~> 5)
   tzinfo-data
   uglifier (>= 1.3.0)
-  webdrivers
   webpacker
   will_paginate (~> 3.3)
 
