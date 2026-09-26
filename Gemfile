@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
-ruby "3.4.4"
+ruby "4.0.0"
 
 gem "active_interaction", "~> 5.3"
 gem "prawn-icon"
