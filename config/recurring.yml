@@ -1,0 +1,26 @@
+# Solid Queue recurring tasks (runs inside `bin/jobs` / SOLID_QUEUE_IN_PUMA).
+# Replaces config/inventory_report_schedule.yml (sidekiq-cron was never
+# installed, so the hourly rebuild never actually ran until now).
+development:
+  inventory_report_rebuilder:
+    class: InventoryReportRebuilderJob
+    queue: default
+    description: "Rebuild per-stock InventoryReport totals from LineItem history"
+    schedule: every hour
+
+test:
+  inventory_report_rebuilder:
+    class: InventoryReportRebuilderJob
+    queue: default
+    description: "Rebuild per-stock InventoryReport totals from LineItem history"
+    schedule: every hour
+
+production:
+  clear_solid_queue_finished_jobs:
+    command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
+    schedule: every hour at minute 12
+  inventory_report_rebuilder:
+    class: InventoryReportRebuilderJob
+    queue: default
+    description: "Rebuild per-stock InventoryReport totals from LineItem history"
+    schedule: every hour
