@@ -1,455 +1,377 @@
-<div class="row">
-    <div class="col-md-8">
-      <div class="card">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-7">
-              <h3 class="title-up">#<%= @work_order.service_number %> - <%= @work_order.description.try(:upcase) %> </h3>
-              <small class='text-muted'> Current Technician: <%= @work_order.technician.try(:full_name) %> </small><br>
-              <small class='text-muted'> Category: <%= @work_order.work_order_category.title %></small><br>
-              <br>
-              <% if current_user == @work_order.technician || current_user.proprietor? %>
-                <%= link_to 'Endorse', edit_computer_repair_section_work_order_endorsement_path(@work_order), class: 'btn btn-sm btn-outline-warning' %>
-              <% end %>
-              <%= link_to 'Update Info', edit_computer_repair_section_work_order_path(@work_order), class: "btn btn-sm btn-outline-warning" %>
-              <% if current_user.proprietor? %>
-                <%= link_to computer_repair_section_work_order_path(@work_order), method: :delete do %>
-                  <span class="btn btn-sm btn-outline-danger"><i class="fa fa-times"></i> Delete</span>
-                <% end %>
-              <% end %>
-              <br><br>
-              <% @work_order.technicians.each do |technician| %>
-                <span data-toggle="tooltip" title="<%=technician.first_name %>" data-placement="top">
-                    <%= image_tag(technician.avatar, class: "img-circle", height: 45, width: 45) %>
-                </span>
-              <% end %><br>
-              <small class="text-muted">TECHNICIANS</small>
-            </div>
-            <div class="col-md-5">
-              <% if current_user.technician? || current_user.proprietor? %>
-                <%= simple_form_for @work_order, url: :computer_repair_section_work_order do |f| %>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <%= f.input :status, label: false, collection: WorkOrder.statuses.keys.to_a.map{|a| [a.titleize, a]}, input_html: { class: 'chosen-select' } %>
-                    </div>
-                    <div class="col-md-4">
-                      <%= f.submit "Update Status", class: "btn btn-primary" %>
-                    </div>
-                  </div>
-                <% end %>
-              <% end %>
-            </div>
-          </div>
-          <hr>
+<% work_order = @work_order %>
+<% can_endorse = current_user == work_order.technician || current_user.proprietor? %>
 
-          <div class="row">
-            <div class="col-md-6">
-              <h4 class="subtitle-up">WORK ORDER DETAILS </h4>
-              <div class="row min-margin">
-                <div class="col-md-6">
-                  <b>Customer</b>
-                </div>
-                <div class="col-md-6">
-                  <%= @work_order.customer_full_name %>
-                </div>
-              </div>
-              <div class="row min-margin">
-                <div class="col-md-6">
-                  <b>Date Received</b>
-                </div>
-                <div class="col-md-6">
-                  <%= @work_order.date_received.strftime("%B %e, %Y") %>
-                </div>
-              </div>
-              <div class="row min-margin">
-                <div class="col-md-6">
-                  <b>Time Received</b>
-                </div>
-                <div class="col-md-6">
-                  <%= @work_order.created_at.strftime("%I:%M %p") %>
-                </div>
-              </div>
-              <div class="row min-margin">
-                <div class="col-md-6">
-                  <b>Contact Person</b>
-                </div>
-                <div class="col-md-6">
-                  <%= @work_order.contact_person %>
-                </div>
-              </div>
-              <div class="row min-margin">
-                <div class="col-md-6">
-                  <b>Department</b>
-                </div>
-                <div class="col-md-6">
-                  <%= @work_order.department.try(:customer_name_and_department) %>
-                </div>
-              </div>
-              <div class="row min-margin">
-                <div class="col-md-6">
-                  <b>Contact Number</b>
-                </div>
-                <div class="col-md-6">
-                  <%= @work_order.customer_contact_number %>
-                </div>
-              </div>
-              <div class="row min-margin">
-                <div class="col-md-6">
-                  <b>Model / Description</b>
-                </div>
-                <div class="col-md-6">
-                  <%= @work_order.description %>
-                </div>
-              </div>
-              <div class="row min-margin">
-                <div class="col-md-6">
-                  <b>Serial #</b>
-                </div>
-                <div class="col-md-6">
-                  <%= @work_order.serial_number %>
-                </div>
-              </div>
-              <div class="row min-margin">
-                <div class="col-md-6">
-                  <b>Reported Problem</b>
-                </div>
-                <div class="col-md-6">
-                  <%= @work_order.reported_problem %>
-                </div>
-              </div>
-              <div class="row min-margin">
-                <div class="col-md-6">
-                  <b>Elapsed Time</b>
-                </div>
-                <div class="col-md-6">
-                  <%= distance_of_time_in_words(@work_order.created_at, Time.zone.now) %>
-                </div>
-              </div>
-              <div class="row min-margin">
-              <div class="col-md-6">
-                  <b>Done Date</b>
-                </div>
-                <div class="col-md-6">
-                    <%= @work_order.done_at.try(:strftime, ("%B %e, %Y")) %>
-
-                </div>
-              </div>
-              <div class="row min-margin">
-              <div class="col-md-6">
-                  <b>Release Date</b>
-                </div>
-                <div class="col-md-6">
-                    <%= @work_order.release_date.try(:strftime, ("%B %e, %Y")) %>
-
-                </div>
-              </div>
-              <% if @work_order.under_warranty? %>
-                <p> Warranty Details </p>
-                <div class="row min-margin">
-                <div class="col-md-6">
-                  <b>Supplier</b>
-                </div>
-                <div class="col-md-6">
-                  <%= @work_order.supplier.try(:business_name) %>
-                </div>
-              </div>
-              <div class="row min-margin">
-                <div class="col-md-6">
-                  <b>Purchase Date</b>
-                </div>
-                <div class="col-md-6">
-                  <% if @work_order.purchase_date.present? %>
-                    <%= @work_order.purchase_date.strftime("%B %e, %Y") %>
-                  <% end %>
-                </div>
-              </div>
-              <% end %>
-            </div>
-            <div class="col-md-5 offset-md-1">
-              <h4 class="subtitle-up">CLAIM FORM </h4>
-              <%= link_to 'CLAIM TAG', computer_repair_section_work_order_service_claim_tag_path(@work_order, format: 'pdf'), class: "btn btn-secondary"  %><br><br>
-              <h4 class="subtitle-up">RELEASE FORM</h4>
-              <% if @work_order.released?%>
-                <%= link_to 'RELEASE FORM', computer_repair_section_work_order_path(@work_order, format: 'pdf'), class: "btn btn-outline-secondary"  %>
-              <% else %>
-              <small class="alert alert-secondary"> status is <b><%= @work_order.status.try(:titleize) %></b> and cannot be released yet </small>
-              <% end %>
-
-              <%#= link_to 'CHARGE INVOICE', computer_repair_section_work_order_path(@work_order, format: 'pdf'), class: "label label-default" %>
-
-            </div>
-          </div>
-          <hr>
-          <h4 class="subtitle-up">CHARGE INVOICE</h4>
-                <% if @work_order.charge_invoice.blank? %>
-                <%= link_to 'Add Charge Invoice Number', new_computer_repair_section_work_order_charge_invoice_path(@work_order), class: "btn btn-primary" %>
-                <% else %>
-                <%= @work_order.charge_invoice.try(:number) %>
-                <%= link_to 'Edit', edit_charge_invoice_path(@work_order.charge_invoice), class: 'btn btn-warning' %>
-                <% end%>
-        </div>
+<div class="card">
+  <div class="card-header d-flex flex-wrap justify-content-between align-items-center" style="gap: 1rem;">
+    <div>
+      <h4 class="mb-1">
+        #<%= work_order.service_number %>
+        <span class="badge <%= work_order.status_badge_class %> align-middle ml-1" style="font-size: 0.75rem;"><%= work_order.status.try(:titleize) %></span>
+      </h4>
+      <div class="text-muted"><%= work_order.description.try(:upcase) %></div>
+      <div class="small text-muted mt-1">
+        <%= work_order.work_order_category.try(:title) %> &middot; Assigned to <%= work_order.technician.try(:full_name) || '—' %>
       </div>
-      <div class="row">
-        <div class="col-md-6">
-          <div class="card card-solid">
-            <div class="card-header">
-              <div class="row">
-                <div class="col-md-7">
-                  <h4 class="subtitle-up"> SERVICE CHARGES </h4>
-                </div>
-                <div class="col-md-5">
-                  <% if !@work_order.released? %>
-                    <%= link_to 'Add Charges', new_repair_services_module_work_order_service_charge_processing_path(@work_order), class: 'btn btn-outline-primary' %>
-                  <% end %>
-                </div>
-              </div>
-            </div>
-            <div class="card-header">
-              <% @work_order.service_charges.each do |charge| %>
-                <div class="row">
-                  <div class="col-md-1 hidden-xs">
-                  </div>
-                  <div class="col-md-7 col-xs-8">
-                    <%= charge.description %>
-                  </div>
-                  <div class="col-md-4 col-xs-4">
-                    <span class="float-right badge badge-warning"><%= number_to_currency charge.amount %></span>
-                  </div>
-                </div>
-                <hr>
-              <% end %>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-body">
-               <div class="row">
-                <div class="col-md-8">
-                  <h4 class="subtitle-up"> SPARE PARTS </h4>
-                </div>
-                <div class="col-md-4">
-                  <% if !@work_order.released? %>
-                    <%=link_to 'Add Parts', new_repair_services_module_work_order_repair_service_order_line_item_processing_path(@work_order), class: 'btn btn-outline-primary' %>
-                  <% end %>
-                </div>
-              </div>
-              <br>
-              <% @work_order.sales_order_line_items.each do |spare_part| %>
-                <div class="row">
-
-                  <div class="col-md-1">
-                    <%= spare_part.quantity.to_i %>
-                  </div>
-                  <div class="col-md-7 col-xs-6">
-
-                    <%= spare_part.product_name %><br>
-                    <small class="text-muted"><%= spare_part.try(:order).try(:date).try(:strftime, ("%B %e, %Y")) %></small><br>
-                    <small class="text-muted"><%= spare_part.bar_code %></small>
-                  </div>
-                  <div class="col-md-3 col-xs-5">
-                    <span class="float-right badge badge-warning"><%= number_to_currency spare_part.total_cost %></span>
-                  </div>
-                  <div class="col-md-1">
-                    <% if current_user.proprietor? %>
-                      <%= link_to repair_services_module_work_order_spare_part_cancellation_path(work_order_id: @work_order.id, line_item_id: spare_part.id), id: "#{spare_part.id}-cancel-line-item", data: { confirm: 'Are you sure you want to delete this item?' }, method: :delete do %>
-                        <span class="text-danger"><i class="fa fa-times"></i>
-                      <% end %>
-                    <% end %>
-                  </div>
-                </div>
-                <hr>
-              <% end %>
-            </div>
-          </div>
+      <% if work_order.technicians.present? %>
+        <div class="mt-2">
+          <% work_order.technicians.each do |technician| %>
+            <span data-toggle="tooltip" title="<%= technician.full_name %>" data-placement="top">
+              <%= image_tag(technician.avatar, class: "img-circle mr-1", height: 28, width: 28) %>
+            </span>
+          <% end %>
         </div>
-        <div class="col-md-6">
-          <div class="card">
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-6">
-                  <h4 class="subtitle-up"> PAYMENT DETAILS </h4>
-                </div>
-                <div class="col-md-6">
-                  <% if current_user.proprietor? || current_user.sales_clerk? %>
-                    <%=link_to 'New Payment / Advance Payment', new_repair_services_module_work_order_payment_processing_path(@work_order), class: 'btn btn-outline-primary' %>
-                  <% end %>
-                </div>
-              </div>
-              <hr>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <p class="title-up"> RECEIVABLES </p>
-                </div>
-                <div class="col-md-6">
-                  <p class="title-up float-right"> <%=number_to_currency @work_order.accounts_receivable_total %></p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <p class="title-up"> SALES RETURNS </p>
-                </div>
-                <div class="col-md-6">
-                  <p class="title-up float-right"> <%=number_to_currency @work_order.sales_returns_total %></p>
-                </div>
-              </div>
-               <div class="row">
-                <div class="col-md-6">
-                  <p class="title-up"> CASH PAYMENTS </p>
-                </div>
-                <div class="col-md-6">
-                  <p class="title-up float-right"> <%=number_to_currency @work_order.cash_payments_total %></p>
-                </div>
-              </div>
-              <hr class="min-margin">
-              <div class="row">
-                <div class="col-md-6">
-                  <p class="title-up"> BALANCE </p>
-                </div>
-                <div class="col-md-6">
-                  <p class="title-up float-right"> <%=number_to_currency @work_order.balance_total %></p>
-                  <% if @work_order.balance_total < 0 %>
-                  <%= link_to 'New Refund', new_computer_repair_section_work_order_refund_path(@work_order), class: "btn btn-danger btn-xs float-right" %>
-                <% end %>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-body">
-
-              <h4 class="subtitle-up"> TRANSACTIONS HISTORY </h4>
-              <p class="text-muted"> List of payments, credit orders and charges </p>
-              <hr>
-              <% @work_order.entries.includes(:recorder).order(created_at: :desc).each do |entry| %>
-                <div class="row">
-
-                  <div class="col-md-10">
-                      <b><%= entry.description %></b><br>
-                      <span class="text-muted">
-                      <%= entry.entry_date.strftime("%b %e") %>
-                      <% if entry.recorder.present? %>
-                        <small><%= entry.recorder.full_name %></small><br>
-                      </span>
-                      <% end %>
-                      <small>DEBIT</small>
-                      <% entry.debit_amounts.each do |amount| %>
-                        <div class="row">
-                          <div class="col-md-8">
-                            <%= amount.account_name %>
-                          </div>
-                          <div class='col-md-4'>
-                            <span class="float-right"><%= number_to_currency amount.amount %></span>
-                          </div>
-                        </div>
-                      <% end %>
-                      <small>CREDIT</small>
-                      <% entry.credit_amounts.each do |amount| %>
-                        <div class="row">
-                          <div class="col-md-8">
-                            <%= amount.account_name %>
-                          </div>
-                          <div class='col-md-4'>
-                            <span class="float-right"><%= number_to_currency amount.amount %></span>
-                          </div>
-                        </div>
-                      <% end %>
-
-                  </div>
-
-                  <div class="col-md-2">
-                    <%# if current_user.proprietor? %>
-                      <%#=link_to entry_path(entry), method: :delete do %>
-                        <!--<span class="float-right" data-toggle='tooltip' title="Cancel Transaction"><i class="fa fa-times text-danger"></i></span>!-->
-                      <%# end %>
-                    <%# end %>
-                  </div>
-                </div>
-                <hr>
-              <% end %>
-            </div>
-          </div>
-        </div>
-      </div>
+      <% end %>
     </div>
-<div class="col-md-4">
-  <div class="card card-solid">
-      <div class="card-body">
-        <h4 class="subtitle-up"> Update Work Order </h4>
-        <%= simple_form_for @post, url: :computer_repair_section_work_order_updates do |f| %>
-          <%= f.input :type, label: false, collection: Post.types.map{|a| [a.titleize, a]}, prompt: 'Select Update Type', input_html: { class: 'chosen-select' } %>
-          <%= f.input :title, label: false, placeholder: 'Title', required: true %>
-          <%= f.input :content, label: false, placeholder: 'Content', as: :text, input_html: { rows: 4, class: "input-xs" }%>
-          <%= f.input :date, input_html: { value: Time.zone.now }, as: :hidden %>
-          <%= f.input :updateable_id, input_html: { value: @work_order.id }, as: :hidden %>
-          <%= f.input :updateable_type, input_html: { value: @work_order.class }, as: :hidden %>
-          <%= f.submit "Update", class: "btn btn-primary btn-block" %>
+    <div class="d-flex flex-wrap align-items-center" style="gap: 0.5rem;">
+      <% if current_user.technician? || current_user.proprietor? %>
+        <%= simple_form_for work_order, url: computer_repair_section_work_order_path(work_order), html: { class: "d-flex align-items-center mb-0" } do |f| %>
+          <%= f.input :status, label: false, collection: WorkOrder.statuses.keys.to_a.map{|a| [a.titleize, a]}, input_html: { class: 'chosen-select', onchange: "this.form.requestSubmit();" }, wrapper_html: { class: "mb-0", style: "min-width: 180px;" } %>
         <% end %>
-  <br>
-  <hr>
-<% @work_order.work_order_updates.each do |work_update| %>
-<% if work_update.id? %>
-
-  <div class="row">
-   <div class="col-md-2">
-     <div class="min-margin"></div>
-     <% if work_update.user.present? %>
-       <%= image_tag(work_update.user.avatar, class: "img-circle", height: 45, width: 45) %>
-     <% end %>
-   </div>
-
-
-    <div class="col-md-9">
-      <b><%= work_update.user.try(:full_name) %></b>
-       <% if work_update.date %>
-      <small class='text-muted'><i class="fa fa-clock-o"></i> <%= work_update.date.strftime("%b %e, %l:%M %p") %></small><br>
-    <% end %>
-      <span><%= work_update.title.try(:upcase) %></b></span><br>
-      <span class="text-muted"><%= work_update.content %></span><br>
-
-
-      <span class="badge bg-gray"><%= work_update.type.try(:titleize).try(:downcase) %></span>
-
-
-
-    </div>
-    <div class="col-md-1">
-      <%= link_to computer_repair_section_work_order_update_path(work_update), method: :delete do %>
-        <span class="text-danger" title="Remove" data-placement="top" data-toggle="tooltip"><i class="fa fa-times"></i> </span>
+      <% end %>
+      <% if can_endorse %>
+        <%= link_to edit_computer_repair_section_work_order_endorsement_path(work_order), class: "btn btn-sm btn-outline-warning" do %>
+          <i class="fa fa-check mr-1"></i> Endorse
+        <% end %>
+      <% end %>
+      <%= link_to edit_computer_repair_section_work_order_path(work_order), class: "btn btn-sm btn-outline-secondary" do %>
+        <i class="fa fa-pencil mr-1"></i> Edit Info
+      <% end %>
+      <%= link_to computer_repair_section_work_order_service_claim_tag_path(work_order, format: 'pdf'), class: "btn btn-sm btn-outline-secondary" do %>
+        <i class="fa-solid fa-tag mr-1"></i> Claim Tag
+      <% end %>
+      <% if work_order.released? %>
+        <%= link_to computer_repair_section_work_order_path(work_order, format: 'pdf'), class: "btn btn-sm btn-outline-secondary" do %>
+          <i class="fa-solid fa-file-pdf mr-1"></i> Release Form
+        <% end %>
+      <% end %>
+      <% if current_user.proprietor? %>
+        <%= link_to computer_repair_section_work_order_path(work_order), method: :delete, data: { confirm: "Delete this work order?" }, class: "btn btn-sm btn-outline-danger" do %>
+          <i class="fa fa-times mr-1"></i> Delete
+        <% end %>
       <% end %>
     </div>
   </div>
-  <hr>
-  <% end %>
-  <% end %>
-</div>
-</div>
-<div class="card card-outline card-secondary">
+
+  <div class="card-header p-2">
+    <ul class="nav nav-pills" id="work-order-detail-tabs" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="details-tab" data-toggle="tab" href="#details-pane" role="tab" aria-controls="details-pane" aria-selected="true">
+          Details
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="accessories-tab" data-toggle="tab" href="#accessories-pane" role="tab" aria-controls="accessories-pane" aria-selected="false">
+          Accessories <span class="badge badge-light ml-1"><%= work_order.accessories.count %></span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="service-charges-tab" data-toggle="tab" href="#service-charges-pane" role="tab" aria-controls="service-charges-pane" aria-selected="false">
+          Service Charges <span class="badge badge-light ml-1"><%= work_order.service_charges.count %></span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="spare-parts-tab" data-toggle="tab" href="#spare-parts-pane" role="tab" aria-controls="spare-parts-pane" aria-selected="false">
+          Spare Parts <span class="badge badge-light ml-1"><%= work_order.sales_order_line_items.count %></span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="payments-tab" data-toggle="tab" href="#payments-pane" role="tab" aria-controls="payments-pane" aria-selected="false">
+          Payments
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="audit-log-tab" data-toggle="tab" href="#audit-log-pane" role="tab" aria-controls="audit-log-pane" aria-selected="false">
+          Audit Log <span class="badge badge-light ml-1"><%= work_order.work_order_updates.count %></span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
   <div class="card-body">
-    <div class="row">
-      <div class="col-md-6">
-        <h4 class="subtitle-up"> Accessories </h4>
+    <div class="tab-content" id="work-order-detail-tabs-content">
+      <div class="tab-pane fade show active" id="details-pane" role="tabpanel" aria-labelledby="details-tab">
+        <div class="row">
+          <div class="col-md-6">
+            <h6 class="text-uppercase text-muted small font-weight-bold mb-2">Work Order</h6>
+            <ul class="list-group list-group-unbordered mb-4">
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Customer</b> <span><%= work_order.customer_full_name %></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Contact Person</b> <span><%= work_order.contact_person %></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Contact Number</b> <span><%= work_order.customer_contact_number %></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Department</b> <span><%= work_order.department.try(:customer_name_and_department) %></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Model / Description</b> <span><%= work_order.description %></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Serial #</b> <span><%= work_order.serial_number %></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <b class="text-nowrap mr-3">Reported Problem</b> <span class="text-right"><%= work_order.reported_problem %></span>
+              </li>
+            </ul>
+
+            <% if work_order.under_warranty? %>
+              <h6 class="text-uppercase text-muted small font-weight-bold mb-2">Warranty</h6>
+              <ul class="list-group list-group-unbordered mb-4">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <b>Supplier</b> <span><%= work_order.supplier.try(:business_name) %></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <b>Purchase Date</b> <span><%= work_order.purchase_date.try(:strftime, "%B %e, %Y") %></span>
+                </li>
+              </ul>
+            <% end %>
+          </div>
+          <div class="col-md-6">
+            <h6 class="text-uppercase text-muted small font-weight-bold mb-2">Timeline</h6>
+            <ul class="list-group list-group-unbordered mb-4">
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Date Received</b> <span><%= work_order.date_received.strftime("%B %e, %Y") %></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Time Received</b> <span><%= work_order.created_at.strftime("%I:%M %p") %></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Elapsed Time</b> <span><%= distance_of_time_in_words(work_order.created_at, Time.zone.now) %></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Done Date</b> <span><%= work_order.done_at.try(:strftime, "%B %e, %Y") || '—' %></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Release Date</b> <span><%= work_order.release_date.try(:strftime, "%B %e, %Y") || '—' %></span>
+              </li>
+            </ul>
+
+            <h6 class="text-uppercase text-muted small font-weight-bold mb-2">Charge Invoice</h6>
+            <% if work_order.charge_invoice.blank? %>
+              <%= link_to 'Add Charge Invoice Number', new_computer_repair_section_work_order_charge_invoice_path(work_order), class: "btn btn-outline-primary btn-sm" %>
+            <% else %>
+              <div class="d-flex justify-content-between align-items-center">
+                <span><%= work_order.charge_invoice.try(:number) %></span>
+                <%= link_to 'Edit', edit_charge_invoice_path(work_order.charge_invoice), class: 'btn btn-outline-warning btn-sm' %>
+              </div>
+            <% end %>
+          </div>
+        </div>
       </div>
-      <div class="col-md-6">
-        <%=link_to 'Add Accessories', new_product_unit_accessory_path(@work_order.product_unit, work_order_id: @work_order.id), class: 'btn btn-outline-primary' %>
+
+      <div class="tab-pane fade" id="accessories-pane" role="tabpanel" aria-labelledby="accessories-tab">
+        <div class="d-flex justify-content-end mb-2">
+          <%= link_to 'Add Accessories', new_product_unit_accessory_path(work_order.product_unit, work_order_id: work_order.id), class: 'btn btn-outline-primary btn-sm' %>
+        </div>
+        <% if work_order.accessories.blank? %>
+          <p class="text-muted text-center mb-0 py-4"><i class="fa-solid fa-box mr-1"></i>No accessories recorded.</p>
+        <% else %>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead><tr><th>Qty</th><th>Description</th><th>Serial #</th><th></th></tr></thead>
+              <tbody>
+                <% work_order.accessories.each do |accessory| %>
+                  <tr>
+                    <td><%= accessory.quantity.to_i %></td>
+                    <td><%= accessory.description %></td>
+                    <td><%= accessory.serial_number.try(:upcase) %></td>
+                    <td class="text-right">
+                      <%= link_to accessory_path(accessory), method: :delete, data: { confirm: "Remove this accessory?" } do %>
+                        <span class="text-danger"><i class="fa fa-trash"></i></span>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
       </div>
-    </div>
-    <hr>
-      <% @work_order.accessories.each do |accessory| %>
-    <div class="row">
-      <div class="col-md-4">
-        <%=accessory.quantity.to_i %>
-      </div>
-      <div class="col-md-6">
-        <%= accessory.description %><br>
-        <small><%= accessory.serial_number.try(:upcase) %></small>
-      </div>
-      <div class="col-md-2">
-         <%= link_to accessory_path(accessory), method: :delete do %>
-            <span class="text-danger fa fa-trash"></span>
+
+      <div class="tab-pane fade" id="service-charges-pane" role="tabpanel" aria-labelledby="service-charges-tab">
+        <div class="d-flex justify-content-end mb-2">
+          <% unless work_order.released? %>
+            <%= link_to 'Add Charges', new_repair_services_module_work_order_service_charge_processing_path(work_order), class: 'btn btn-outline-primary btn-sm' %>
           <% end %>
+        </div>
+        <% if work_order.service_charges.blank? %>
+          <p class="text-muted text-center mb-0 py-4"><i class="fa-solid fa-screwdriver-wrench mr-1"></i>No service charges recorded.</p>
+        <% else %>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead><tr><th>Description</th><th class="text-right">Amount</th></tr></thead>
+              <tbody>
+                <% work_order.service_charges.each do |charge| %>
+                  <tr>
+                    <td><%= charge.description %></td>
+                    <td class="text-right"><%= number_to_currency charge.amount %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="tab-pane fade" id="spare-parts-pane" role="tabpanel" aria-labelledby="spare-parts-tab">
+        <div class="d-flex justify-content-end mb-2">
+          <% unless work_order.released? %>
+            <%= link_to 'Add Parts', new_repair_services_module_work_order_repair_service_order_line_item_processing_path(work_order), class: 'btn btn-outline-primary btn-sm' %>
+          <% end %>
+        </div>
+        <% if work_order.sales_order_line_items.blank? %>
+          <p class="text-muted text-center mb-0 py-4"><i class="fa-solid fa-gears mr-1"></i>No spare parts recorded.</p>
+        <% else %>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead><tr><th>Qty</th><th>Item</th><th class="text-right">Amount</th><th></th></tr></thead>
+              <tbody>
+                <% work_order.sales_order_line_items.each do |spare_part| %>
+                  <tr>
+                    <td><%= spare_part.quantity.to_i %></td>
+                    <td>
+                      <%= spare_part.product_name %><br>
+                      <small class="text-muted"><%= spare_part.try(:order).try(:date).try(:strftime, "%B %e, %Y") %></small><br>
+                      <small class="text-muted"><%= spare_part.bar_code %></small>
+                    </td>
+                    <td class="text-right font-weight-bold"><%= number_to_currency spare_part.total_cost %></td>
+                    <td class="text-right">
+                      <% if current_user.proprietor? %>
+                        <%= link_to repair_services_module_work_order_spare_part_cancellation_path(work_order_id: work_order.id, line_item_id: spare_part.id), id: "#{spare_part.id}-cancel-line-item", data: { confirm: 'Are you sure you want to delete this item?' }, method: :delete do %>
+                          <span class="text-danger"><i class="fa fa-times"></i></span>
+                        <% end %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="tab-pane fade" id="payments-pane" role="tabpanel" aria-labelledby="payments-tab">
+        <div class="d-flex justify-content-end mb-2">
+          <% if current_user.proprietor? || current_user.sales_clerk? %>
+            <%= link_to 'New Payment / Advance Payment', new_repair_services_module_work_order_payment_processing_path(work_order), class: 'btn btn-outline-primary btn-sm' %>
+          <% end %>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped mb-0">
+            <tbody>
+              <tr>
+                <td>Receivables</td>
+                <td class="text-right"><%= number_to_currency work_order.accounts_receivable_total %></td>
+              </tr>
+              <tr>
+                <td>Sales Returns</td>
+                <td class="text-right"><%= number_to_currency work_order.sales_returns_total %></td>
+              </tr>
+              <tr>
+                <td>Cash Payments</td>
+                <td class="text-right"><%= number_to_currency work_order.cash_payments_total %></td>
+              </tr>
+              <tr>
+                <td><strong>Balance</strong></td>
+                <td class="text-right">
+                  <strong><%= number_to_currency work_order.balance_total %></strong>
+                  <% if work_order.balance_total < 0 %>
+                    <%= link_to 'New Refund', new_computer_repair_section_work_order_refund_path(work_order), class: "btn btn-danger btn-xs ml-2" %>
+                  <% end %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h6 class="text-uppercase text-muted small font-weight-bold mt-4 mb-1">Transactions History</h6>
+        <p class="text-muted small">List of payments, credit orders and charges</p>
+        <% if work_order.entries.blank? %>
+          <p class="text-muted text-center mb-0 py-4"><i class="fa-solid fa-money-bill-wave mr-1"></i>No transactions recorded.</p>
+        <% else %>
+          <% work_order.entries.includes(:recorder).order(created_at: :desc).each do |entry| %>
+            <div class="row">
+              <div class="col-md-10">
+                <b><%= entry.description %></b><br>
+                <span class="text-muted">
+                  <%= entry.entry_date.strftime("%b %e") %>
+                  <% if entry.recorder.present? %>
+                    <small><%= entry.recorder.full_name %></small>
+                  <% end %>
+                </span><br>
+                <small>DEBIT</small>
+                <% entry.debit_amounts.each do |amount| %>
+                  <div class="row">
+                    <div class="col-md-8"><%= amount.account_name %></div>
+                    <div class="col-md-4"><span class="float-right"><%= number_to_currency amount.amount %></span></div>
+                  </div>
+                <% end %>
+                <small>CREDIT</small>
+                <% entry.credit_amounts.each do |amount| %>
+                  <div class="row">
+                    <div class="col-md-8"><%= amount.account_name %></div>
+                    <div class="col-md-4"><span class="float-right"><%= number_to_currency amount.amount %></span></div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+            <hr>
+          <% end %>
+        <% end %>
+      </div>
+
+      <div class="tab-pane fade" id="audit-log-pane" role="tabpanel" aria-labelledby="audit-log-tab">
+        <div class="row">
+          <div class="col-md-4">
+            <h6 class="text-uppercase text-muted small font-weight-bold mb-2">Add Update</h6>
+            <%= simple_form_for @post, url: :computer_repair_section_work_order_updates do |f| %>
+              <%= f.input :type, label: false, collection: Post.types.map{|a| [a.titleize, a]}, prompt: 'Select Update Type', input_html: { class: 'chosen-select' } %>
+              <%= f.input :title, label: false, placeholder: 'Title', required: true %>
+              <%= f.input :content, label: false, placeholder: 'Content', as: :text, input_html: { rows: 4, class: "input-xs" } %>
+              <%= f.input :date, input_html: { value: Time.zone.now }, as: :hidden %>
+              <%= f.input :updateable_id, input_html: { value: work_order.id }, as: :hidden %>
+              <%= f.input :updateable_type, input_html: { value: work_order.class }, as: :hidden %>
+              <%= f.submit "Update", class: "btn btn-primary btn-block" %>
+            <% end %>
+          </div>
+          <div class="col-md-8">
+            <h6 class="text-uppercase text-muted small font-weight-bold mb-2">History</h6>
+            <% if work_order.work_order_updates.blank? %>
+              <p class="text-muted text-center mb-0 py-4"><i class="fa-solid fa-clock-rotate-left mr-1"></i>No updates recorded yet.</p>
+            <% else %>
+              <% work_order.work_order_updates.each do |work_update| %>
+                <% if work_update.id? %>
+                  <div class="row">
+                    <div class="col-md-2">
+                      <% if work_update.user.present? %>
+                        <%= image_tag(work_update.user.avatar, class: "img-circle", height: 45, width: 45) %>
+                      <% end %>
+                    </div>
+                    <div class="col-md-9">
+                      <b><%= work_update.user.try(:full_name) %></b>
+                      <% if work_update.date %>
+                        <small class="text-muted"><i class="fa fa-clock-o"></i> <%= work_update.date.strftime("%b %e, %l:%M %p") %></small><br>
+                      <% end %>
+                      <span><%= work_update.title.try(:upcase) %></span><br>
+                      <span class="text-muted"><%= work_update.content %></span><br>
+                      <span class="badge bg-gray"><%= work_update.type.try(:titleize).try(:downcase) %></span>
+                    </div>
+                    <div class="col-md-1">
+                      <%= link_to computer_repair_section_work_order_update_path(work_update), method: :delete do %>
+                        <span class="text-danger" title="Remove" data-placement="top" data-toggle="tooltip"><i class="fa fa-times"></i></span>
+                      <% end %>
+                    </div>
+                  </div>
+                  <hr>
+                <% end %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
       </div>
     </div>
-    <br>
-    <% end %>
-</div>
+  </div>
 </div>

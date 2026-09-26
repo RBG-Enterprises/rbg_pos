@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_25_212250) do
+ActiveRecord::Schema.define(version: 2026_09_26_001339) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -895,6 +895,7 @@ ActiveRecord::Schema.define(version: 2026_09_25_212250) do
     t.bigint "department_id"
     t.bigint "technician_id"
     t.datetime "done_at"
+    t.datetime "time_received"
     t.index ["account_number"], name: "index_work_orders_on_account_number", unique: true
     t.index ["customer_id"], name: "index_work_orders_on_customer_id"
     t.index ["department_id"], name: "index_work_orders_on_department_id"

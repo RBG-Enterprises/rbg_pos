@@ -1,0 +1,9 @@
+$("ul.errors").html("")
+<% if @customer.errors.any? %>
+  <% @customer.errors.full_messages.each do |message| %>
+    $("ul.errors").append($("<li />").html("<%= message.html_safe %>"))
+  <% end %>
+<% else %>
+  $("#customer-modal").modal("hide")
+  window.location.href = "<%= new_computer_repair_section_work_order_path(customer_id: @customer.id) %>"
+<% end %>

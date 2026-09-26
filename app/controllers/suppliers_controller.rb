@@ -5,7 +5,11 @@ class SuppliersController < ApplicationController
 		else
 		  @suppliers = Supplier.all.paginate(page: params[:page], per_page: 20)
 		end
-		authorize @suppliers
+
+		respond_to do |format|
+			format.html { authorize @suppliers }
+			format.json { render json: @suppliers.map { |s| { id: s.id, text: s.business_name } } }
+		end
 	end
 	def show
 		@supplier = Supplier.find(params[:id])

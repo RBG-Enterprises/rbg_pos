@@ -29,6 +29,14 @@ document.addEventListener("turbolinks:load", () => {
       autoclose: true
 
     }).datepicker("setDate", "0");;
+  $('.datepicker-no-default').datepicker(
+    {
+      format: 'dd/mm/yyyy',
+      immediateUpdates: true,
+      todayBtn: true,
+      todayHighlight: true,
+      autoclose: true
+    });
   $('.chosen-select').chosen({width: "95%"});
 
   var tabsNav = document.getElementById('session-detail-tabs')

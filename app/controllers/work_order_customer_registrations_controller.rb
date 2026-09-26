@@ -4,12 +4,10 @@ class WorkOrderCustomerRegistrationsController < ApplicationController
 	end
   def create
     @customer = Customer.create(customer_params)
-    if @customer.valid?
-      @customer.save! 
-      AccountCreators::Customer.new(customer: @customer).create_accounts!
-      redirect_to new_computer_repair_section_work_order_url(customer_id: @customer.id), notice: 'Customer saved successfully'
-    else 
-      render :new 
+    AccountCreators::Customer.new(customer: @customer).create_accounts! if @customer.persisted?
+    respond_to do |format|
+      format.html { redirect_to new_computer_repair_section_work_order_url(customer_id: @customer.id), notice: 'Customer saved successfully' }
+      format.js
     end
   end
   

@@ -27,7 +27,8 @@ describe 'New work order' do
     fill_in 'Physical condition',       with: 'good'
     fill_in 'Reported problem',         with: 'no power'
     check 'Under warranty'
-    select_from_chosen 'Test supplier', from: 'Supplier'
+    fill_in 'supplier-search', with: 'Test supplier'
+    within('.typeahead-menu') { click_on 'Test supplier' }
     fill_in 'Purchase date',            with: Date.current.strftime("%B %e, %Y")
     fill_in 'Expiry date',              with: Date.current.next_year
 

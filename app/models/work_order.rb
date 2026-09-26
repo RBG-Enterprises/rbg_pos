@@ -2,6 +2,14 @@ class WorkOrder < ApplicationRecord
   include PgSearch::Model
   enum status: [:received, :work_in_progress, :done,  :released, :return_to_owner]
 
+  STATUS_BADGE_CLASSES = {
+    "received" => "badge-secondary",
+    "work_in_progress" => "badge-warning",
+    "done" => "badge-success",
+    "released" => "badge-outline-success",
+    "return_to_owner" => "badge-outline-danger",
+  }.freeze
+
   has_one_attached :signature
 
   pg_search_scope :text_search, against: [:service_number, :reported_problem, :physical_condition, :customer_name, :product_name],
@@ -37,6 +45,8 @@ class WorkOrder < ApplicationRecord
   validates :description, :physical_condition, :reported_problem, presence: true
   validates :customer_id, :date_received, presence: true
 
+  before_create { self.time_received ||= Time.current }
+
   delegate :description, :model_number, :serial_number, to: :product_unit, allow_nil: true
   delegate :full_name, :address, :contact_number, to: :customer, allow_nil: true, prefix: true
   delegate :avatar, :full_name, to: :customer
@@ -67,6 +77,10 @@ class WorkOrder < ApplicationRecord
 
   def name
     "#{product_name}"
+  end
+
+  def status_badge_class
+    STATUS_BADGE_CLASSES.fetch(status, "badge-secondary")
   end
 
   def self.total_charges_cost(args={} ) #refactor

@@ -33,6 +33,7 @@ Rails.application.routes.draw do
     },
     as: :technician_root
   resources :store, only: [:index]
+  resources :departments, only: [:index]
   resources :customers do
     resources :departments, only: [:new, :create], module: :customers
     resources :refunds,         only: [:new, :create],                module: :customers

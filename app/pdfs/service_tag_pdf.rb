@@ -81,7 +81,7 @@ class ServiceTagPdf < Prawn::Document
     bounding_box([@page_width - job_box_width, top_y], width: job_box_width, height: 55) do
       stroke_bounds
       move_down(6)
-      text("JOB ORDER ID", align: :center, size: 8, style: :bold, color: "666666")
+      text("CLAIM #", align: :center, size: 8, style: :bold, color: "666666")
       move_down(3)
       text(@work_order.service_number.to_s, align: :center, size: 18, style: :bold, color: "CC0000")
     end
@@ -98,37 +98,41 @@ class ServiceTagPdf < Prawn::Document
   def form_grid
     grid_top = cursor
     half_width = @page_width / 2.0
-    left_height = 0
-    right_height = 0
+    right_cell_style = { size: 8, font: "Helvetica", inline_format: true, padding: [2, 3, 2, 3] }
 
-    bounding_box([0, grid_top], width: half_width) do
-      t = table(
-        left_column_data,
-        cell_style: { size: 8, font: "Helvetica", inline_format: true, padding: [2, 3, 2, 3] },
-        column_widths: [78, half_width - 78],
-      )
-      left_height = t.height
+    left_table = make_table(
+      left_column_data,
+      cell_style: { size: 8, font: "Helvetica", inline_format: true, padding: [2, 3, 2, 3] },
+      column_widths: [78, half_width - 78],
+    )
+
+    natural_right_table = make_table(
+      right_column_data,
+      cell_style: right_cell_style,
+      column_widths: [82, half_width - 82],
+    )
+    extra_height = [left_table.height - natural_right_table.height, 0].max
+
+    right_table = make_table(
+      right_column_data,
+      cell_style: right_cell_style,
+      column_widths: [82, half_width - 82],
+    ) do |table|
+      table.row(@warranty_status_row).column(1).font_style = :bold
+      table.row(@warranty_status_row).column(1).text_color = @work_order.under_warranty? ? "1F7A1F" : "CC0000"
+      table.row(1).each { |cell| cell.padding_bottom += extra_height } if extra_height.positive?
     end
 
-    bounding_box([half_width, grid_top], width: half_width) do
-      t = table(
-        right_column_data,
-        cell_style: { size: 8, font: "Helvetica", inline_format: true, padding: [2, 3, 2, 3] },
-        column_widths: [82, half_width - 82],
-      ) do |table|
-        table.row(@warranty_status_row).column(1).font_style = :bold
-        table.row(@warranty_status_row).column(1).text_color = @work_order.under_warranty? ? "1F7A1F" : "CC0000"
-      end
-      right_height = t.height
-    end
+    bounding_box([0, grid_top], width: half_width) { left_table.draw }
+    bounding_box([half_width, grid_top], width: half_width) { right_table.draw }
 
-    move_cursor_to(grid_top - [left_height, right_height].max)
+    move_cursor_to(grid_top - [left_table.height, right_table.height].max)
   end
 
   def left_column_data
     [
       ["Received Date:", @work_order.date_received.try(:strftime, "%B %e, %Y")],
-      ["Received Time:", @work_order.date_received.try(:strftime, "%I:%M %p")],
+      ["Received Time:", @work_order.time_received.try(:strftime, "%I:%M %p")],
       ["Client Name:", "<b>#{@work_order.customer_full_name.try(:upcase)}</b>"],
       ["Contact Person:", @work_order.contact_person],
       ["Department:", @work_order.department.try(:customer_name_and_department)],
@@ -142,8 +146,6 @@ class ServiceTagPdf < Prawn::Document
     data = [
       ["Item Description:", @work_order.description],
       ["Item Accessories:", accessories_text],
-      ["Password:", "N/A"],
-      ["Back Up Files:", "N/A"],
     ]
     @warranty_status_row = data.length
     data << ["Warranty Status:", @work_order.under_warranty? ? "UNDER WARRANTY" : ""]
@@ -178,12 +180,14 @@ class ServiceTagPdf < Prawn::Document
     move_down(18)
     col_width = @page_width / 4.0
 
+    cell_style = { borders: [], size: 8, style: :bold, align: :center, valign: :bottom, height: 16 }
     table(
-      [["", @work_order.technician.try(:full_name).to_s.upcase, "", ""]],
+      [[@work_order.customer_full_name.to_s.upcase, technician_in_charge_name, "", ""]],
       column_widths: [col_width] * 4,
-      cell_style: { borders: [], size: 8, style: :bold, align: :center, valign: :bottom, height: 16 },
+      cell_style: cell_style.merge(padding: [2, 3, 2, 3]),
     )
 
+    move_down(30)
     y = cursor
     render_signature(12, y, col_width - 24)
     4.times do |i|
@@ -198,6 +202,10 @@ class ServiceTagPdf < Prawn::Document
       column_widths: [col_width] * 4,
       cell_style: { borders: [], size: 8, align: :center },
     )
+  end
+
+  def technician_in_charge_name
+    @work_order.technician.try(:full_name).to_s.upcase
   end
 
   def render_signature(x, y, width)

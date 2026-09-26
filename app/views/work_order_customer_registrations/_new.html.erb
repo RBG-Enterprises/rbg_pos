@@ -1,0 +1,35 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title">New Customer</h4>
+    </div>
+    <%=simple_form_for @customer, url: :work_order_customer_registrations, remote: true do |f| %>
+    <%= f.error_notification %>
+    <%= f.input :business_id, input_html: { value: current_user.business_id }, as: :hidden %>
+      <div class="modal-body">
+        <ul class="errors text-danger">
+        </ul>
+        <div class="row">
+          <div class="col-md-6">
+            <%=f.input :first_name %>
+          </div>
+           <div class="col-md-6">
+            <%=f.input :last_name %>
+          </div>
+        </div>
+         <div class="row">
+          <div class="col-md-6">
+            <%=f.input :address %>
+          </div>
+           <div class="col-md-6">
+            <%=f.input :contact_number %>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <%= link_to "Cancel", "#", class: "btn btn-default pull-left", data: {dismiss: "modal"} %>
+        <%=f.submit "Save Customer", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
