@@ -54,6 +54,8 @@ gem "net-imap", require: false
 gem "net-pop", require: false
 gem "csv", require: false
 gem "ostruct", require: false
+# ActiveSupport 8.0 passes quirks_mode to JSON.generate; json 3.x removed it.
+gem "json", "< 3"
 gem "listen", "~> 3.8"
 gem "bullet"
 
