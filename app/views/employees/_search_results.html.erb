@@ -13,7 +13,10 @@
     <tbody>
       <% @employees.each do |employee| %>
         <tr>
-          <td><%= link_to employee.name, employee_path(employee) %></td>
+          <td>
+            <%= image_tag(employee.avatar, height: 35, width: 35, class: "img-circle mr-2") %>
+            <%= link_to employee.name, employee_path(employee) %>
+          </td>
           <td><%= employee.email %></td>
           <td><%= employee.role.try(:titleize) %></td>
           <td><%= employee.designation %></td>

@@ -22,7 +22,8 @@ node_modules/
 
 /public/packs
 /public/packs-test
-/storage
+/storage/*
+!/storage/.keep
 /public/storage
 
 /yarn-error.log
