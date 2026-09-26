@@ -5,11 +5,8 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby "3.3.0"
 
 gem "active_interaction", "~> 5.3"
-# Rails 6.1 is incompatible with concurrent-ruby >= 1.3.5 (LoggerThreadSafeLevel).
-# Drop this pin after upgrading to Rails 7.1+.
-gem "concurrent-ruby", "1.3.4"
 gem "prawn-icon"
-gem "rails", "~> 7.0.0"
+gem "rails", "~> 7.1.0"
 gem "audited", "~> 5.0"
 gem "spreadsheet"
 gem "rqrcode"
