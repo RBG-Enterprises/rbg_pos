@@ -26,7 +26,7 @@ gem "terser"
 gem "groupdate"
 gem "turbolinks", "~> 5"
 gem "public_activity"
-gem "redis", "~> 4.0"
+gem "redis", "~> 5.0"
 gem "jquery-rails"
 gem "jquery-ui-rails"
 gem "barby"
@@ -45,12 +45,12 @@ gem "roo", "2.7.0"
 gem "simple_calendar"
 gem "pdf-reader"
 gem "pagy"
-gem "ffi", "1.15.3"
+gem "ffi", ">= 1.15"
 gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem "net-smtp", require: false
 gem "net-imap", require: false
 gem "net-pop", require: false
-gem "listen", ">= 3.0.5", "< 3.2"
+gem "listen", "~> 3.8"
 gem "bullet"
 
 group :development, :test do
