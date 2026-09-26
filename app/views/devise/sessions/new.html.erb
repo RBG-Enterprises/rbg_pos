@@ -1,30 +1,19 @@
-<div class="container">
-  <br>
-  <div class="row">
-    <div class="col-md-8 offset-md-2">
-      <center><%#=image_tag("letterhead.jpg", height: 200, width: 600) %></center>
-
-      <br>
+<div class="signin-page">
+  <div class="signin-card">
+    <%= render 'layouts/flash' %>
+    <div class="signin-brand">
+      <%= image_tag("logo.jpg", class: "signin-logo", alt: "RBG Computers, Cellshop and Enterprises") %>
+      <h1 class="signin-title">RBG Computers, Cellshop and Enterprises</h1>
+      <p class="signin-subtitle">Sign in to continue</p>
     </div>
+    <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name),
+      wrapper_mappings: { boolean: :vertical_boolean }) do |f| %>
+      <%= f.input :email, placeholder: "Email address", label: false,
+        input_html: { class: "signin-input", autocomplete: "email" } %>
+      <%= f.input :password, placeholder: "Password", label: false,
+        input_html: { class: "signin-input", autocomplete: "current-password" } %>
+      <%= f.submit "Sign in", class: "btn btn-primary btn-block signin-btn", data: { disable_with: "Signing in..." } %>
+    <% end %>
   </div>
-  <div class="col-md-4 offset-md-4">
-    <%=render 'layouts/flash' %>
-    <div class="card">
-      <div class="card-body">
-        <h4 class="title-up"><center> RBG COMPUTERS, CELLSHOP AND ENTERPRISES </center> </h4>
-
-      <br>
-      <%= simple_form_for(resource, as: resource_name, :url => session_path(resource_name),
-        wrapper_mappings: {boolean: :vertical_boolean }) do |f| %>
-        <center><%=image_tag("logo.png", height: 140, width: 140, class: 'img-circle img-responsive text-center') %></center>
-        <br>
-        <br>
-        <%= f.input :email, placeholder: "Email", input_html:{class: "form-control"}, label: false %>
-        <%= f.input :password, placeholder: "Password",  input_html:{class: "form-control"}, label: false  %>
-        
-        <%= f.submit "Sign in", class: "btn btn-primary btn-flat btn-block btn-lg", data: {disable_with: "Signing in..."} %>
-      <% end %>
-      <br>
-    </div>
-  </div>
+  <p class="signin-foot">&copy; <%= Date.current.year %> RBG Computers, Cellshop and Enterprises</p>
 </div>

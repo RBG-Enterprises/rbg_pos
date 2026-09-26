@@ -12,7 +12,7 @@ class EmployeesController < ApplicationController
   end
   def update
     @employee = User.find(params[:id])
-    authorize @employee
+    authorize @employee, :update_avatar?
     if @employee.update(employee_params)
       redirect_to employee_settings_path(@employee), notice: "Employee photo updated successfully."
     else

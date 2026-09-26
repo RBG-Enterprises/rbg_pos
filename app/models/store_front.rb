@@ -20,6 +20,8 @@ class StoreFront < ApplicationRecord
   has_many :sales_order_line_items,                through: :sales_orders, class_name: "StoreFrontModule::LineItems::SalesOrderLineItem"
   has_many :work_orders
   has_many :selling_prices,                        class_name: "StoreFrontModule::SellingPrice"
+  has_many :user_store_fronts, dependent: :destroy
+  has_many :authorized_users, through: :user_store_fronts, source: :user
   has_many :employees,                             class_name: 'User'
   has_many :store_front_accounts,                  class_name: 'StoreFronts::StoreFrontAccount'
   has_many :accounts,                              through: :store_front_accounts

@@ -4,19 +4,58 @@
     <li class="nav-item">
       <a class="nav-link" data-widget="pushmenu" href="#"><i class="fa-solid fa-bars"></i></a>
     </li>
-
   </ul>
 
   <!-- Right navbar links -->
   <ul class="navbar-nav ml-auto">
     <li class="nav-item dropdown">
-      <a class="nav-link" data-toggle="dropdown" href="#">
-        <%= current_user.first_name %>  <i class="fa-solid fa-user"></i>
+      <a class="nav-link d-flex align-items-center py-1" data-toggle="dropdown" href="#">
+        <% if current_user.avatar.attached? %>
+          <%= image_tag current_user.avatar, height: 30, width: 30, class: "img-circle mr-2", alt: current_user.first_name %>
+        <% else %>
+          <%= image_tag "default.png", height: 30, width: 30, class: "img-circle mr-2", alt: current_user.first_name %>
+        <% end %>
+        <span class="mr-2"><%= current_user.first_name %></span>
+        <i class="fa-solid fa-angle-down text-muted small"></i>
       </a>
 
-      <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-
-                <%=link_to 'Sign out', destroy_user_session_path, method: :delete, class: "dropdown-item" %>
+      <div class="dropdown-menu user-menu dropdown-menu-right">
+        <div class="user-menu-identity">
+          <% if current_user.avatar.attached? %>
+            <%= image_tag current_user.avatar, class: "user-menu-avatar", alt: current_user.full_name %>
+          <% else %>
+            <%= image_tag "default.png", class: "user-menu-avatar", alt: current_user.full_name %>
+          <% end %>
+          <div class="user-menu-who">
+            <div class="user-menu-name"><%= current_user.full_name %></div>
+            <div class="user-menu-meta"><%= [current_user.role.try(:titleize), current_store_front.try(:name)].compact.reject(&:blank?).join(" · ") %></div>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="user-menu-caption">Switch store</div>
+        <a class="dropdown-item user-menu-row" href="#" id="switch-store-toggle" title="Switch store front">
+          <i class="fa-solid fa-store"></i>
+          <span class="user-menu-row-text"><%= current_store_front.try(:name) || "Select store front" %></span>
+          <i id="switch-store-caret" class="fa-solid fa-angle-right"></i>
+        </a>
+        <div id="switch-store-list" class="collapse user-menu-submenu">
+          <% current_user.switchable_store_fronts.order(:name).each do |store_front| %>
+            <%= link_to store_front_switches_path(store_front_id: store_front.id), method: :post,
+              class: "dropdown-item user-menu-row user-menu-subitem #{'is-active' if store_front.id == current_store_front.try(:id)}" do %>
+              <i class="fa-solid <%= store_front.id == current_store_front.try(:id) ? 'fa-check' : 'fa-store' %>"></i>
+              <span class="user-menu-row-text"><%= store_front.name %></span>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="dropdown-divider"></div>
+        <%= link_to account_path, class: "dropdown-item user-menu-row" do %>
+          <i class="fa-solid fa-user-gear"></i>
+          <span class="user-menu-row-text">Account</span>
+        <% end %>
+        <%= link_to destroy_user_session_path, method: :delete, class: "dropdown-item user-menu-row user-menu-signout" do %>
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span class="user-menu-row-text">Sign out</span>
+        <% end %>
       </div>
 
     </li>
@@ -24,3 +63,29 @@
   </ul>
 </nav>
 <!-- /.navbar -->
+<script>
+  (function() {
+    function initSwitchStoreToggle() {
+      var toggle = document.getElementById('switch-store-toggle');
+      if (!toggle || toggle.dataset.bound === 'true') { return; }
+      toggle.dataset.bound = 'true';
+      var list = document.getElementById('switch-store-list');
+      var caret = document.getElementById('switch-store-caret');
+      toggle.addEventListener('click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        window.jQuery(list).collapse('toggle');
+      });
+      window.jQuery(list).on('show.bs.collapse', function() {
+        caret.classList.remove('fa-angle-right');
+        caret.classList.add('fa-angle-down');
+      });
+      window.jQuery(list).on('hide.bs.collapse', function() {
+        caret.classList.remove('fa-angle-down');
+        caret.classList.add('fa-angle-right');
+      });
+    }
+    document.addEventListener('turbolinks:load', initSwitchStoreToggle);
+    if (document.readyState !== 'loading') { initSwitchStoreToggle(); }
+  })();
+</script>

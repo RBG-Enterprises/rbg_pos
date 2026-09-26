@@ -1,171 +1,45 @@
 <div class="tab-pane <%= 'active' if current_page? employee_settings_path(@employee) %>" id="employee-settings">
   <div class="content">
-    <h4 class="title-up">Photo</h4>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
-    <div class="row">
-      <div class="col-md-2">
-        <center>
-          <%= image_tag(@employee.avatar, height: 80, width: 80, class: "img-circle", id: "employee-photo-preview") %>
-          <br>
-          <small class="text-muted" id="employee-photo-filename"></small>
-        </center>
-      </div>
-      <div class="col-md-10">
-        <% if policy(@employee).update? %>
-          <%= simple_form_for @employee, url: employee_path(@employee), method: :patch, html: { id: "employee-photo-form" } do |f| %>
-            <%= f.input :avatar, as: :file, label: "Upload photo", input_html: { id: "employee-avatar-input", accept: "image/*" } %>
-            <%= f.submit "Update Photo", class: "btn btn-primary btn-sm" %>
-          <% end %>
+    <%= render 'employees/partials/photo_upload', employee: @employee, form_url: employee_path(@employee) %>
+    <hr>
+    <% if policy(@employee).update? %>
+      <h4 class="title-up">Store Front Access</h4>
+      <p class="text-muted">Store fronts <b><%= @employee.full_name %></b> can switch to from the top navbar.</p>
+      <% accesses_by_store_front = @employee.user_store_fronts.index_by(&:store_front_id) %>
+      <ul class="list-group mb-3">
+        <% @employee.switchable_store_fronts.order(:name).each do |store_front| %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>
+              <%= store_front.name %>
+              <% if store_front.id == @employee.store_front_id %>
+                <span class="badge badge-primary ml-1">Home</span>
+              <% end %>
+            </span>
+            <% access = accesses_by_store_front[store_front.id] %>
+            <% if access.present? && store_front.id != @employee.store_front_id %>
+              <%= button_to "Remove", employee_store_front_access_path(@employee, access),
+                method: :delete, class: "btn btn-danger btn-sm",
+                data: { confirm: "Remove #{store_front.name} from #{@employee.full_name}'s store fronts?" } %>
+            <% end %>
+          </li>
         <% end %>
-      </div>
-    </div>
-
-    <div class="modal fade" id="employee-photo-crop-modal" tabindex="-1" role="dialog" aria-labelledby="employee-photo-crop-title" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" id="employee-photo-crop-title">Preview &amp; Adjust Photo</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-md-8">
-                <div style="max-height: 400px; overflow: hidden;">
-                  <img id="employee-photo-crop-image" src="" alt="Photo preview" style="max-width: 100%;">
-                </div>
-              </div>
-              <div class="col-md-4">
-                <p class="text-muted"><small>Drag to reposition. Use the controls to zoom or rotate. The photo is cropped square for the circular avatar.</small></p>
-                <div class="d-flex flex-wrap mb-3">
-                  <button type="button" class="btn btn-outline-secondary btn-sm mr-1 mb-1" id="employee-photo-zoom-in" title="Zoom in"><i class="fa fa-search-plus"></i></button>
-                  <button type="button" class="btn btn-outline-secondary btn-sm mr-1 mb-1" id="employee-photo-zoom-out" title="Zoom out"><i class="fa fa-search-minus"></i></button>
-                  <button type="button" class="btn btn-outline-secondary btn-sm mr-1 mb-1" id="employee-photo-rotate-left" title="Rotate left"><i class="fa fa-rotate-left"></i></button>
-                  <button type="button" class="btn btn-outline-secondary btn-sm mr-1 mb-1" id="employee-photo-rotate-right" title="Rotate right"><i class="fa fa-rotate-right"></i></button>
-                  <button type="button" class="btn btn-outline-secondary btn-sm mb-1" id="employee-photo-reset" title="Reset"><i class="fa fa-refresh"></i> Reset</button>
-                </div>
-                <div class="form-group">
-                  <label for="employee-photo-zoom-range"><small>Zoom</small></label>
-                  <input type="range" class="form-control-range" id="employee-photo-zoom-range" min="0.2" max="3" step="0.01" value="1">
-                </div>
-                <div class="text-center mt-3">
-                  <small class="text-muted d-block mb-2">Cropped preview</small>
-                  <div id="employee-photo-crop-preview" class="mx-auto" style="width: 120px; height: 120px; overflow: hidden; border-radius: 50%; border: 1px solid #ddd;"></div>
-                </div>
-              </div>
+      </ul>
+      <% business_store_fronts = (@employee.business || current_business).try(:store_fronts) || StoreFront.all %>
+      <% assignable_store_fronts = business_store_fronts.where.not(id: @employee.switchable_store_fronts.select(:id)).order(:name) %>
+      <% if assignable_store_fronts.any? %>
+        <%= simple_form_for :store_front_access, url: employee_store_front_accesses_path(@employee) do |f| %>
+          <div class="row">
+            <div class="col-md-8">
+              <%= f.input :store_front_id, collection: assignable_store_fronts.map { |s| [s.name, s.id] },
+                label: "Add store front", include_blank: "Select a store front" %>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+              <%= f.submit "Add Store Front", class: "btn btn-primary btn-sm mb-3" %>
             </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal" id="employee-photo-crop-cancel">Cancel</button>
-            <button type="button" class="btn btn-primary" id="employee-photo-crop-apply">Crop &amp; Apply</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-    <script>
-      (function() {
-        function initEmployeePhotoCropper() {
-          var input = document.getElementById('employee-avatar-input');
-          var modal = window.jQuery ? window.jQuery('#employee-photo-crop-modal') : null;
-          var image = document.getElementById('employee-photo-crop-image');
-          var preview = document.getElementById('employee-photo-preview');
-          var filenameLabel = document.getElementById('employee-photo-filename');
-          var zoomRange = document.getElementById('employee-photo-zoom-range');
-          if (!input || !modal || !image || typeof Cropper === 'undefined') { return; }
-          if (input.dataset.cropperBound === 'true') { return; }
-          input.dataset.cropperBound = 'true';
-
-          var cropper = null;
-          var originalFilename = '';
-          var cropApplied = false;
-          var objectUrl = null;
-
-          function destroyCropper() {
-            if (cropper) { cropper.destroy(); cropper = null; }
-            if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; }
-          }
-
-          input.addEventListener('change', function(event) {
-            var file = event.target.files && event.target.files[0];
-            if (!file) { return; }
-            if (!file.type.match(/^image\//)) {
-              alert('Please select an image file.');
-              input.value = '';
-              return;
-            }
-            originalFilename = file.name;
-            cropApplied = false;
-            destroyCropper();
-            objectUrl = URL.createObjectURL(file);
-            image.src = objectUrl;
-            if (zoomRange) { zoomRange.value = 1; }
-            modal.modal('show');
-          });
-
-          modal.on('shown.bs.modal', function() {
-            cropper = new Cropper(image, {
-              aspectRatio: 1,
-              viewMode: 1,
-              dragMode: 'move',
-              autoCropArea: 1,
-              guides: true,
-              center: true,
-              highlight: true,
-              background: true,
-              preview: '#employee-photo-crop-preview'
-            });
-          });
-
-          modal.on('hidden.bs.modal', function() {
-            destroyCropper();
-            if (!cropApplied) { input.value = ''; }
-          });
-
-          function bindButton(id, fn) {
-            var btn = document.getElementById(id);
-            if (btn) { btn.addEventListener('click', fn); }
-          }
-
-          bindButton('employee-photo-zoom-in', function() { if (cropper) { cropper.zoom(0.1); } });
-          bindButton('employee-photo-zoom-out', function() { if (cropper) { cropper.zoom(-0.1); } });
-          bindButton('employee-photo-rotate-left', function() { if (cropper) { cropper.rotate(-90); } });
-          bindButton('employee-photo-rotate-right', function() { if (cropper) { cropper.rotate(90); } });
-          bindButton('employee-photo-reset', function() {
-            if (cropper) { cropper.reset(); }
-            if (zoomRange) { zoomRange.value = 1; }
-          });
-
-          if (zoomRange) {
-            zoomRange.addEventListener('input', function() {
-              if (!cropper) { return; }
-              cropper.zoomTo(parseFloat(zoomRange.value));
-            });
-          }
-
-          bindButton('employee-photo-crop-apply', function() {
-            if (!cropper) { return; }
-            var canvas = cropper.getCroppedCanvas({ width: 400, height: 400, imageSmoothingQuality: 'high' });
-            if (!canvas) { return; }
-            canvas.toBlob(function(blob) {
-              if (!blob) { return; }
-              var croppedFile = new File([blob], originalFilename || 'employee-photo.png', { type: 'image/png' });
-              var transfer = new DataTransfer();
-              transfer.items.add(croppedFile);
-              input.files = transfer.files;
-              if (preview) { preview.src = URL.createObjectURL(blob); }
-              if (filenameLabel) { filenameLabel.textContent = croppedFile.name; }
-              cropApplied = true;
-              modal.modal('hide');
-            }, 'image/png');
-          });
-        }
-
-        document.addEventListener('turbolinks:load', initEmployeePhotoCropper);
-        if (document.readyState !== 'loading') { initEmployeePhotoCropper(); }
-      })();
-    </script>
+        <% end %>
+      <% end %>
+    <% end %>
     <hr>
     <% if current_user.proprietor? %>
       <h4 class="title-up">Account Status</h4>

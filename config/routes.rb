@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       request.env["warden"].user.role == "technician" if request.env["warden"].user
     },
     as: :technician_root
+  resources :store_front_switches, only: [:create]
   resources :store, only: [:index]
   resources :departments, only: [:index]
   resources :customers do
@@ -110,9 +111,11 @@ Rails.application.routes.draw do
     resources :payments, only: [:new, :create], module: :suppliers
   end
   resources :users, only: [:edit, :update]
+  resource :account, only: [:show, :update]
   resources :registries, only: [:create, :show, :destroy]
   resources :employees, only: [:show, :edit, :update] do
     resource :account_deactivations, only: :create, module: :employees
+    resources :store_front_accesses, only: [:create, :destroy], module: :employees
     resources :repairs, only: [:index], module: :employees
     resources :remittances, only: [:new, :create], module: :employees
     resources :bank_remittances, only: [:new, :create], module: :employees

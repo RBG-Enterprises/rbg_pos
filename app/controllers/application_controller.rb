@@ -53,7 +53,16 @@ class ApplicationController < ActionController::Base
   end
 
   def current_store_front
-    current_user.store_front
+    return @current_store_front if defined?(@current_store_front)
+
+    @current_store_front =
+      if session[:store_front_id].present?
+        switched = current_user.switchable_store_fronts.find_by(id: session[:store_front_id])
+        session.delete(:store_front_id) if switched.nil?
+        switched || current_user.store_front
+      else
+        current_user.store_front
+      end
   end
 
   def current_business

@@ -23,7 +23,110 @@
   <% if current_user.proprietor? %>
     <%= f.input :role, collection: User.roles.keys.to_a.map{|a| [a.titleize, a] }, as: :radio_buttons %>
     <%= f.input :section_id, collection: Section.all.map{|a| [a.name, a.id] }, as: :radio_buttons %>
-    <%= f.input :cash_on_hand_account_id, collection: AccountingModule::Asset.all.map{|a| [a.name, a.id] }, input_html: { class: 'chosen-select' } %>
+    <div class="form-group cash_on_hand_account_id">
+      <label class="control-label" for="cash-account-search">Cash on Hand Account</label>
+      <div class="customer-typeahead-selected mb-2 <%= 'd-none' unless @user.cash_on_hand_account %>" data-typeahead-chip>
+        <span class="badge badge-light border p-2">
+          <i class="fa fa-bank"></i> <span data-typeahead-chip-text><%= @user.cash_on_hand_account.try(:name) %></span>
+          <a href="#" class="ml-2 text-danger" data-typeahead-clear title="Change account"><i class="fa fa-times"></i></a>
+        </span>
+      </div>
+      <div id="cash-account-typeahead" class="customer-typeahead <%= 'd-none' if @user.cash_on_hand_account %>" data-typeahead data-url="<%= accounting_accounts_path %>">
+        <%= f.hidden_field :cash_on_hand_account_id %>
+        <div class="input-group stylish-input-group">
+          <input type="text" class="form-control border-input typeahead-input" id="cash-account-search" autocomplete="off" placeholder="Type to search account">
+        </div>
+        <div class="customer-typeahead-results-wrapper">
+          <div class="list-group customer-typeahead-results typeahead-menu" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function() {
+        function debounce(fn, delay) {
+          var timeout;
+          return function() {
+            var context = this, args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(function() { fn.apply(context, args); }, delay);
+          };
+        }
+
+        function initCashAccountTypeahead() {
+          var container = document.getElementById('cash-account-typeahead');
+          if (!container || container.dataset.typeaheadBound === 'true') { return; }
+          container.dataset.typeaheadBound = 'true';
+
+          var field  = container.closest('.form-group');
+          var chip   = field.querySelector('[data-typeahead-chip]');
+          var url    = container.dataset.url;
+          var hidden = container.querySelector('input[type="hidden"]');
+          var input  = container.querySelector('.typeahead-input');
+          var menu   = container.querySelector('.typeahead-menu');
+
+          function select(id, text) {
+            hidden.value = id;
+            input.value = '';
+            menu.innerHTML = '';
+            menu.style.display = 'none';
+            chip.querySelector('[data-typeahead-chip-text]').textContent = text;
+            chip.classList.remove('d-none');
+            container.classList.add('d-none');
+          }
+
+          function clear(event) {
+            event.preventDefault();
+            hidden.value = '';
+            chip.classList.add('d-none');
+            container.classList.remove('d-none');
+            input.focus();
+          }
+
+          function renderResults(query, items) {
+            menu.innerHTML = '';
+            if (!items.length) {
+              var empty = document.createElement('div');
+              empty.className = 'list-group-item text-muted small';
+              empty.textContent = 'No results found for "' + query + '".';
+              menu.appendChild(empty);
+              menu.style.display = 'block';
+              return;
+            }
+            items.forEach(function(item) {
+              var option = document.createElement('a');
+              option.href = '#';
+              option.className = 'list-group-item list-group-item-action customer-typeahead-option';
+              option.textContent = item.text;
+              option.addEventListener('click', function(event) {
+                event.preventDefault();
+                select(item.id, item.text);
+              });
+              menu.appendChild(option);
+            });
+            menu.style.display = 'block';
+          }
+
+          var search = debounce(function() {
+            var query = input.value.trim();
+            if (!query) { menu.style.display = 'none'; return; }
+
+            fetch(url + '.json?search=' + encodeURIComponent(query), { headers: { 'Accept': 'application/json' } })
+              .then(function(response) { return response.json(); })
+              .then(function(items) { renderResults(query, items); })
+              .catch(function() { menu.style.display = 'none'; });
+          }, 300);
+
+          input.addEventListener('input', search);
+          chip.querySelector('[data-typeahead-clear]').addEventListener('click', clear);
+          document.addEventListener('click', function(event) {
+            if (!container.contains(event.target)) { menu.style.display = 'none'; }
+          });
+        }
+
+        document.addEventListener('turbolinks:load', initCashAccountTypeahead);
+        if (document.readyState !== 'loading') { initCashAccountTypeahead(); }
+      })();
+    </script>
   <% end %>
   <%= f.submit "Update Employee", class: "btn btn-danger float-right" %>
 <% end %>

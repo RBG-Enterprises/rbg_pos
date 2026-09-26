@@ -21,6 +21,8 @@ class User < ApplicationRecord
   has_many :cash_accounts,          through: :employee_cash_accounts, class_name: "AccountingModule::Account", foreign_key: 'cash_account_id'
   has_many :voucher_amounts,        class_name: "Vouchers::VoucherAmount", foreign_key: 'recorder_id'
   has_many :cash_counts,            class_name: "CashCounts::CashCount", foreign_key: 'employee_id'
+  has_many :user_store_fronts, dependent: :destroy
+  has_many :accessible_store_fronts, through: :user_store_fronts, source: :store_front
   has_many :cash_register_sessions, class_name: "CashRegisterSession", foreign_key: 'employee_id'
 
   enum role: [:proprietor, :sales_clerk, :technician, :accountant, :warehouse_clerk]
@@ -51,6 +53,17 @@ class User < ApplicationRecord
 
   def name_and_store_front
     "#{full_name} - #{store_front.name}"
+  end
+
+  # Every store front this user is allowed to switch to: explicitly granted
+  # access plus their home store front (so legacy users keep working).
+  def switchable_store_fronts
+    StoreFront.where(id: ([store_front_id] + user_store_fronts.select(:store_front_id).map(&:store_front_id)).compact.uniq)
+  end
+
+  def can_access_store_front?(store_front)
+    return false if store_front.nil?
+    store_front.id == store_front_id || user_store_fronts.exists?(store_front_id: store_front.id)
   end
 
   def self.employee_for(cash_on_hand_account)

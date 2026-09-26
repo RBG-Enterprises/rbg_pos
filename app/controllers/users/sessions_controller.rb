@@ -9,6 +9,7 @@ class Users::SessionsController < Devise::SessionsController
 
   # POST /resource/sign_in
   def create
+    session.delete(:store_front_id)
     super do |user|
       CashRegisterSessions::OpenForDay.call(employee: user, date: Date.current)
     end

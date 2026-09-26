@@ -30,6 +30,10 @@
           <span class="font-weight-bold"><%= @employee.store_front.try(:name) || "—" %></span>
         </div>
         <div class="col-sm-6 col-lg-4 mb-4 mb-lg-0">
+          <small class="text-muted text-uppercase d-block mb-1" style="letter-spacing: .05em; font-size: 11px;">Can Switch To</small>
+          <span class="font-weight-bold"><%= @employee.switchable_store_fronts.order(:name).map(&:name).join(", ").presence || "—" %></span>
+        </div>
+        <div class="col-sm-6 col-lg-4 mb-4 mb-lg-0">
           <small class="text-muted text-uppercase d-block mb-1" style="letter-spacing: .05em; font-size: 11px;">Section</small>
           <span class="font-weight-bold"><%= @employee.section.try(:name) || "—" %></span>
         </div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_26_001339) do
+ActiveRecord::Schema.define(version: 2026_09_26_203701) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -767,6 +767,16 @@ ActiveRecord::Schema.define(version: 2026_09_26_001339) do
     t.index ["product_id"], name: "index_unit_of_measurements_on_product_id"
   end
 
+  create_table "user_store_fronts", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "store_front_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["store_front_id"], name: "index_user_store_fronts_on_store_front_id"
+    t.index ["user_id", "store_front_id"], name: "index_user_store_fronts_on_user_id_and_store_front_id", unique: true
+    t.index ["user_id"], name: "index_user_store_fronts_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -1022,6 +1032,8 @@ ActiveRecord::Schema.define(version: 2026_09_26_001339) do
   add_foreign_key "technician_work_orders", "users", column: "technician_id"
   add_foreign_key "technician_work_orders", "work_orders"
   add_foreign_key "unit_of_measurements", "products"
+  add_foreign_key "user_store_fronts", "store_fronts"
+  add_foreign_key "user_store_fronts", "users"
   add_foreign_key "users", "accounts", column: "cash_on_hand_account_id"
   add_foreign_key "users", "businesses"
   add_foreign_key "users", "sections"

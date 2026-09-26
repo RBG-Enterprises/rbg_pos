@@ -1,7 +1,18 @@
 module Accounting
   class AccountsController < ApplicationController
     def index
-      @accounts = AccountingModule::Account.active.all.order(:account_code).all.paginate(page: params[:page], per_page: 35)
+      respond_to do |format|
+        format.html do
+          @accounts = AccountingModule::Account.active.all.order(:account_code).all.paginate(page: params[:page], per_page: 35)
+        end
+        format.json do
+          query = ActiveRecord::Base.sanitize_sql_like(params[:search].to_s.strip)
+          @accounts = AccountingModule::Asset.active
+            .where("name ILIKE :prefix OR account_code ILIKE :prefix", prefix: "#{query}%")
+            .order(:name).limit(20)
+          render json: @accounts.map { |a| { id: a.id, text: "#{a.name} (#{a.account_code})" } }
+        end
+      end
     end
     def new
       @account = AccountingModule::Account.new

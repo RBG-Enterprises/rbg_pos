@@ -1,0 +1,183 @@
+<h4 class="title-up">Photo</h4>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+<style>
+  .profile-photo-picker { position: relative; display: inline-block; }
+  .profile-photo-picker.updatable { cursor: pointer; }
+  .profile-photo-picker img { display: block; }
+  .profile-photo-overlay {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; opacity: 0; transition: opacity 0.15s ease-in-out;
+  }
+  .profile-photo-picker.updatable:hover .profile-photo-overlay { opacity: 1; }
+</style>
+<center>
+  <div class="profile-photo-picker <%= 'updatable' if policy(employee).update_avatar? %>" id="employee-photo-picker">
+    <%= image_tag(employee.avatar, height: 100, width: 100, class: "img-circle", id: "employee-photo-preview") %>
+    <% if policy(employee).update_avatar? %>
+      <div class="profile-photo-overlay"><span>Change photo</span></div>
+    <% end %>
+  </div>
+  <br>
+  <small class="text-muted" id="employee-photo-filename"></small>
+</center>
+<% if policy(employee).update_avatar? %>
+  <%= simple_form_for employee, url: form_url, method: :patch, html: { id: "employee-photo-form", style: "display:none;" } do |f| %>
+    <%= f.input :avatar, as: :file, label: false, input_html: { id: "employee-avatar-input", accept: "image/*" }, wrapper_html: { style: "margin:0;" } %>
+  <% end %>
+<% end %>
+
+<div class="modal fade" id="employee-photo-crop-modal" tabindex="-1" role="dialog" aria-labelledby="employee-photo-crop-title" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="employee-photo-crop-title">Preview &amp; Adjust Photo</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-8">
+            <div style="max-height: 400px; overflow: hidden;">
+              <img id="employee-photo-crop-image" src="" alt="Photo preview" style="max-width: 100%;">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <p class="text-muted"><small>Drag to reposition. Use the controls to zoom or rotate. The photo is cropped square for the circular avatar.</small></p>
+            <div class="d-flex flex-wrap mb-3">
+              <button type="button" class="btn btn-outline-secondary btn-sm mr-1 mb-1" id="employee-photo-zoom-in" title="Zoom in"><i class="fa fa-search-plus"></i></button>
+              <button type="button" class="btn btn-outline-secondary btn-sm mr-1 mb-1" id="employee-photo-zoom-out" title="Zoom out"><i class="fa fa-search-minus"></i></button>
+              <button type="button" class="btn btn-outline-secondary btn-sm mr-1 mb-1" id="employee-photo-rotate-left" title="Rotate left"><i class="fa fa-rotate-left"></i></button>
+              <button type="button" class="btn btn-outline-secondary btn-sm mr-1 mb-1" id="employee-photo-rotate-right" title="Rotate right"><i class="fa fa-rotate-right"></i></button>
+              <button type="button" class="btn btn-outline-secondary btn-sm mb-1" id="employee-photo-reset" title="Reset"><i class="fa fa-refresh"></i> Reset</button>
+            </div>
+            <div class="form-group">
+              <label for="employee-photo-zoom-range"><small>Zoom</small></label>
+              <input type="range" class="form-control-range" id="employee-photo-zoom-range" min="0.2" max="3" step="0.01" value="1">
+            </div>
+            <div class="text-center mt-3">
+              <small class="text-muted d-block mb-2">Cropped preview</small>
+              <div id="employee-photo-crop-preview" class="mx-auto" style="width: 120px; height: 120px; overflow: hidden; border-radius: 50%; border: 1px solid #ddd;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="employee-photo-crop-cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="employee-photo-crop-apply">Apply Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script>
+  (function() {
+    function initEmployeePhotoCropper() {
+      var picker = document.getElementById('employee-photo-picker');
+      var input = document.getElementById('employee-avatar-input');
+      var form = document.getElementById('employee-photo-form');
+      var modal = window.jQuery ? window.jQuery('#employee-photo-crop-modal') : null;
+      var image = document.getElementById('employee-photo-crop-image');
+      var preview = document.getElementById('employee-photo-preview');
+      var filenameLabel = document.getElementById('employee-photo-filename');
+      var zoomRange = document.getElementById('employee-photo-zoom-range');
+      if (!input || !form || !modal || !image || typeof Cropper === 'undefined') { return; }
+      if (input.dataset.cropperBound === 'true') { return; }
+      input.dataset.cropperBound = 'true';
+
+      var cropper = null;
+      var originalFilename = '';
+      var cropApplied = false;
+      var objectUrl = null;
+
+      function destroyCropper() {
+        if (cropper) { cropper.destroy(); cropper = null; }
+        if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; }
+      }
+
+      if (picker) {
+        picker.addEventListener('click', function() { input.click(); });
+      }
+
+      input.addEventListener('change', function(event) {
+        var file = event.target.files && event.target.files[0];
+        if (!file) { return; }
+        if (!file.type.match(/^image\//)) {
+          alert('Please select an image file.');
+          input.value = '';
+          return;
+        }
+        originalFilename = file.name;
+        cropApplied = false;
+        destroyCropper();
+        objectUrl = URL.createObjectURL(file);
+        image.src = objectUrl;
+        if (zoomRange) { zoomRange.value = 1; }
+        modal.modal('show');
+      });
+
+      modal.on('shown.bs.modal', function() {
+        cropper = new Cropper(image, {
+          aspectRatio: 1,
+          viewMode: 1,
+          dragMode: 'move',
+          autoCropArea: 1,
+          guides: true,
+          center: true,
+          highlight: true,
+          background: true,
+          preview: '#employee-photo-crop-preview'
+        });
+      });
+
+      modal.on('hidden.bs.modal', function() {
+        destroyCropper();
+        if (!cropApplied) { input.value = ''; }
+      });
+
+      function bindButton(id, fn) {
+        var btn = document.getElementById(id);
+        if (btn) { btn.addEventListener('click', fn); }
+      }
+
+      bindButton('employee-photo-zoom-in', function() { if (cropper) { cropper.zoom(0.1); } });
+      bindButton('employee-photo-zoom-out', function() { if (cropper) { cropper.zoom(-0.1); } });
+      bindButton('employee-photo-rotate-left', function() { if (cropper) { cropper.rotate(-90); } });
+      bindButton('employee-photo-rotate-right', function() { if (cropper) { cropper.rotate(90); } });
+      bindButton('employee-photo-reset', function() {
+        if (cropper) { cropper.reset(); }
+        if (zoomRange) { zoomRange.value = 1; }
+      });
+
+      if (zoomRange) {
+        zoomRange.addEventListener('input', function() {
+          if (!cropper) { return; }
+          cropper.zoomTo(parseFloat(zoomRange.value));
+        });
+      }
+
+      bindButton('employee-photo-crop-apply', function() {
+        if (!cropper) { return; }
+        var canvas = cropper.getCroppedCanvas({ width: 400, height: 400, imageSmoothingQuality: 'high' });
+        if (!canvas) { return; }
+        canvas.toBlob(function(blob) {
+          if (!blob) { return; }
+          var croppedFile = new File([blob], originalFilename || 'employee-photo.png', { type: 'image/png' });
+          var transfer = new DataTransfer();
+          transfer.items.add(croppedFile);
+          input.files = transfer.files;
+          if (preview) { preview.src = URL.createObjectURL(blob); }
+          if (filenameLabel) { filenameLabel.textContent = croppedFile.name; }
+          cropApplied = true;
+          modal.modal('hide');
+          form.submit();
+        }, 'image/png');
+      });
+    }
+
+    document.addEventListener('turbolinks:load', initEmployeePhotoCropper);
+    if (document.readyState !== 'loading') { initEmployeePhotoCropper(); }
+  })();
+</script>
