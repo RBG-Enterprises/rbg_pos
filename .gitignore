@@ -45,8 +45,7 @@ yarn-debug.log*
 /app/assets/builds/*
 !/app/assets/builds/.keep
 
+# Rails credentials master key (production). Deploy via RAILS_MASTER_KEY env
+# or shared config/master.key. Per-env test/development keys ARE committed.
 /config/master.key
-
-/config/credentials/test.key
-
-/config/credentials/development.key
+/config/credentials/production.key
