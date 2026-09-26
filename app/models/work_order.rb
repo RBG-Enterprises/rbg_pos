@@ -1,6 +1,6 @@
 class WorkOrder < ApplicationRecord
   include PgSearch::Model
-  enum status: [:received, :work_in_progress, :done,  :released, :return_to_owner]
+  enum :status, [:received, :work_in_progress, :done,  :released, :return_to_owner]
 
   STATUS_BADGE_CLASSES = {
     "received" => "badge-secondary",

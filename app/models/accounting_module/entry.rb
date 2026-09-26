@@ -2,7 +2,7 @@ module AccountingModule
   class Entry < ApplicationRecord
     include PgSearch::Model
     multisearchable against: [:description, :reference_number]
-    enum entry_type: [:cash_order, :credit_order, :cash_stock, :credit_stock, :customer_credit_payment, :expense, :supplier_credit_payment,
+    enum :entry_type, [:cash_order, :credit_order, :cash_stock, :credit_stock, :customer_credit_payment, :expense, :supplier_credit_payment,
       :work_order_credit, :work_order_payment, :work_order_service_charge, :stock_transfer, :fund_transfer, :other_sale, :owner_withdraw]
     belongs_to :commercial_document, :polymorphic => true, optional: true
     belongs_to :cash_register_session, optional: true

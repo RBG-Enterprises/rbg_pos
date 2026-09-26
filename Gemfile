@@ -6,7 +6,7 @@ ruby "3.3.0"
 
 gem "active_interaction", "~> 5.3"
 gem "prawn-icon"
-gem "rails", "~> 7.2.0"
+gem "rails", "~> 8.0.0"
 gem "audited", "~> 5.0"
 gem "spreadsheet"
 gem "rqrcode"

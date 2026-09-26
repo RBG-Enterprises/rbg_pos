@@ -133,7 +133,7 @@ Rails.application.routes.draw do
     resources :cash_transfers, only: [:new, :create], module: :cash_accounts
   end
   resources :work_orders, only: [:index, :new, :create] do
-    resources :payments, only: [:ew, :create], module: :work_orders
+    resources :payments, only: [:new, :create], module: :work_orders
   end
   resources :work_order_statuses, only: [:edit, :update]
   namespace :computer_repair_section do

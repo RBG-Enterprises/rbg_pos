@@ -25,7 +25,7 @@ class User < ApplicationRecord
   has_many :accessible_store_fronts, through: :user_store_fronts, source: :store_front
   has_many :cash_register_sessions, class_name: "CashRegisterSession", foreign_key: 'employee_id'
 
-  enum role: [:proprietor, :sales_clerk, :technician, :accountant, :warehouse_clerk]
+  enum :role, [:proprietor, :sales_clerk, :technician, :accountant, :warehouse_clerk]
 
   pg_search_scope :text_search, against: [:first_name, :last_name, :email]
 
