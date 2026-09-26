@@ -30,9 +30,6 @@ RSpec.configure do |config|
   config.include Warden::Test::Helpers
   config.example_status_persistence_file_path = "spec/failed_tests.txt"
 
-  config.after(:each) do
-    DatabaseRewinder.clean
-  end
   config.before(:each, type: :system) do
     driven_by :rack_test, using: :firefox
   end
@@ -41,7 +38,6 @@ RSpec.configure do |config|
     driven_by :selenium, using: :firefox
   end
   config.before(:suite) do
-      DatabaseRewinder.clean_all
       FactoryBot.reload
     end
   config.use_transactional_fixtures = true

@@ -28,7 +28,6 @@ gem "mina-puma", require: false, github: "untitledkingdom/mina-puma"
 gem "terser"
 gem "groupdate"
 gem "turbolinks", "~> 5"
-gem "public_activity"
 gem "redis", "~> 5.0"
 gem "jquery-rails"
 gem "jquery-ui-rails"
@@ -44,7 +43,7 @@ gem "chartkick"
 gem "pundit"
 gem "will_paginate", "~> 3.3"
 gem "money-rails", "~>1.12"
-gem "roo", "2.7.0"
+gem "roo", "~> 2.10"
 gem "simple_calendar"
 gem "pdf-reader"
 gem "pagy"
@@ -53,6 +52,7 @@ gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem "net-smtp", require: false
 gem "net-imap", require: false
 gem "net-pop", require: false
+gem "csv", require: false
 gem "listen", "~> 3.8"
 gem "bullet"
 
@@ -67,7 +67,6 @@ group :test do
   gem "shoulda-matchers"
   gem "capybara"
   gem "selenium-webdriver"
-  gem "database_rewinder"
 end
 
 gem "rack-mini-profiler", require: false
