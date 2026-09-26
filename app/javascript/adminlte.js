@@ -588,9 +588,20 @@ var Treeview = function ($) {
 
     // Private
 
+    // PATCHED (rbg_pos): make listener setup idempotent. Upstream binds one
+    // document-level click handler per init() call, and init() runs both on
+    // window load and (via our Turbo integration) on turbo:load — stacking
+    // handlers makes every toggle fire N times (expand+collapse = stuck).
+    // The handler is document-global, so exactly one binding serves all
+    // current and future Turbo renders.
     Treeview.prototype._setupListeners = function _setupListeners() {
       var _this3 = this;
 
+      if ($.fn.Treeview._listenersBound) {
+        return;
+      }
+
+      $.fn.Treeview._listenersBound = true;
       $(document).on('click', this._config.trigger, function (event) {
         _this3.toggle(event);
       });

@@ -14,9 +14,12 @@ import * as ActiveStorage from "@rails/activestorage";
 ActiveStorage.start();
 import Rails from "@rails/ujs";
 Rails.start();
-import jquery from "jquery";
-window.jQuery = window.$ = jquery;
-import "popper.js";
+// NOTE: window.jQuery/window.$ are provided by app/javascript/jquery-shim.js
+// via esbuild --inject (see package.json). Do NOT assign them here: ESM
+// imports are hoisted, so a body-level assignment would run AFTER legacy
+// plugins (chosen-js, adminlte) evaluate and demand the global.
+// NOTE: no direct popper.js import — bootstrap bundles the copy it needs.
+// (A bare `import "popper.js"` is dropped by esbuild: sideEffects:false.)
 import "bootstrap";
 import "bootstrap-datepicker";
 import "chosen-js";
@@ -28,15 +31,32 @@ window.Chartkick = Chartkick;
 import "./controllers";
 
 function excludeUjsFromTurbo(root) {
+  // - UJS remote forms/links + data-method deletes keep legacy behavior.
+  // - href="#" toggles (AdminLTE treeview, clear-selection links) must not
+  //   trigger a Turbo render (which would wipe expanded/collapsed state).
   (root || document).querySelectorAll(
-    'form[data-remote="true"], a[data-remote="true"], a[data-method]'
+    'form[data-remote="true"], a[data-remote="true"], a[data-method], a[href="#"]'
   ).forEach(function (el) {
     el.setAttribute("data-turbo", "false");
   });
 }
 
+// AdminLTE Treeview binds its (document-global, Turbo-proof) click handler
+// only when initialized — upstream does it on window load, which fires once
+// per full page load, possibly on a page with no sidebar (e.g. sign-in).
+// Initialize on the first turbo:load where a widget actually exists; the
+// vendored idempotency patch in adminlte.js makes this safe to attempt on
+// every navigation (exactly one document handler ever).
+function initTreeviewOnce() {
+  if (!$.fn.Treeview) { return; }
+  var widgets = $('[data-widget="treeview"]');
+  if (!widgets.length) { return; }
+  widgets.first().Treeview('init');
+}
+
 function initWidgets() {
   excludeUjsFromTurbo();
+  initTreeviewOnce();
   $('[data-toggle="tooltip"]').tooltip();
   $('[data-toggle="popover"]').popover();
   $('.datepicker').datepicker(
