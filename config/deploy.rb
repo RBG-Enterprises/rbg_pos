@@ -18,7 +18,11 @@ set :force_asset_precompile, true
 set :term_mode, nil
 set :app_path, lambda { "#{fetch(:deploy_to)}/#{fetch(:current_path)}" }
 set :stage, "production"
-set :shared_paths, ["config/database.yml", "log", "tmp/log", "public/system", "tmp/pids", "tmp/sockets"]
+# NOTE (Rails 8): place the production master key at shared/config/master.key
+# (or export RAILS_MASTER_KEY). Run Solid Queue workers via a supervised
+# `bin/jobs` process (systemd) alongside Puma; `rails:assets_precompile`
+# below triggers jsbundling (yarn build) + cssbundling (yarn build:css).
+set :shared_paths, ["config/database.yml", "config/master.key", "log", "tmp/log", "public/system", "tmp/pids", "tmp/sockets"]
 set :shared_dirs, fetch(:shared_dirs, []).push("public/assets").push("public/packs").push("public/storage").push("storage")
 
 # mina-puma (untitledkingdom/mina-puma) still passes `-d`/`--daemon` to `puma`,

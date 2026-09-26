@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  # Rails 8 health check (used by monitoring / deployment verification).
+  get "up" => "rails/health#show", as: :rails_health_check
+
   authenticate :user, ->(user) { user.proprietor? } do
   end
   unauthenticated :user do

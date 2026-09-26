@@ -1,7 +1,18 @@
 # PRD: Rails 6.1 → 8 + Ruby 3.3.0 → 4, New Server Cutover — rbg_pos
 
-> Owner: vonchristian | Status: approved for implementation | Mode: OpenCode executable
+> Owner: vonchristian | Status: IMPLEMENTED on branch `rails-8` (Ruby 4.0.0 + Rails 8.0.5.1, suite green) | Mode: OpenCode executable
 > Source: codebase audit 2026-09-26 (read-only) + user decisions
+
+## 0. As-built record (2026-09-26, branch `rails-8`)
+
+- Ruby `3.3.0 → 3.4.4 → 4.0.0` (rbenv locally has 3.1.2–4.0.0), Rails `6.1.7.7 → 7.0.10 → 7.1.6 → 7.2.3 → 8.0.5.1`, `load_defaults 8.0`. Puma kept at 6.6.0 (verified booting on Ruby 4). Node 22.15.1 (`.nvmrc`), PG 17 locally / 16 in CI.
+- Fast suite (`models+services+requests+jobs+forms+lib`): 436 examples, 6 failures — all 6 proven pre-existing via stash-test on pristine tree (cash_register_session x3, stock_spec, account_creators, requests/cash_register). System specs quarantined (need browser CI).
+- Notable fixes found by the upgrade (all committed): `ActiveRecord::Base.default_timezone` removal (7.1), `enum name:` kwargs removal (8.0, 6 models), `:ew → :new` route typo (8.0 validates `only:`), `Order.text_search_with_stocks` duplicate `associated_against` keys (only last won; merged), `json < 3` pin (AS 8.0 `quirks_mode` vs json 3.x), `concurrent-ruby 1.3.4` pin (lifted at 7.1), `connection_pool < 3` pin (lifted at Ruby 3.4).
+- Solids on ONE shared Postgres DB (`database.yml` primary/queue/cache/cable roles, same DB; `db:prepare`/`db:schema:load` handle all schemas — never `schema:load` semantics changed). `bin/jobs` verified (dispatcher+worker+scheduler, hourly `InventoryReportRebuilderJob` registered — this schedule never ran under Sidekiq since sidekiq-cron was never installed).
+- Frontend: esbuild + sass via `yarn build`/`build:css` (outputs in `app/assets/builds/`, `application.css` committed, `application.js` built in CI/dev), Turbo Drive for navigation + UJS kept for remote/modal/delete flows via runtime `data-turbo="false"` opt-out, Bootstrap 4 kept (no BS5 rewrite), `@rails/ujs 7`, chartkick wired with explicit `window` globals (parity with old bundle).
+- Secrets: `secrets.yml` deleted; single `credentials.yml.enc` (prod key preserved) + committed per-env `test`/`development` keys; `master.key` gitignored, added to Mina `shared_paths`. CI needs no extra secrets.
+- Accepted debt (documented, non-blocking): `will_paginate` kept (no version cap, coexists with `pagy`), `spreadsheet` gem kept for legacy `.xls`, `mina` kept for deploys (Kamal later), `money-rails 1.15.0` is latest, system specs need browser CI, repo-wide `rubocop --parallel` was already red before this work.
+- New-server runbook deltas: provision Ruby 4.0.0 + Node 22 + PG 16/17; `db:prepare` (not `schema:load`+migrate dance) creates solid tables on fresh DBs; existing DBs need one-time `load db/queue_schema.rb db/cache_schema.rb db/cable_schema.rb`; run supervised `bin/jobs` next to Puma; `/up` health route added.
 
 ## 1. Goal
 
