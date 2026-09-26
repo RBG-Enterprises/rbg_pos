@@ -10,7 +10,12 @@ Dir[Rails.root.join("spec/models/shared_examples/**/*.rb")].each {|f| require f 
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
 require 'capybara/rspec'
-require 'webdrivers'
+begin
+  require 'webdrivers'
+rescue LoadError
+  # webdrivers is deprecated (Selenium Manager in selenium-webdriver >= 4.11 handles drivers).
+  # Safe to boot without it; will be removed from Gemfile in Phase 1.
+end
 
 begin
   ActiveRecord::Migration.maintain_test_schema!
