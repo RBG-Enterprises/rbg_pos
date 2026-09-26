@@ -34,6 +34,16 @@ jobs:
         with:
           ruby-version: '3.3'
           bundler-cache: true
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Install JS dependencies and build assets
+        run: |
+          yarn install --frozen-lockfile
+          yarn build
+          yarn build:css
       # Add or replace database setup steps here
       - name: Set up database schema
         run: bin/rails db:schema:load

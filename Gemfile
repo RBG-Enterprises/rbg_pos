@@ -11,10 +11,12 @@ gem "concurrent-ruby", "1.3.4"
 gem "prawn-icon"
 gem "rails", "~> 7.0.0"
 gem "audited", "~> 5.0"
-gem "autonumeric-rails"
 gem "spreadsheet"
 gem "rqrcode"
-gem "webpacker"
+gem "jsbundling-rails"
+gem "cssbundling-rails"
+gem "turbo-rails"
+gem "stimulus-rails"
 gem "sidekiq"
 # gem 'activerecord-postgis-adapter'
 gem "pg_search"
@@ -28,7 +30,6 @@ gem "mina", require: false
 gem "mina-puma", require: false, github: "untitledkingdom/mina-puma"
 gem "terser"
 gem "groupdate"
-gem "turbolinks", "~> 5"
 gem "redis", "~> 5.0"
 gem "jquery-rails"
 gem "jquery-ui-rails"
@@ -74,7 +75,7 @@ gem "rack-mini-profiler", require: false
 
 gem "matrix", "~> 0.4.2"
 
-gem "dartsass-rails", "~> 0.5.0"
+
 gem "rubocop", require: false
 gem "rubocop-rails", require: false
 gem "rubocop-rspec", require: false
