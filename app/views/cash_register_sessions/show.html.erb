@@ -215,7 +215,7 @@
             <% else %>
               <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                  <thead><tr><th>Time</th><th>Description</th><th class="text-right">In</th><th class="text-right">Out</th></tr></thead>
+                  <thead><tr><th>Time</th><th>Description</th><th class="text-right">In</th><th class="text-right">Out</th><% if current_user.proprietor? %><th class="text-right">Action</th><% end %></tr></thead>
                   <tbody>
                     <% @transfer_entries.each do |entry| %>
                       <tr>
@@ -223,6 +223,13 @@
                         <td><%= entry.description %></td>
                         <td class="text-right"><%= number_to_currency(entry.debit_amounts.where(account: session.cash_account).sum(:amount)) %></td>
                         <td class="text-right"><%= number_to_currency(entry.credit_amounts.where(account: session.cash_account).sum(:amount)) %></td>
+                        <% if current_user.proprietor? %>
+                          <td class="text-right">
+                            <% if entry.voidable_transfer_by?(current_user) %>
+                              <%= button_to "Void", void_transfer_cash_register_session_path(session, entry_id: entry.id), method: :post, class: "btn btn-outline-danger btn-sm", data: { confirm: "Please confirm you want to void this transfer." } %>
+                            <% end %>
+                          </td>
+                        <% end %>
                       </tr>
                     <% end %>
                   </tbody>
@@ -251,3 +258,18 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  function activateSessionTabFromHash() {
+    var hash = window.location.hash;
+    if (!hash) { return; }
+    var tabLink = document.querySelector('a[data-toggle="tab"][href="' + hash + '"]');
+    if (tabLink && window.jQuery) { jQuery(tabLink).tab("show"); }
+  }
+  document.addEventListener("DOMContentLoaded", activateSessionTabFromHash);
+  document.addEventListener("turbolinks:load", activateSessionTabFromHash);
+  // Keep the fragment in sync so a refresh stays on the same tab.
+  document.addEventListener("shown.bs.tab", function(e) {
+    if (e.target && e.target.hash) { history.replaceState(null, "", e.target.hash); }
+  });
+</script>

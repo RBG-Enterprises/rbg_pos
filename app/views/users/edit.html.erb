@@ -124,6 +124,13 @@
         }
 
         document.addEventListener('turbolinks:load', initCashAccountTypeahead);
+        // Same Turbolinks cache caveat as the photo cropper: the DOM is cached
+        // without its listeners, so clear the bound marker before caching or a
+        // restored page will skip re-binding until a full refresh.
+        document.addEventListener('turbolinks:before-cache', function() {
+          var cachedContainer = document.getElementById('cash-account-typeahead');
+          if (cachedContainer) { delete cachedContainer.dataset.typeaheadBound; }
+        });
         if (document.readyState !== 'loading') { initCashAccountTypeahead(); }
       })();
     </script>

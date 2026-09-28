@@ -68,6 +68,27 @@ class CashRegisterSessionsController < ApplicationController
                 notice: "Session closed. EOD report generated."
   end
 
+  # Proprietor-only: void a same-day transfer (e.g. sent to the wrong
+  # account) by posting a contra entry. Scoped to this session's transfers.
+  def void_transfer
+    @cash_register_session = find_session
+    unless current_user.proprietor?
+      redirect_to cash_register_session_path(@cash_register_session),
+                  alert: "Only proprietors can void transfers."
+      return
+    end
+
+    entry = @cash_register_session.transfer_entries.find(params[:entry_id])
+    CashRegisterSessions::VoidTransfer.call(entry: entry, current_user: current_user)
+    redirect_to cash_register_session_path(@cash_register_session),
+                notice: "Transfer voided successfully."
+  rescue ActiveRecord::RecordNotFound
+    redirect_to cash_register_session_path(@cash_register_session),
+                alert: "Transfer not found in this session."
+  rescue CashRegisterSessions::VoidTransfer::NotVoidable => e
+    redirect_to cash_register_session_path(@cash_register_session), alert: e.message
+  end
+
   private
 
   def cashiers_scope

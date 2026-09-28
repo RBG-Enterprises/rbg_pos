@@ -14,8 +14,12 @@ module AccountingModule
 		validates :amount, presence: true, numericality: true
 	  def save
 	  	ActiveRecord::Base.transaction do
-	  		create_entry
+	  		@created_entry = create_entry
 	  	end
+	  end
+
+	  def created_entry
+	  	@created_entry
 	  end
 
 	  private

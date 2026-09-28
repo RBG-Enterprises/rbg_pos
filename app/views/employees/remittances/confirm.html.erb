@@ -1,0 +1,67 @@
+
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <div class="card card-default">
+        <div class="card-header">
+          <h4 class="subtitle-up">Confirm Remittance</h4>
+        </div>
+        <div class="card-body">
+
+          <div class="row">
+            <div class="col-md-3">
+              <%=image_tag(@employee.avatar, class: "img-circle", height: 50, width: 50) %>
+            </div>
+            <div class="col-md-8">
+              <h4 class="title-up"><%= @employee.full_name %></h4>
+              <small class="text-muted"><%= @employee.role.try(:titleize) %></small>
+            </div>
+          </div>
+          <br>
+          <p class="text-muted">Please review the transfer details before saving.</p>
+          <table class="table table-striped mb-0">
+            <tbody>
+              <tr>
+                <td><b>From</b></td>
+                <td class="text-right"><%= @cash_account.try(:name) || "—" %></td>
+              </tr>
+              <tr>
+                <td><b>Transfer To</b></td>
+                <td class="text-right"><%= @debit_account.try(:name) || "—" %></td>
+              </tr>
+              <tr>
+                <td><b>Amount</b></td>
+                <td class="text-right font-weight-bold"><%= number_to_currency(@entry.amount) %></td>
+              </tr>
+              <tr>
+                <td><b>Date</b></td>
+                <td class="text-right"><%= @entry.entry_date %></td>
+              </tr>
+              <tr>
+                <td><b>Reference Number</b></td>
+                <td class="text-right"><%= @entry.reference_number.presence || "—" %></td>
+              </tr>
+              <tr>
+                <td><b>Description</b></td>
+                <td class="text-right"><%= @entry.description %></td>
+              </tr>
+            </tbody>
+          </table>
+          <hr>
+          <%= form_tag employee_remittances_path(@employee) do %>
+            <%= hidden_field_tag "accounting_module_remittance_form[recorder_id]", @entry.recorder_id %>
+            <%= hidden_field_tag "accounting_module_remittance_form[cashier_id]", @entry.cashier_id %>
+            <%= hidden_field_tag "accounting_module_remittance_form[entry_date]", @entry.entry_date %>
+            <%= hidden_field_tag "accounting_module_remittance_form[reference_number]", @entry.reference_number %>
+            <%= hidden_field_tag "accounting_module_remittance_form[description]", @entry.description %>
+            <%= hidden_field_tag "accounting_module_remittance_form[amount]", @entry.amount %>
+            <%= hidden_field_tag "accounting_module_remittance_form[credit_account_id]", @entry.credit_account_id %>
+            <%= hidden_field_tag "accounting_module_remittance_form[debit_account_id]", @entry.debit_account_id %>
+            <%= submit_tag "Back", name: "back", class: "btn btn-secondary" %>
+            <%= submit_tag "Confirm Transfer", name: "confirmed", class: "btn btn-primary float-right", data: { disable_with: "Saving..." } %>
+          <% end %>
+          <br>
+          <br>
+        </div>
+      </div>
+    </div>
+  </div>

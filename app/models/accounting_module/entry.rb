@@ -79,6 +79,34 @@ module AccountingModule
       debit_amounts.sum(:amount)
     end
 
+    VOID_DESCRIPTION_PREFIX = "VOID of Entry #".freeze
+
+    def self.void_description_for(entry)
+      "#{VOID_DESCRIPTION_PREFIX}#{entry.id} - #{entry.description}".truncate(255)
+    end
+
+    # Cash transfers / remittances: entries whose commercial document is a
+    # User (cashier), as opposed to sales, expenses, etc.
+    def transfer?
+      commercial_document_type == "User"
+    end
+
+    def entered_today?
+      entry_date.present? && entry_date.to_date == Time.zone.today
+    end
+
+    def void_entry?
+      description.to_s.start_with?(VOID_DESCRIPTION_PREFIX)
+    end
+
+    def voided?
+      self.class.where(description: self.class.void_description_for(self)).exists?
+    end
+
+    def voidable_transfer_by?(user)
+      user.present? && user.proprietor? && transfer? && entered_today? && !void_entry? && !voided?
+    end
+
     private
 
     def assign_cash_register_session

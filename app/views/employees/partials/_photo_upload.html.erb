@@ -178,6 +178,14 @@
     }
 
     document.addEventListener('turbolinks:load', initEmployeePhotoCropper);
+    // Turbolinks caches the DOM (but not JS listeners) when navigating away.
+    // Clear the bound marker before caching so a restored page re-attaches
+    // its listeners; otherwise the picker silently stops opening the modal
+    // until a full page refresh.
+    document.addEventListener('turbolinks:before-cache', function() {
+      var cachedInput = document.getElementById('employee-avatar-input');
+      if (cachedInput) { delete cachedInput.dataset.cropperBound; }
+    });
     if (document.readyState !== 'loading') { initEmployeePhotoCropper(); }
   })();
 </script>
