@@ -13,7 +13,7 @@ class ServiceTagPdf < Prawn::Document
   ]
 
   def initialize(work_order, view_context)
-    super(margin: 20, page_size: "A5", page_layout: :landscape)
+    super(margin: 20, page_size: "LETTER", page_layout: :portrait)
     @work_order = work_order
     @view_context = view_context
     @page_width = bounds.width

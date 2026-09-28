@@ -18,7 +18,7 @@ module Reports
       :store_front
 
     def initialize(args)
-      super(margin: 30, page_size: "A4")
+      super(margin: 30, page_size: "LETTER", page_layout: :portrait)
       @cash_register_session = args.fetch(:cash_register_session)
       @orders       = args[:orders] || cash_register_session.sales_orders
       @credit_sales = args[:credit_sales] || cash_register_session.credit_sales

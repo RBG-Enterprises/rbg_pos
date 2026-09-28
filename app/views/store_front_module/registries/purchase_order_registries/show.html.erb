@@ -77,7 +77,7 @@
             <%= f.input :employee_id, input_html: { value: current_user.id }, as: :hidden %>
             <%= f.input :registry_id, input_html: { value: @registry.id }, as: :hidden %>
             <%= f.input :account_number, input_html: { value: SecureRandom.uuid }, as: :hidden %>
-            <%= f.input :voucher_id, collection: Voucher.for_suppliers.unused.map{|a| [a.reference_number, a.id] }, input_html: { class: 'chosen-select' } %>
+            <%= f.input :voucher_id, collection: Voucher.for_suppliers.map{|a| [a.reference_number, a.id] }, input_html: { class: 'chosen-select' } %>
             <%=f.submit "Save Purchase", class: "btn btn-primary btn-block btn-lg", :accesskey => "C" %>
           <% end %>
         <% end %>

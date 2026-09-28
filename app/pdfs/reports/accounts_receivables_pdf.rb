@@ -1,7 +1,7 @@
 module Reports
   class AccountsReceivablesPdf < Prawn::Document 
     def initialize(customers, view_context)
-      super(margin: 50, page_size: 'A4')
+      super(margin: 50, page_size: 'LETTER', page_layout: :portrait)
       @customers = customers
       @view_context = view_context
       heading

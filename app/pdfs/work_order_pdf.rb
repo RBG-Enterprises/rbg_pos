@@ -2,7 +2,7 @@
 
 class WorkOrderPdf < Prawn::Document
   def initialize(work_orders, from_date, to_date, view_context)
-    super(margin: 20, page_size: "A4")
+    super(margin: 20, page_size: "LETTER", page_layout: :portrait)
     @work_orders = work_orders
     @from_date = from_date
     @to_date = to_date

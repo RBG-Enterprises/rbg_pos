@@ -1,6 +1,6 @@
 class OrderPdf < Prawn::Document
 	def initialize(order, view_context)
-      super(margin: 30, page_size: 'A4')
+      super(margin: 30, page_size: 'LETTER', page_layout: :portrait)
 		@order = order
 		@view_context = view_context
 		heading

@@ -2,7 +2,7 @@ module Reports
   class CashReceiptsPdf < Prawn::Document
     attr_reader :from_date, :to_date, :cash_receipts, :employee, :view_context, :business
     def initialize(args)
-      super(margin: 30, page_size: 'A4')
+      super(margin: 30, page_size: 'LETTER', page_layout: :portrait)
       @from_date     = args[:from_date]
       @to_date       = args[:to_date]
       @cash_receipts = args[:cash_receipts]

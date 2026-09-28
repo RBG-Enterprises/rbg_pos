@@ -1,6 +1,6 @@
 class ProductsPdf < Prawn::Document 
   def initialize(products, view_context)
-      super(margin: 30, page_size: 'A4')
+      super(margin: 30, page_size: 'LETTER', page_layout: :portrait)
     @products = products 
     @view_context = view_context
     heading

@@ -1,6 +1,6 @@
 class IncomeStatementPdf < Prawn::Document
   def initialize(revenues, expenses, employee, from_date, to_date, view_context)
-    super(margin: 40, page_size: "A4", page_layout: :portrait)
+    super(margin: 40, page_size: "LETTER", page_layout: :portrait)
     @revenues = revenues
     @expenses = expenses
     @employee = employee

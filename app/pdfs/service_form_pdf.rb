@@ -3,7 +3,7 @@ require 'barby/barcode/code_39'
 require 'barby/outputter/prawn_outputter'
 class ServiceFormPdf < Prawn::Document
   def initialize(work_order, view_context)
-    super(margin: 40, page_size: 'A4')
+    super(margin: 40, page_size: 'LETTER', page_layout: :portrait)
     @work_order = work_order
     @view_context = view_context
     logo_details

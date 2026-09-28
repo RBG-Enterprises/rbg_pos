@@ -7,7 +7,7 @@
 <% end %>
 <%= simple_form_for @purchase_order, url: :supplier_purchase_order_processings do |f| %>
   <%= f.input :date, as: :string, input_html: { class: 'datepicker' } %>
-  <%= f.input :voucher_id, collection: @supplier.vouchers.unused.map{ |voucher| [voucher.reference_number, voucher.id] }, input_html: { class: 'chosen-select' } %>
+  <%= f.input :voucher_id, collection: @supplier.vouchers.map{ |voucher| [voucher.reference_number, voucher.id] }, input_html: { class: 'chosen-select' } %>
   <%= f.input :supplier_id, input_html: { value: @supplier.id }, as: :hidden %>
   <%= f.input :cart_id, input_html: { value: current_cart.id }, as: :hidden %>
   <%= f.input :employee_id, input_html:    { value: current_user.id }, as: :hidden %>

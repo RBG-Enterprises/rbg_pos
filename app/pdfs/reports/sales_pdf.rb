@@ -2,7 +2,7 @@ module Reports
   class SalesPdf < Prawn::Document
     attr_reader :from_date, :to_date, :orders, :employee, :view_context, :business, :cash_on_hand_account, :store_front
     def initialize(args)
-      super(margin: 30, page_size: 'A4')
+      super(margin: 30, page_size: 'LETTER', page_layout: :portrait)
       @from_date    = args[:from_date]
       @to_date      = args[:to_date]
       @orders       = args[:orders]
