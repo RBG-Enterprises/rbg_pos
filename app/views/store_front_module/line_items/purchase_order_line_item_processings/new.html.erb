@@ -93,9 +93,9 @@
       <% end %>
         <% if @cart.purchase_order_line_items.present? %>
           <%= simple_form_for @purchase_order, url: :store_front_module_purchase_order_processings do |f| %>
-            <%= f.input :supplier_id, collection: Supplier.all.map{|a| [ a.name, a.id] } %>
+            <%= f.input :supplier_id, collection: Supplier.all.map{|a| [ a.name, a.id] }, input_html: { class: 'chosen-select' } %>
             <%= f.input :date, as: :string, input_html: { class: "datepicker" } %>
-            <%= f.input :voucher_id, collection: Voucher.unused.map{|a| ["#{a.payee_name}/#{a.reference_number}-#{number_to_currency a.total}", a.id] } %>
+            <%= f.input :voucher_id, collection: Voucher.for_suppliers.map{|a| ["#{a.payee_name}/#{a.reference_number}", a.id] }, input_html: { class: 'chosen-select' } %>
             <%= f.input :cart_id, input_html: { value: @cart.id }, as: :hidden %>
             <%= f.input :employee_id, input_html: { value: current_user.id }, as: :hidden %>
         <%=f.submit "Save Purchase", class: "btn btn-success btn-block btn-lg", :accesskey => "C" %>
