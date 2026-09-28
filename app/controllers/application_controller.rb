@@ -9,12 +9,13 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # Always resolves through OpenForDay so a session left open from a previous
+  # day gets auto-closed and today's gets found-or-created on every request,
+  # rather than trusting a stale prior-day open session as "current".
   def current_cash_register_session
     return nil unless current_user&.cashier?
 
-    @current_cash_register_session ||=
-      current_user.current_cash_register_session ||
-      CashRegisterSessions::OpenForDay.call(employee: current_user)
+    @current_cash_register_session ||= CashRegisterSessions::OpenForDay.call(employee: current_user)
   end
 
   # Cashiers must declare their opening float before they can transact.

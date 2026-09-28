@@ -46,6 +46,21 @@ describe 'Cash register sessions', type: :request do
     expect(response.body).to include('Opening float')
   end
 
+  it 'auto-closes a stale open session from a prior day and opens a fresh one for today' do
+    cash = create(:asset, name: 'Cash Rollover Link')
+    clerk = create(:sales_clerk, cash_on_hand_account: cash)
+    stale_session = CashRegisterSessions::OpenForDay.call(employee: clerk, date: Date.current - 1)
+    stale_session.update!(opening_declared_amount: 300)
+    login_as(clerk, scope: :user)
+
+    get store_index_path
+
+    expect(response).to have_http_status(:success)
+    expect(response.body).to include('Declare your starting cash')
+    expect(stale_session.reload).to be_closed
+    expect(clerk.cash_register_sessions.for_day(Date.current).first).to be_present
+  end
+
   it 'lets a proprietor filter sessions by cashier and date' do
     cash = create(:asset, name: 'Cash Filter Link')
     clerk = create(:sales_clerk, first_name: 'Ada', last_name: 'Lovelace', cash_on_hand_account: cash)
