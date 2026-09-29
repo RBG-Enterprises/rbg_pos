@@ -69,6 +69,17 @@ class CashRegisterSessionsController < ApplicationController
                 notice: "Session closed. EOD report generated."
   end
 
+  # Cashier closed then signed back in the same day: reopen today's
+  # session and reset the closing count to zero for the new shift.
+  def reopen
+    @cash_register_session = find_session
+    authorize_session!(@cash_register_session)
+    CashRegisterSessions::ReopenSession.call(session: @cash_register_session)
+    redirect_to store_index_path, notice: "Cash session reopened for today."
+  rescue CashRegisterSessions::ReopenSession::NotReopenable => e
+    redirect_to store_index_path, alert: e.message
+  end
+
   # Proprietor-only: void a same-day transfer (e.g. sent to the wrong
   # account) by posting a contra entry. Scoped to this session's transfers.
   def void_transfer

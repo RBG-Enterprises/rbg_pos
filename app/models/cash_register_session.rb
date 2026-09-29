@@ -146,6 +146,12 @@ class CashRegisterSession < ApplicationRecord
     opening_system_amount || 0
   end
 
+  # A closed session from today can be reopened when the cashier signs
+  # back in the same day (yesterday's sessions stay closed for history).
+  def reopenable?
+    closed? && session_date == Date.current
+  end
+
   def ending_balance
     closing_declared_amount.presence || expected_cash
   end

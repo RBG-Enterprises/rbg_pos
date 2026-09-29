@@ -35,7 +35,7 @@
           <tr>
             <% if show_date %>
               <td class="text-nowrap">
-                <%= link_to session.session_date.strftime("%b %e, %Y"), cash_register_session_path(session), class: "font-weight-bold" %>
+                <%= link_to session.session_date.strftime("%b %e, %Y"), cash_register_session_path(session) %>
               </td>
             <% end %>
             <td>
@@ -51,7 +51,7 @@
                 <span class="badge badge-pill badge-secondary"><i class="fa-solid fa-lock mr-1"></i>Closed</span>
               <% end %>
             </td>
-            <td class="text-right sales-table__figure font-weight-bold"><%= number_to_currency(session.expected_cash) %></td>
+            <td class="text-right sales-table__figure"><%= number_to_currency(session.expected_cash) %></td>
             <td class="text-right sales-table__figure"><%= number_to_currency(session.closing_declared_amount || 0) %></td>
             <td class="text-right sales-table__figure <%= variance.zero? ? 'text-muted' : 'text-danger font-weight-bold' %>">
               <%= number_to_currency(variance) %>

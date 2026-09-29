@@ -76,6 +76,12 @@
         <%= link_to cash_register_sessions_path, class: "btn btn-outline-secondary btn-block" do %>
           <i class="fa-solid fa-list mr-1"></i> All sessions
         <% end %>
+        <% if session.reopenable? && can_manage %>
+          <%= link_to "Reopen cash session for today", reopen_cash_register_session_path(session),
+                method: :patch,
+                class: "btn btn-warning btn-block mt-2",
+                data: { confirm: "Reopen your cash session for today? The closing amount will be reset to zero." } %>
+        <% end %>
       </div>
     </div>
   </div>

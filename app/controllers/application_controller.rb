@@ -20,10 +20,13 @@ class ApplicationController < ActionController::Base
 
   # Cashiers must declare their opening float before they can transact.
   # Non-cashiers (no cash drawer assigned) have nothing to open, so they're unrestricted.
+  # A closed session (even today's) is not open — it must be reopened first.
   def cash_register_session_open?
     return true unless current_user&.cashier?
 
-    current_cash_register_session.present? && current_cash_register_session.opening_declared_amount.present?
+    current_cash_register_session.present? &&
+      current_cash_register_session.open? &&
+      current_cash_register_session.opening_declared_amount.present?
   end
 
   def ensure_cash_register_session

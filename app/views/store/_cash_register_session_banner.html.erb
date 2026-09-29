@@ -52,6 +52,19 @@
           <% end %>
         </div>
       <% end %>
+
+      <% if @cash_register_session.closed? && @cash_register_session.reopenable? %>
+        <div class="alert alert-warning mt-3 mb-0 d-flex align-items-center flex-wrap">
+          <div class="mr-3">
+            <strong>Cash session closed for today.</strong>
+            <div class="small">You closed this cash session earlier today. Reopen it to continue selling.</div>
+          </div>
+          <%= link_to "Reopen cash session for today", reopen_cash_register_session_path(@cash_register_session),
+                method: :patch,
+                class: "btn btn-warning ml-auto",
+                data: { confirm: "Reopen your cash session for today? The closing amount will be reset to zero." } %>
+        </div>
+      <% end %>
     </div>
   </div>
 <% end %>

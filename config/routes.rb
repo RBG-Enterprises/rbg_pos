@@ -61,6 +61,7 @@ Rails.application.routes.draw do
   resources :cash_register_sessions, only: [:index, :show, :update] do
     member do
       patch :close
+      patch :reopen
       post :void_transfer
     end
   end
