@@ -8,6 +8,7 @@ class CashRegisterSessionsController < ApplicationController
 
     @can_filter_by_employee = filter.can_filter_by_employee
     @pagy, @cash_register_sessions = pagy(filter.sessions)
+    @today_sessions = today_sessions_scope
 
     if @can_filter_by_employee
       @selected_cashier = cashiers_scope.find_by(id: params[:employee_id]) if params[:employee_id].present?
@@ -93,6 +94,15 @@ class CashRegisterSessionsController < ApplicationController
 
   def cashiers_scope
     User.where(id: CashRegisterSession.select(:employee_id)).includes(:store_front, avatar_attachment: :blob)
+  end
+
+  # Owner tracking: today's sessions get their own table on top of the
+  # index, separate from the paginated history. Respects the selected
+  # cashier filter so the owner can narrow today's view too.
+  def today_sessions_scope
+    scope = @can_filter_by_employee ? CashRegisterSession.for_day(Date.current) : current_user.cash_register_sessions.for_day(Date.current)
+    scope = scope.where(employee_id: params[:employee_id]) if @can_filter_by_employee && params[:employee_id].present?
+    scope.recent.includes(:store_front, :cash_account, employee: { avatar_attachment: :blob })
   end
 
   def find_session

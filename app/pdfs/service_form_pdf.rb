@@ -1,66 +1,80 @@
 require 'barby'
 require 'barby/barcode/code_39'
-require 'barby/outputter/prawn_outputter'
+require 'barby/outputter/png_outputter'
+require 'stringio'
 class ServiceFormPdf < Prawn::Document
+  # Single source of truth for the two-column geometry, derived from the
+  # printable area so nothing drifts off a LETTER page.
+  GUTTER = 12
+  LEFT_RATIO = 0.61
+
   def initialize(work_order, view_context)
     super(margin: 40, page_size: 'LETTER', page_layout: :portrait)
     @work_order = work_order
     @view_context = view_context
-    logo_details
-    heading
-    barcode
-    move_down 5
-    stroke_horizontal_rule
-    move_down 5
-    bounding_box [0, 700], width: 310 do
-      customer_details
-      product_details
-      reported_problem
-      diagnosis_details
-      actions_taken_details
-    end
-    bounding_box [335, 700], width: 520 do
-      charges_details
-      spare_parts_details
-      summary_details
-    end
+    header
+    columns
   end
 
   private
   def price(number)
     @view_context.number_to_currency(number, :unit => "P ")
   end
-  def barcode
-    bounding_box [380, 770], width: 150 do
-      text "RELEASING FORM"
-      move_down 30
-      barcode = Barby::Code39.new(@work_order.service_number)
-      barcode.annotate_pdf(self, height: 30)
-      move_down 3
-      text  "##{@work_order.service_number}", size: 18
 
+  # Header lives entirely in normal flow (inside the margins): logo floated
+  # at the top-left, title beside it, barcode pinned to the printable
+  # top-right. Cursor is synced below whichever block runs taller.
+  def header
+    float do
+      image(Rails.root.join("app/assets/images/rbg_logo.png"), width: 55)
     end
-  end
-  def logo_details
-    image(Rails.root.join("app/assets/images/rbg_logo.png"), at: [0,780], width: 60)
-  end
-  def heading
-    table([["", "RBG COMPUTERS, CELLSHOP AND ENTERPRISES"]], cell_style: { font: "Helvetica", :padding => [0,0,0,0]}, column_widths: [70]) do
-      cells.borders = []
-      column(2).size = 14
-      column(1).font_style = :bold
+    indent(70) do
+      text "RBG COMPUTERS, CELLSHOP AND ENTERPRISES", style: :bold, size: 12
+      text "#{@work_order.store_front.name} Repair Center", size: 9
     end
-    table([["", "#{@work_order.store_front.name} Repair Center"]], cell_style: { font: "Helvetica", :padding => [0,0,0,0]}, column_widths: [70]) do
-      cells.borders = []
-      column(1).size = 10
+    barcode_width = 150
+    box = bounding_box([bounds.width - barcode_width, bounds.top], width: barcode_width) do
+      text "RELEASING FORM", align: :right, size: 10, style: :bold
+      move_down 4
+      barcode = Barby::Code39.new(@work_order.service_number)
+      image StringIO.new(barcode.to_png(height: 60, margin: 0, xdim: 2)), position: :right, height: 30
+      move_down 2
+      text "##{@work_order.service_number}", size: 15, align: :right
+    end
+    move_cursor_to([cursor, bounds.top - box.height].min)
+    move_down 5
+    stroke_horizontal_rule
+    move_down 5
+  end
+
+  # Two columns sized from the printable width. The short money column is
+  # drawn first so it stays on page 1; the details column then flows across
+  # as many pages as it needs instead of dragging everything with it.
+  def columns
+    left_width = ((bounds.width - GUTTER) * LEFT_RATIO).round
+    right_x = left_width + GUTTER
+    right_width = bounds.width - right_x
+    top = cursor
+    bounding_box([right_x, top], width: right_width) do
+      charges_details
+      spare_parts_details
+      summary_details
+    end
+    move_cursor_to(top)
+    bounding_box([0, top], width: left_width) do
+      customer_details
+      product_details
+      reported_problem
+      diagnosis_details
+      actions_taken_details
     end
   end
 
   def customer_details
     move_down 20
-    text "CUSTOMER DETAILS", style: :bold
+    text "CUSTOMER DETAILS", style: :bold, size: 11
     move_down 2
-    table(customer_details_data, cell_style: { size: 11, font: "Helvetica", inline_format: true, :padding => [2,0,0,0]}, column_widths: [10, 150, 150]) do
+    table(customer_details_data, cell_style: { size: 9.5, font: "Helvetica", inline_format: true, :padding => [2,0,0,0]}, column_widths: [10, 140, 160]) do
         cells.borders = []
         # column(0).background_color = "CCCCCC"
     end
@@ -75,8 +89,8 @@ class ServiceFormPdf < Prawn::Document
   end
   def product_details
     move_down 5
-    text "PRODUCT DETAILS", style: :bold
-    table(product_details_data, cell_style: { size: 11, font: "Helvetica", inline_format: true, :padding => [3,0,0,0]}, column_widths: [10, 150, 150]) do
+    text "PRODUCT DETAILS", style: :bold, size: 11
+    table(product_details_data, cell_style: { size: 9.5, font: "Helvetica", inline_format: true, :padding => [3,0,0,0]}, column_widths: [10, 140, 160]) do
         cells.borders = []
         # column(0).background_color = "CCCCCC"
     end
@@ -94,8 +108,8 @@ class ServiceFormPdf < Prawn::Document
                                 @work_order.accessories.map{|a| ["","", "#{a.quantity.to_i} - #{a.description} <i>(#{a.serial_number})</i>"] }
   end
   def reported_problem
-    text "REPORTED PROBLEM", style: :bold
-    table(reported_problem_data, cell_style: { size: 11, font: "Helvetica", inline_format: true, :padding => [3,0,0,0]}, column_widths: [10, 150, 150]) do
+    text "REPORTED PROBLEM", style: :bold, size: 11
+    table(reported_problem_data, cell_style: { size: 9.5, font: "Helvetica", inline_format: true, :padding => [3,0,0,0]}, column_widths: [10, 140, 160]) do
         cells.borders = []
         # column(0).background_color = "CCCCCC"
     end
@@ -112,15 +126,15 @@ class ServiceFormPdf < Prawn::Document
 
   def diagnosis_details
     move_down 5
-    text "DIAGNOSIS", style: :bold
+    text "DIAGNOSIS", style: :bold, size: 11
     if @work_order.diagnoses.present?
-      table(diagnosis_details_data, cell_style: { size: 11, font: "Helvetica", inline_format: true, :padding => [3,0,0,0]}, column_widths: [10, 150,  150]) do
+      table(diagnosis_details_data, cell_style: { size: 9.5, font: "Helvetica", inline_format: true, :padding => [3,0,0,0]}, column_widths: [10, 140,  160]) do
           cells.borders = []
-          column(0).size = 10
+          column(0).size = 9
           # column(0).background_color = "CCCCCC"
       end
     else
-      text "No Diagnosis Yet"
+      text "No Diagnosis Yet", size: 9.5
     end
     move_down 5
     stroke_horizontal_rule
@@ -130,15 +144,15 @@ class ServiceFormPdf < Prawn::Document
   end
   def actions_taken_details
     move_down 5
-    text "ACTIONS TAKEN", style: :bold
+    text "ACTIONS TAKEN", style: :bold, size: 11
     if @work_order.actions_taken.present?
-      table(actions_taken_details_data, cell_style: { size: 11, font: "Helvetica", inline_format: true, :padding => [3,0,0,0]}, column_widths: [10, 150,  150]) do
+      table(actions_taken_details_data, cell_style: { size: 9.5, font: "Helvetica", inline_format: true, :padding => [3,0,0,0]}, column_widths: [10, 140,  160]) do
           cells.borders = []
-          column(0).size = 10
+          column(0).size = 9
           # column(0).background_color = "CCCCCC"
       end
     else
-      text "No Actions Taken Yet"
+      text "No Actions Taken Yet", size: 9.5
     end
     move_down 5
     stroke_horizontal_rule
@@ -151,7 +165,7 @@ class ServiceFormPdf < Prawn::Document
     move_down 15
     text "SERVICE CHARGES", style: :bold, size: 10
     if @work_order.service_charges.present?
-      table(charge_details_data, cell_style: { size: 10, font: "Helvetica", inline_format: true, :padding => [3,0,0,0]}, column_widths: [10, 120, 50]) do
+      table(charge_details_data, cell_style: { size: 9.5, font: "Helvetica", inline_format: true, :padding => [3,0,0,0]}, column_widths: [10, 120, 50]) do
           cells.borders = []
           column(2).align = :right
 
@@ -167,7 +181,7 @@ class ServiceFormPdf < Prawn::Document
   def spare_parts_details
     text "SPARE PARTS", style: :bold, size: 10
     if @work_order.sales_order_line_items.present?
-      table(spare_part_details_data, cell_style: { size: 10, font: "Helvetica", inline_format: true, :padding => [3,0,0,0]}, column_widths: [10, 120, 50]) do
+      table(spare_part_details_data, cell_style: { size: 9.5, font: "Helvetica", inline_format: true, :padding => [3,0,0,0]}, column_widths: [10, 120, 50]) do
           cells.borders = []
           column(2).align = :right
           # column(0).background_color = "CCCCCC"
@@ -184,7 +198,7 @@ end
     move_down 10
     text "SUMMARY", style: :bold, size: 10
     move_down 5
-      table(payment_data, cell_style: { size: 10, font: "Helvetica", inline_format: true, :padding => [5,0,0,0]}, column_widths: [10, 120, 50]) do
+      table(payment_data, cell_style: { size: 9.5, font: "Helvetica", inline_format: true, :padding => [5,0,0,0]}, column_widths: [10, 120, 50]) do
           cells.borders = []
           column(2).align = :right
 

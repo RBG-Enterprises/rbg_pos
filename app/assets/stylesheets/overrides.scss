@@ -562,3 +562,94 @@ $nav-pills-underline-border-width:    3px !default;
   margin-top: 0.5rem;
 }
 .signin-foot { margin-top: 1.5rem; margin-bottom: 0; color: #868e96; font-size: 0.8rem; }
+
+// Cash sessions index (app/views/cash_register_sessions/index.html.erb,
+// app/views/cash_register_sessions/_sessions_table.html.erb)
+.cash-sessions-stats {
+  &__value {
+    // Fluid ledger figure: full peso precision has to fit a half-width
+    // card on phones, so the value scales with the viewport instead of
+    // clipping with an ellipsis. Never touches the shared .stat-card.
+    font-size: clamp(1rem, 3.2vw, 1.35rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: #212529;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+}
+.cash-sessions {
+  &__table {
+    thead th {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #6c757d;
+      border-top: 0;
+      white-space: nowrap;
+    }
+
+    tbody td {
+      vertical-align: middle;
+    }
+  }
+
+  &__totals td {
+    background-color: rgba(0, 0, 0, 0.025);
+  }
+
+  &__empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: #6c757d;
+
+    > i {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      opacity: 0.45;
+    }
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 100%;
+    padding: 0.3rem 0.4rem 0.3rem 0.35rem;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 2rem;
+  }
+
+  &__chip-clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #c92a2a;
+
+    &:hover {
+      background-color: #ffe3e3;
+      color: #c92a2a;
+    }
+  }
+}
+
+// Cash session detail (app/views/cash_register_sessions/show.html.erb)
+.cash-session-balance {
+  // Hero figure for the narrow identity card: stacked under its label so
+  // full peso precision always fits without wrapping mid-number.
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #212529;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: break-word;
+}

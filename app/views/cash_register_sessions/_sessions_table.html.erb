@@ -1,0 +1,88 @@
+<%# Shared sessions table (index: Today + history).
+    Locals:
+      sessions    - enumerable of CashRegisterSession (required)
+      show_date   - show the Date column (default: false)
+      show_totals - show the totals footer (default: false)
+%>
+<% show_date = local_assigns.fetch(:show_date, false) %>
+<% show_totals = local_assigns.fetch(:show_totals, false) %>
+<% if sessions.blank? %>
+  <div class="cash-sessions__empty">
+    <i class="fa-solid fa-cash-register"></i>
+    <p class="mb-1"><strong>No cash sessions found.</strong></p>
+    <p class="text-muted small mb-0">Sessions open automatically the next time a cashier signs in.</p>
+  </div>
+<% else %>
+  <div class="table-responsive">
+    <table class="table table-hover cash-sessions__table mb-0">
+      <thead>
+        <tr>
+          <% if show_date %>
+            <th>Date</th>
+          <% end %>
+          <th>Cashier</th>
+          <th>Drawer</th>
+          <th>Status</th>
+          <th class="text-right">Expected</th>
+          <th class="text-right">Counted</th>
+          <th class="text-right">Variance</th>
+          <th class="text-right">Report</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% sessions.each do |session| %>
+          <% variance = session.variance_amount || 0 %>
+          <tr>
+            <% if show_date %>
+              <td class="text-nowrap">
+                <%= link_to session.session_date.strftime("%b %e, %Y"), cash_register_session_path(session), class: "font-weight-bold" %>
+              </td>
+            <% end %>
+            <td>
+              <div class="sales-table__cashier-cell">
+                <%= render "users/partials/cashier_identity", cashier: session.employee, store_front: session.store_front %>
+              </div>
+            </td>
+            <td class="text-muted text-nowrap"><%= session.cash_account.try(:name) %></td>
+            <td>
+              <% if session.open? %>
+                <span class="badge badge-pill badge-success"><i class="fa-solid fa-lock-open mr-1"></i>Open</span>
+              <% else %>
+                <span class="badge badge-pill badge-secondary"><i class="fa-solid fa-lock mr-1"></i>Closed</span>
+              <% end %>
+            </td>
+            <td class="text-right sales-table__figure font-weight-bold"><%= number_to_currency(session.expected_cash) %></td>
+            <td class="text-right sales-table__figure"><%= number_to_currency(session.closing_declared_amount || 0) %></td>
+            <td class="text-right sales-table__figure <%= variance.zero? ? 'text-muted' : 'text-danger font-weight-bold' %>">
+              <%= number_to_currency(variance) %>
+            </td>
+            <td class="text-right text-nowrap">
+              <div class="btn-group btn-group-sm" role="group" aria-label="Session reports">
+                <%= link_to cash_register_session_path(session), class: "btn btn-outline-secondary", title: "Open session" do %>
+                  <i class="fa-solid fa-arrow-right"></i>
+                <% end %>
+                <%= link_to cash_register_session_path(session, format: :pdf), class: "btn btn-outline-secondary", title: "Download PDF" do %>
+                  <i class="fa-solid fa-file-pdf"></i>
+                <% end %>
+                <%= link_to cash_register_session_path(session, format: :csv), class: "btn btn-outline-secondary", title: "Download CSV" do %>
+                  <i class="fa-solid fa-file-csv"></i>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+      <% if show_totals %>
+        <tfoot>
+          <tr class="cash-sessions__totals">
+            <td colspan="<%= show_date ? 4 : 3 %>" class="text-right text-uppercase small font-weight-bold text-muted">Totals</td>
+            <td class="text-right sales-table__figure font-weight-bold"><%= number_to_currency(sessions.sum(&:expected_cash)) %></td>
+            <td class="text-right sales-table__figure font-weight-bold"><%= number_to_currency(sessions.sum { |s| s.closing_declared_amount || 0 }) %></td>
+            <td class="text-right sales-table__figure font-weight-bold"><%= number_to_currency(sessions.sum { |s| s.variance_amount || 0 }) %></td>
+            <td></td>
+          </tr>
+        </tfoot>
+      <% end %>
+    </table>
+  </div>
+<% end %>

@@ -1,20 +1,78 @@
+<% today_open_count = @today_sessions.count(&:open?) %>
+<% today_expected = @today_sessions.sum(&:expected_cash) %>
+<% today_counted = @today_sessions.sum { |s| s.closing_declared_amount || 0 } %>
+<% today_variance = @today_sessions.sum { |s| s.variance_amount || 0 } %>
+
 <section class="content-header">
-  <h1><i class="fa-solid fa-cash-register"></i> Cash Sessions</h1>
-  <p class="text-muted mb-0">One session per cashier per day — every sale, transfer and count, accounted for.</p>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1><i class="fa-solid fa-cash-register mr-2"></i>Cash Sessions</h1>
+        <p class="text-muted mb-0">One session per cashier per day — every sale, transfer and count, accounted for.</p>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to "Home", store_index_path %></li>
+          <li class="breadcrumb-item active">Cash Sessions</li>
+        </ol>
+      </div>
+    </div>
+  </div>
 </section>
+
+<!-- TODAY AT A GLANCE: the owner's tracking strip -->
+<div class="row cash-sessions-stats">
+  <div class="col-6 col-lg-3">
+    <div class="card stat-card">
+      <div class="card-body">
+        <p class="stat-card__label">Open now</p>
+        <p class="stat-card__value cash-sessions-stats__value mb-0"><%= today_open_count %></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card stat-card">
+      <div class="card-body">
+        <p class="stat-card__label">Expected in drawers</p>
+        <p class="stat-card__value cash-sessions-stats__value mb-0"><%= number_to_currency(today_expected) %></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card stat-card">
+      <div class="card-body">
+        <p class="stat-card__label">Counted</p>
+        <p class="stat-card__value cash-sessions-stats__value mb-0"><%= number_to_currency(today_counted) %></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card stat-card <%= 'stat-card--highlight' unless today_variance.zero? %>">
+      <div class="card-body">
+        <p class="stat-card__label">Variance</p>
+        <p class="stat-card__value cash-sessions-stats__value mb-0"><%= number_to_currency(today_variance) %></p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <% if @can_filter_by_employee %>
   <% filters_active = params[:employee_id].presence || params[:date].presence %>
   <div class="card card-outline card-secondary">
     <div class="card-body">
-      <div class="d-flex flex-wrap align-items-end" style="gap: 1rem;">
-        <div style="min-width: 15rem;">
-          <label class="mb-1" for="cash-sessions-cashier-search">Cashier</label>
+      <div class="form-row">
+        <div class="form-group col-md-5 mb-md-0">
+          <label for="cash-sessions-cashier-search">Cashier</label>
 
-          <div id="selected-cashier" class="customer-typeahead-selected<%= ' d-none' unless @selected_cashier %>">
-            <span class="badge badge-light border p-2">
-              <i class="fa fa-user"></i> <span id="selected-cashier-name"><%= @selected_cashier&.full_name %></span>
-              <a href="#" id="clear-selected-cashier" class="ml-2 text-danger" title="Change cashier"><i class="fa fa-times"></i></a>
+          <div id="selected-cashier" class="<%= 'd-none' unless @selected_cashier %>">
+            <span class="cash-sessions__chip">
+              <% if @selected_cashier %>
+                <%= image_tag(@selected_cashier.avatar, class: "img-circle", height: 28, width: 28, alt: "") %>
+              <% else %>
+                <i class="fa fa-user text-muted"></i>
+              <% end %>
+              <span id="selected-cashier-name" class="font-weight-bold"><%= @selected_cashier&.full_name %></span>
+              <a href="#" id="clear-selected-cashier" class="cash-sessions__chip-clear" title="Change cashier"><i class="fa fa-times"></i></a>
             </span>
           </div>
 
@@ -24,23 +82,63 @@
           </div>
         </div>
 
-        <%= form_tag cash_register_sessions_path, method: :get, id: "cash-sessions-filter-form", class: "d-flex flex-wrap align-items-end", style: "gap: 1rem;" do %>
+        <%= form_tag cash_register_sessions_path, method: :get, id: "cash-sessions-filter-form", class: "form-group col-md-7 mb-0" do %>
           <%= hidden_field_tag :employee_id, params[:employee_id], id: "cash-sessions-employee-id" %>
-          <div class="form-group mb-0">
-            <label class="mb-1" for="date">Date</label>
-            <%= date_field_tag :date, params[:date], class: "form-control" %>
-          </div>
-          <div class="form-group mb-0">
-            <%= submit_tag "Filter", class: "btn btn-primary" %>
-            <% if filters_active %>
-              <%= link_to "Clear", cash_register_sessions_path, class: "btn btn-outline-secondary" %>
-            <% end %>
+          <div class="form-row align-items-end">
+            <div class="col-6 col-md-5">
+              <label for="date">Date</label>
+              <%= date_field_tag :date, params[:date], class: "form-control" %>
+            </div>
+            <div class="col-6 col-md-7">
+              <%= submit_tag "Filter", class: "btn btn-primary" %>
+              <% if filters_active %>
+                <%= link_to cash_register_sessions_path, class: "btn btn-outline-secondary" do %>
+                  <i class="fa-solid fa-xmark mr-1"></i>Clear
+                <% end %>
+              <% end %>
+            </div>
           </div>
         <% end %>
       </div>
     </div>
   </div>
+<% end %>
 
+<div class="card card-outline card-primary">
+  <div class="card-header">
+    <h3 class="card-title">
+      <i class="fa-solid fa-sun mr-1"></i>
+      Today <span class="text-muted font-weight-normal"><%= Date.current.strftime("%b %e, %Y") %></span>
+    </h3>
+    <div class="card-tools">
+      <span class="badge badge-primary badge-pill"><%= pluralize(@today_sessions.size, "session") %></span>
+    </div>
+  </div>
+  <div class="card-body p-0">
+    <%= render "cash_register_sessions/sessions_table", sessions: @today_sessions, show_totals: true %>
+  </div>
+</div>
+
+<div class="card card-outline card-secondary">
+  <div class="card-header">
+    <h3 class="card-title"><i class="fa-solid fa-clock-rotate-left mr-1"></i>Session history</h3>
+    <div class="card-tools">
+      <span class="badge badge-secondary badge-pill"><%= pluralize(@pagy.count, "session") %></span>
+    </div>
+  </div>
+  <div class="card-body p-0">
+    <%= render "cash_register_sessions/sessions_table", sessions: @cash_register_sessions, show_date: true %>
+  </div>
+  <% if @cash_register_sessions.present? %>
+    <div class="card-footer clearfix">
+      <div class="d-flex justify-content-center mb-0">
+        <%== pagy_bootstrap_nav(@pagy) %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<% if @can_filter_by_employee %>
   <script type="text/javascript">
   document.addEventListener("turbolinks:load", function () {
     var typeahead = document.getElementById('cashier-typeahead');
@@ -51,23 +149,23 @@
     var resultsWrapper = document.getElementById('cashier-search-results');
     var clearLink = document.getElementById('clear-selected-cashier');
 
-    if (!typeahead) { return; }
+    if (!typeahead || !resultsWrapper || !hiddenField) { return; }
 
     function selectCashier(id, name) {
       hiddenField.value = id;
-      selectedName.textContent = name;
-      selected.classList.remove('d-none');
+      if (selectedName) { selectedName.textContent = name; }
+      if (selected) { selected.classList.remove('d-none'); }
       typeahead.classList.add('d-none');
       resultsWrapper.innerHTML = '';
-      searchInput.value = '';
+      if (searchInput) { searchInput.value = ''; }
     }
 
     function clearCashier(event) {
       event.preventDefault();
       hiddenField.value = '';
-      selected.classList.add('d-none');
+      if (selected) { selected.classList.add('d-none'); }
       typeahead.classList.remove('d-none');
-      searchInput.focus();
+      if (searchInput) { searchInput.focus(); }
     }
 
     resultsWrapper.addEventListener('click', function (event) {
@@ -76,70 +174,7 @@
       selectCashier(option.dataset.cashierId, option.dataset.cashierName);
     });
 
-    clearLink.addEventListener('click', clearCashier);
+    if (clearLink) { clearLink.addEventListener('click', clearCashier); }
   });
   </script>
 <% end %>
-
-<div class="card card-solid">
-  <div class="card-body">
-    <% if @cash_register_sessions.blank? %>
-      <p class="text-muted text-center mb-0 py-4">
-        <i class="fa-solid fa-cash-register fa-2x mb-2 d-block"></i>
-        <strong>No cash sessions yet.</strong><br>Sessions open automatically the next time a cashier signs in.
-      </p>
-    <% else %>
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Cashier</th>
-              <th>Drawer</th>
-              <th>Status</th>
-              <th class="text-right">Expected</th>
-              <th class="text-right">Counted</th>
-              <th class="text-right">Variance</th>
-              <th class="text-right">Report</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @cash_register_sessions.each do |session| %>
-              <tr>
-                <td>
-                  <%= link_to session.session_date.strftime("%b %e, %Y"), cash_register_session_path(session), class: "font-weight-bold" %>
-                </td>
-                <td>
-                  <div class="sales-table__cashier-cell">
-                    <%= render "users/partials/cashier_identity", cashier: session.employee, store_front: session.store_front %>
-                  </div>
-                </td>
-                <td class="text-muted"><%= session.cash_account.try(:name) %></td>
-                <td><span class="badge badge-<%= session.open? ? 'success' : 'secondary' %>"><%= session.status %></span></td>
-                <td class="text-right"><%= number_to_currency(session.expected_cash) %></td>
-                <td class="text-right"><%= number_to_currency(session.closing_declared_amount || 0) %></td>
-                <td class="text-right <%= (session.variance_amount || 0) == 0 ? '' : 'text-danger font-weight-bold' %>">
-                  <%= number_to_currency(session.variance_amount || 0) %>
-                </td>
-                <td class="text-right text-nowrap">
-                  <%= link_to cash_register_session_path(session), class: "btn btn-outline-secondary btn-sm mr-1", title: "Open session" do %>
-                    <i class="fa-solid fa-arrow-right"></i>
-                  <% end %>
-                  <%= link_to cash_register_session_path(session, format: :pdf), class: "btn btn-outline-secondary btn-sm mr-1", title: "Download PDF" do %>
-                    <i class="fa-solid fa-file-pdf"></i>
-                  <% end %>
-                  <%= link_to cash_register_session_path(session, format: :csv), class: "btn btn-outline-secondary btn-sm", title: "Download CSV" do %>
-                    <i class="fa-solid fa-file-csv"></i>
-                  <% end %>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-      <div class="d-flex justify-content-center mt-3">
-        <%== pagy_nav(@pagy) %>
-      </div>
-    <% end %>
-  </div>
-</div>

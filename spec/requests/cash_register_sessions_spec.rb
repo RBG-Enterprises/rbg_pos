@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe 'Cash register sessions', type: :request do
-  it 'shows a Transfer link to the cashier on an open session' do
+  it 'shows a Transfer link inside the transfers pane on an open session' do
     cash = create(:asset, name: 'Cash Transfer Link')
     clerk = create(:sales_clerk, cash_on_hand_account: cash)
     session = CashRegisterSessions::OpenForDay.call(employee: clerk)
@@ -9,11 +9,11 @@ describe 'Cash register sessions', type: :request do
 
     get cash_register_session_path(session)
 
+    transfer_path = new_employee_remittance_path(employee_id: clerk.id, cash_account_id: cash.id)
     expect(response).to have_http_status(:success)
     expect(response.body).to include('Transfer')
-    expect(response.body).to include(
-      new_employee_remittance_path(employee_id: clerk.id, cash_account_id: cash.id)
-    )
+    expect(response.body).to include(transfer_path)
+    expect(response.body.index('transfers-pane')).to be < response.body.index(transfer_path)
   end
 
   it 'hides the Transfer link on a closed session' do
