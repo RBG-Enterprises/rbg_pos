@@ -177,7 +177,8 @@
                   <thead><tr><th>Item</th><th class="text-right">Qty</th><th class="text-right">Amount</th></tr></thead>
                   <tbody>
                     <% @items_summary.each do |row| %>
-                      <tr>
+                      <% stock_path = item_stock_path(row) %>
+                      <tr class="<%= 'clickable-row' if stock_path.present? %>" <%= "onclick=\"window.location='#{stock_path}'\"".html_safe if stock_path.present? %>>
                         <td class="font-weight-bold"><%= row[:name] %></td>
                         <td class="text-right sales-table__figure"><%= row[:quantity] %></td>
                         <td class="text-right sales-table__figure"><%= number_to_currency(row[:amount]) %></td>
@@ -198,7 +199,7 @@
                   <thead><tr><th>Time</th><th>Type</th><th>Customer</th><th class="text-right">Amount</th></tr></thead>
                   <tbody>
                     <% @cash_receipts.each do |row| %>
-                      <% source_path = cash_receipt_source_path(row[:order]) %>
+                      <% source_path = cash_receipt_source_path(row) %>
                       <tr class="<%= 'clickable-row' if source_path.present? %>" <%= "onclick=\"window.location='#{source_path}'\"".html_safe if source_path.present? %>>
                         <td class="text-muted text-nowrap"><%= row[:date].try(:strftime, "%I:%M %p") %></td>
                         <td><%= row[:kind] %></td>

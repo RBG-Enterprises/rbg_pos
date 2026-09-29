@@ -95,14 +95,19 @@ class CashRegisterSession < ApplicationRecord
   # cash receipts recorded outside the regular POS flow, and payments on
   # repair work orders — normalized into one merged, chronological list for
   # the Cash Receipts tab/report.
+  #
+  # Amount is the debit leg hitting this session's drawer account — never
+  # payable_amount, whose debit total also sweeps up non-cash legs such as
+  # Cost of Goods Sold and would inflate the receipt.
   def cash_receipts
     vouchers.processed.where(type: CASH_RECEIPT_VOUCHER_TYPES).order(:date).map do |voucher|
       {
         date: voucher.date,
         customer_name: voucher.payee_name,
-        amount: voucher.payable_amount,
+        amount: voucher.voucher_amounts.debit.where(account: cash_account).sum(:amount),
         kind: cash_receipt_kind(voucher),
         order: voucher.commercial_document,
+        voucher: voucher,
       }
     end
   end
@@ -112,15 +117,19 @@ class CashRegisterSession < ApplicationRecord
   end
 
   # Items sold in this session, aggregated by product name.
-  # Returns [{ name:, quantity:, amount: }, ...] sorted by amount desc.
+  # Returns [{ name:, quantity:, amount:, stock_id:, stock_store_front_id: }, ...] sorted by amount desc.
   def items_summary
-    grouped = Hash.new { |hash, key| hash[key] = { name: key, quantity: 0, amount: BigDecimal("0"), bar_code: nil } }
-    sales_orders.includes(sales_order_line_items: :product, other_sales_line_items: []).find_each do |order|
+    grouped = Hash.new { |hash, key| hash[key] = { name: key, quantity: 0, amount: BigDecimal("0"), bar_code: nil, stock_id: nil, stock_store_front_id: nil } }
+    sales_orders.includes(sales_order_line_items: [:product, :stock], other_sales_line_items: []).find_each do |order|
       order.sales_order_line_items.each do |line_item|
         key = line_item.product_name.presence || line_item.bar_code.presence || "Item"
         grouped[key][:quantity] += line_item.quantity.to_f
         grouped[key][:amount] += line_item.total_cost.to_d
         grouped[key][:bar_code] ||= line_item.bar_code.presence
+        if grouped[key][:stock_id].nil? && line_item.stock_id.present?
+          grouped[key][:stock_id] = line_item.stock_id
+          grouped[key][:stock_store_front_id] = line_item.stock.store_front_id
+        end
       end
       order.other_sales_line_items.each do |line_item|
         key = line_item.description.presence || "Other Sale"
