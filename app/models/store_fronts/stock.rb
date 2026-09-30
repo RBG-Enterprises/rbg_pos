@@ -54,7 +54,7 @@ module StoreFronts
     end
 
     def self.available_quantity
-      sum(&:available_quantity)
+      sum(:available_quantity)
     end
 
     def self.processed
@@ -66,7 +66,7 @@ module StoreFronts
     end
 
     def balance_for_cart_on_transfer(cart)
-      balance - stock_transfers.processed.where(cart: cart).sum(&:quantity)
+      balance - stock_transfers.processed.where(cart: cart).sum(:quantity)
     end
 
     def balance

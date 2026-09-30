@@ -1,9 +1,10 @@
 class SuppliersController < ApplicationController
 	def index
+		suppliers_scope = Supplier.with_attached_avatar
 		if params[:search].present?
-			@suppliers = Supplier.text_search(params[:search]).paginate(page: params[:page], per_page: 20)
+			@pagy, @suppliers = pagy(suppliers_scope.text_search(params[:search]))
 		else
-		  @suppliers = Supplier.all.paginate(page: params[:page], per_page: 20)
+		  @pagy, @suppliers = pagy(suppliers_scope.all)
 		end
 
 		respond_to do |format|
@@ -32,6 +33,6 @@ class SuppliersController < ApplicationController
 	private
 	def supplier_params
 		params.require(:supplier).
-		permit(:business_name, :owner_name, :contact_number, :address)
+		permit(:business_name, :owner_name, :contact_number, :address, :avatar)
 	end
 end

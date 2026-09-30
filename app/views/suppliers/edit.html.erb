@@ -3,15 +3,16 @@
     <div class="card card-default">
       <div class="card-header">
         <center>
-          <%= image_tag(@supplier.avatar, class: "img-circle", height: 60, width: 60) %><br>
+          <%= supplier_logo(@supplier, height: 80, width: 80) %><br>
           <h3 class="subtitle-up"> <%= @supplier.business_name %></h3>
         </center>
       </div>
       <div class="card-body">
         <div class="row">
           <div class="col-md-10 offset-md-1">
-            <%= simple_form_for @supplier do |f| %>
+            <%= simple_form_for @supplier, html: { multipart: true } do |f| %>
               <%= f.error_notification %>
+              <%= f.input :avatar, as: :file, label: "Supplier logo" %>
               <%= f.input :business_name %>
               <%= f.input :owner_name %>
               <%= f.input :address %>

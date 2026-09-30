@@ -35,7 +35,7 @@ module Products
         @purchase.save!
         @stock.update(barcode: @purchase.bar_code, **stock_params)
         @stock.save
-        redirect_to product_stocks_url(@product), notice: 'Stock updated successfully.'
+        redirect_to store_front_module_stock_url(@stock), notice: 'Stock updated successfully.'
       else
         render :edit
       end

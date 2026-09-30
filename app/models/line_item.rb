@@ -53,19 +53,19 @@ class LineItem < ApplicationRecord
   end
 
   def self.total_cost
-    all.sum(&:unit_cost_and_quantity)
+    sum(Arel.sql("COALESCE(unit_cost, 0) * COALESCE(quantity, 0)"))
   end
 
   def self.total
-    sum(&:quantity)
+    sum(:quantity)
   end
 
   def self.total_converted_quantity
-    processed.all.sum(&:quantity)
+    processed.sum(:quantity)
   end
 
   def self.balance(args={})
-    sum(&:quantity)
+    sum(:quantity)
   end
 
 

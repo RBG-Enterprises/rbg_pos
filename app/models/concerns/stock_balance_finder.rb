@@ -1,5 +1,5 @@
 module StockBalanceFinder
   def balance
-    sum(&:quantity)
+    sum(:quantity)
   end
 end

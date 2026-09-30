@@ -3,11 +3,15 @@
     <div class="modal-header">
       <h4 class="modal-title">New Supplier</h4>
     </div>
-    <%=simple_form_for @supplier, url: :supplier_registrations, remote: true do |f| %>
+    <%=simple_form_for @supplier, url: :supplier_registrations, remote: true, html: { multipart: true } do |f| %>
     <%= f.error_notification %>
       <div class="modal-body">
         <ul class="errors text-danger">
         </ul>
+        <center>
+          <%= supplier_logo(@supplier, height: 80, width: 80) %><br>
+          <%= f.input :avatar, as: :file, label: "Supplier logo" %>
+        </center>
         <div class="row">
           <div class="col-md-6">
             <%=f.input :business_name %>

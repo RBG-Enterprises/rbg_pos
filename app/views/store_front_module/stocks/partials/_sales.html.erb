@@ -1,25 +1,36 @@
 <h4 class="title-up"> Sales </h4>
-<div  class="table table-responsive">
-  <table class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th> Date </th>
-        <th> Customer </th>
-        <th> Quantity </th>
-        <th> REF # </th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @sales.each do |sale| %>
+<% if @sales.present? %>
+  <div class="table table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
         <tr>
-          <td><%= link_to sale.date.strftime('%B %e, %Y'), store_front_module_sales_order_path(sale.sales_order) %></td>
-          <td><%= sale.customer_name %></td>
-          <td><%= sale.quantity %></td>
-          <td># <%= sale.reference_number %></td>
-          <td> <% if sale.order.returned_at %> <span class="badge badge-warning"> SALES RETURN </span><% end %></td>
+          <th> Date </th>
+          <th> Customer </th>
+          <th> Quantity </th>
+          <th> REF # </th>
+          <th></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+      </thead>
+      <tbody>
+        <% @sales.each do |sale| %>
+          <tr>
+            <td>
+              <% if sale.sales_order.present? %>
+                <%= link_to sale.date.strftime("%B %e, %Y"), store_front_module_sales_order_path(sale.sales_order) %>
+              <% else %>
+                <%= sale.date.try(:strftime, "%B %e, %Y") %>
+              <% end %>
+            </td>
+            <td><%= sale.customer_name %></td>
+            <td><span class="badge bg-green"><%= sale.quantity %></span></td>
+            <td># <%= sale.reference_number %></td>
+            <td><% if sale.order.try(:returned_at).present? %> <span class="badge badge-warning"> SALES RETURN </span><% end %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <center><%== pagy_bootstrap_nav(@pagy) %></center>
+  </div>
+<% else %>
+  <p class="text-muted">No sales recorded for this stock yet.</p>
+<% end %>

@@ -38,7 +38,7 @@
                                     <tbody>
                                       <% @suppliers.each do |supplier| %>
                                         <tr>
-                                          <td><%= link_to supplier.business_name, supplier %></td>
+                                          <td><%= link_to supplier do %><%= supplier_logo(supplier, height: 35, width: 35, css_class: "img-circle mr-2") %><%= supplier.business_name %><% end %></td>
                                           <td><%= supplier.owner_name %></td>
                                           <td><%= supplier.address %></td>
                                           <td><%= supplier.contact_number %></td>
@@ -47,4 +47,4 @@
                                       <% end %>
                                     </tbody>
                                   </table>
-                                  <center> <%= will_paginate @suppliers %></center>
+                                  <center> <%== pagy_bootstrap_nav(@pagy) %></center>

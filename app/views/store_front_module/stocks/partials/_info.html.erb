@@ -1,64 +1,75 @@
 <div class="row">
-  <div class="col-md-6">
-    <small> PURCHASE QTY </small>
-    <h4 class="title-up"> <%= @stock.purchase_quantity %></h4>
+  <div class="col-md-4">
+    <small>IN STOCK</small>
+    <h4 class="title-up"><%= @stock.available_quantity %></h4>
+    <%= button_to 'Sync Count', store_front_module_stock_syncs_path(@stock), class: "btn btn-outline-secondary btn-sm" %>
   </div>
-  <div class="col-md-6">
-    <small> IN STOCK </small>
-    <h4 class="title-up"><%= @stock.balance%></h4>
-    <%= button_to 'Sync Count', store_front_module_stock_syncs_path(@stock), class: "btn btn-outline-secondary" %>
-
+  <div class="col-md-4">
+    <small>PURCHASED</small>
+    <h4 class="title-up"><%= @stock.purchase_quantity %></h4>
+  </div>
+  <div class="col-md-4">
+    <small>ADJUSTMENT</small>
+    <h4 class="title-up"><%= @stock.count_adjustment %></h4>
   </div>
 </div>
 <hr>
+<h4 class="subtitle-up">Details</h4>
 <div class="row">
-  <div class="col-md-3">
-    <small> SALES </small>
-    <h4 class="subtitle-up"> <%= @stock.sales.total %></h4>
-  </div>
-  <div class="col-md-3">
-    <small> TRANSFERS </small>
-    <h4 class="subtitle-up"><%= @stock.stock_transfers.total %></h4>
-  </div>
-  <div class="col-md-3">
-    <small> INTERNAL USES </small>
-    <h4 class="subtitle-up"><%= @stock.internal_uses.total %></h4>
-  </div>
-  <div class="col-md-3">
-    <small> SPOILAGES </small>
-    <h4 class="subtitle-up"><%= @stock.spoilages.total %></h4>
-  </div>
+  <div class="col-md-3 text-muted">Supplier</div>
+  <div class="col-md-9"><%= @supplier_name.presence || "Not recorded" %></div>
 </div>
-<hr>
-<p><b>barcode</b></p>
-<%= @stock.barcode %>
-<br>
-<p><b>Supplier</b></p>
-<%= @stock.supplier_name %>
-<hr />
-
-
-<p><b>Stocks with the same Barcode (<%= @stock.barcode %>)</b></p>
-<div class="card-body">
-        <div class="table table-responsive">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th> Store </th>
-                <th> In Stock </th>
-                <th> Last Update </th>
-              </tr>
-            </thead>
-            <tbody>
-              <% store_front_ids = StoreFronts::Stock.processed.includes(:store_front).where(barcode: @stock.barcode).pluck(:store_front_id) %>
-              <% StoreFront.where(id: store_front_ids).each do |store_front| %>
-                <tr>
-                  <td><%= store_front.name %></td>
-                  <td><%= store_front.stocks.processed.where(barcode: @stock.barcode).sum(:available_quantity) %></td>
-                  <td><%= store_front.stocks.processed.where(barcode: @stock.barcode).order(updated_at: :desc).last.updated_at.strftime("%B %e, %Y") %></td>
-                </tr>
+<div class="row">
+  <div class="col-md-3 text-muted">Date purchased</div>
+  <div class="col-md-9"><%= @purchase_date.present? ? @purchase_date.strftime("%B %e, %Y") : "Not recorded" %></div>
+</div>
+<div class="row">
+  <div class="col-md-3 text-muted">Barcode</div>
+  <div class="col-md-9"><%= @stock.barcode.presence || "—" %></div>
+</div>
+<div class="row">
+  <div class="col-md-3 text-muted">Unit</div>
+  <div class="col-md-9"><%= @stock.try(:unit_code) || "—" %></div>
+</div>
+<% if current_user.proprietor? %>
+  <div class="row">
+    <div class="col-md-3 text-muted">Unit cost</div>
+    <div class="col-md-9"><%= number_to_currency(@stock.last_purchase_cost) %></div>
+  </div>
+  <div class="row">
+    <div class="col-md-3 text-muted">Total Cost</div>
+    <div class="col-md-9"><%= number_to_currency(@stock.total_cost) %></div>
+  </div>
+<% end %>
+<% if @same_barcode_summary.present? %>
+  <hr>
+  <p class="subtitle-up">AVAILABILITY IN STORES</p>
+  <div class="table-responsive">
+    <table class="table table-striped table-sm">
+      <thead>
+        <tr>
+          <th>Store</th>
+          <th>In Stock</th>
+          <th>Last Update</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @same_barcode_summary.first(5).each do |row| %>
+          <tr>
+            <td>
+              <%= row[:store_front].try(:name) %>
+              <% if row[:store_front] == @stock.store_front %>
+                <span class="badge badge-pill badge-success">This stock</span>
               <% end %>
-            </tbody>
-          </table>
-        </div>
-      </div>
+            </td>
+            <td><%= row[:available_quantity] %></td>
+            <td><%= row[:last_updated_at].try(:strftime, "%B %e, %Y") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <% if @same_barcode_summary.size > 5 %>
+    <p class="text-muted"><small>Showing 5 of <%= @same_barcode_summary.size %> stores</small></p>
+  <% end %>
+<% end %>

@@ -14,7 +14,6 @@ class Supplier < ApplicationRecord
 
   has_many :vouchers, as: :payee
   has_many :voucher_amounts, class_name: "Vouchers::VoucherAmount", through: :vouchers
-  before_save :set_default_image
   def name
     business_name
   end
@@ -43,11 +42,5 @@ class Supplier < ApplicationRecord
   def default_accounts_payable_account
     return payable_account if payable_account.present?
     AccountingModule::Liability.find_by(name: 'Accounts Payable-Trade')
-  end
-
-  def set_default_image
-    if !avatar.attached?
-      self.avatar.attach(io: File.open(Rails.root.join('app', 'assets', 'images', 'default.png')), filename: 'default-image.png', content_type: 'image/png')
-    end
   end
 end

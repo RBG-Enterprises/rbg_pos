@@ -1,23 +1,34 @@
 <h4 class="title-up"> Internal Uses </h4>
-<div  class="table table-responsive">
-  <table class="table table-responsive">
-    <thead>
-      <tr>
-        <th> Date </th>
-        <th> Employee </th>
-        <th> Quantity </th>
-        <th> REF # </th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @internal_uses.each do |internal_use| %>
+<% if @internal_uses.present? %>
+  <div class="table table-responsive">
+    <table class="table table-striped">
+      <thead>
         <tr>
-          <td><%= link_to internal_use.internal_use_order_date.strftime('%B %e, %Y'), store_front_module_internal_use_order_path(internal_use.internal_use_order) %></td>
-          <td><%= internal_use.employee_name %></td>
-          <td><%= internal_use.quantity %></td>
-          <td># <%= internal_use.reference_number %></td>
+          <th> Date </th>
+          <th> Employee </th>
+          <th> Quantity </th>
+          <th> REF # </th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+      </thead>
+      <tbody>
+        <% @internal_uses.each do |internal_use| %>
+          <tr>
+            <td>
+              <% if internal_use.internal_use_order.present? %>
+                <%= link_to internal_use.internal_use_order.date.strftime("%B %e, %Y"), store_front_module_internal_use_order_path(internal_use.internal_use_order) %>
+              <% else %>
+                <span class="text-muted">—</span>
+              <% end %>
+            </td>
+            <td><%= internal_use.internal_use_order&.employee_name %></td>
+            <td><%= internal_use.quantity %></td>
+            <td># <%= internal_use.internal_use_order&.reference_number %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <center><%== pagy_bootstrap_nav(@pagy) %></center>
+  </div>
+<% else %>
+  <p class="text-muted">No internal use recorded for this stock yet.</p>
+<% end %>

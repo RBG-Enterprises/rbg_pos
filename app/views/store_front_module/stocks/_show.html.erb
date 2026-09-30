@@ -1,30 +1,63 @@
+<% available = @stock.available_quantity.to_d %>
+<% low_threshold = @stock.product.try(:low_stock_count).to_d %>
+<% stock_status = if available <= 0
+     :sold_out
+   elsif low_threshold > 0 && available <= low_threshold
+     :low
+   else
+     :in_stock
+   end %>
 <div class="content">
   <div class="row">
     <div class="col-md-12">
       <div class="card">
         <div class="card-body">
           <h3 class="title-up"><%= stock.name %></h3>
-          <span class="text-muted"><i class="fa fa-barcode"></i> <%= stock.barcode %></span>
+          <div class="mb-2">
+            <% if stock.barcode.present? %>
+              <span class="text-muted"><i class="fa fa-barcode"></i> <%= stock.barcode %></span>
+            <% end %>
+            <% if stock_status == :in_stock %>
+              <span class="badge badge-success">In stock</span>
+            <% elsif stock_status == :low %>
+              <span class="badge badge-warning">Low stock</span>
+            <% else %>
+              <span class="badge badge-danger">Sold out</span>
+            <% end %>
+          </div>
 
 <ul class="nav nav-pills nav-pills-underline">
   <li class="nav-item">
    <%= link_to 'Info', store_front_module_stock_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_path(stock))}" %>
  </li>
 <li class="nav-item">
-  <%= link_to 'Sales', store_front_module_stock_sales_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_sales_path(stock))}" %>
+  <%= link_to store_front_module_stock_sales_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_sales_path(stock))}" do %>
+    Sales <span class="badge badge-pill badge-light"><%= @movement_counts[:sales] %></span>
+  <% end %>
 </li>
 <li class="nav-item">
-  <%= link_to 'Stock Transfers', store_front_module_stock_stock_transfers_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_stock_transfers_path(stock))}" %>
+  <%= link_to store_front_module_stock_stock_transfers_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_stock_transfers_path(stock))}" do %>
+    Stock Transfers <span class="badge badge-pill badge-light"><%= @movement_counts[:stock_transfers] %></span>
+  <% end %>
 </li>
 <li class="nav-item">
-  <%= link_to 'Spoilages', store_front_module_stock_spoilages_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_spoilages_path(stock))}" %>
+  <%= link_to store_front_module_stock_spoilages_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_spoilages_path(stock))}" do %>
+    Spoilages <span class="badge badge-pill badge-light"><%= @movement_counts[:spoilages] %></span>
+  <% end %>
 </li>
 <li class="nav-item">
- <%= link_to 'Internal Uses', store_front_module_stock_internal_uses_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_internal_uses_path(stock))}" %>
+ <%= link_to store_front_module_stock_internal_uses_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_internal_uses_path(stock))}" do %>
+   Internal Uses <span class="badge badge-pill badge-light"><%= @movement_counts[:internal_uses] %></span>
+ <% end %>
 </li>
 <li class="nav-item">
   <%= link_to 'Activities', store_front_module_stock_activities_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_activities_path(stock))}" %>
 </li>
+<% if current_user.proprietor? %>
+  <li class="nav-item">
+    <%= link_to 'Settings', store_front_module_stock_settings_path(stock), class: "nav-link #{ 'active' if current_page?(store_front_module_stock_settings_path(stock))}" %>
+  </li>
+<% end %>
 </ul>
 <br>
 
@@ -46,6 +79,9 @@
     <% end %>
     <% if current_page? store_front_module_stock_activities_path(stock) %>
       <%=render 'store_front_module/stocks/partials/activities', stock: stock %>
+    <% end %>
+    <% if current_user.proprietor? && current_page?(store_front_module_stock_settings_path(stock)) %>
+      <%=render 'store_front_module/stocks/partials/settings', stock: stock %>
     <% end %>
   </div>
 </div>

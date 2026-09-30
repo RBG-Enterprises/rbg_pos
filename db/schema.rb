@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_26_203701) do
+ActiveRecord::Schema.define(version: 2026_09_29_000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -424,6 +424,7 @@ ActiveRecord::Schema.define(version: 2026_09_26_203701) do
     t.index ["referencer_type", "referencer_id"], name: "index_line_items_on_referencer_type_and_referencer_id"
     t.index ["registry_id"], name: "index_line_items_on_registry_id"
     t.index ["sales_order_line_item_id"], name: "index_line_items_on_sales_order_line_item_id"
+    t.index ["stock_id", "type", "order_id"], name: "index_line_items_on_stock_type_and_order"
     t.index ["stock_id"], name: "index_line_items_on_stock_id"
     t.index ["store_front_id"], name: "index_line_items_on_store_front_id"
     t.index ["type"], name: "index_line_items_on_type"
@@ -664,6 +665,7 @@ ActiveRecord::Schema.define(version: 2026_09_26_203701) do
     t.index ["barcode"], name: "index_stocks_on_barcode"
     t.index ["is_processed"], name: "index_stocks_on_is_processed"
     t.index ["product_id"], name: "index_stocks_on_product_id"
+    t.index ["store_front_id", "is_processed"], name: "index_stocks_on_store_front_and_processed"
     t.index ["store_front_id"], name: "index_stocks_on_store_front_id"
     t.index ["unit_of_measurement_id"], name: "index_stocks_on_unit_of_measurement_id"
   end

@@ -34,7 +34,6 @@
                   <th>Unit Cost</th>
                   <th>Total Cost</th>
                   <th>Supplier</th>
-                  <th></th>
 
               </tr>
             </thead>
@@ -43,18 +42,20 @@
               <tr>
               <td><%=link_to stock.name, store_front_module_stock_path(stock) %><br>
                 <small><%= stock.barcode %></small><br>
-                    <% if stock.sales.processed.present? %>
+                    <% processed_sales = stock.sales.select { |sale| sale.order_id.present? } %>
+                    <% if processed_sales.present? %>
                       <b> Sales</b><br>
-                      <% stock.sales.processed.each do |sale| %>
+                      <% processed_sales.each do |sale| %>
                         Quantity: <span class="badge bg-green"><%= sale.quantity %></span><br>
                        Customer: <%= sale.customer_name %><br>
                        Date: <%= sale.date.strftime('%B %e, %Y') %><br>
                        REF #: <%= sale.reference_number %>
                       <% end %>
                     <% end %>
-                    <% if stock.stock_transfers.processed.present? %>
+                    <% processed_transfers = stock.stock_transfers.select { |transfer| transfer.order_id.present? } %>
+                    <% if processed_transfers.present? %>
                       <b> Stock Transfers </b><br>
-                      <% stock.stock_transfers.processed.each do |transfer| %>
+                      <% processed_transfers.each do |transfer| %>
                        Quantity: <span class="badge bg-yellow"><%= transfer.quantity %></span><br>
                        Destination: <%= transfer.destination_store_front_name %><br>
                        Date: <%= transfer.purchase_order_date.strftime('%B %e, %Y') %><br>
@@ -65,7 +66,13 @@
               </td>
 
               <td><%= stock.try(:purchase_order_date).try(:strftime, ("%B %e, %Y")) %></td>
-              <td> <%= stock.balance %></td>
+              <td>
+                <% if stock.available_quantity.to_d <= 0 %>
+                  <span class="badge badge-danger">Sold Out</span>
+                <% else %>
+                  <%= stock.available_quantity %>
+                <% end %>
+              </td>
 
               <td><%= stock.purchase_quantity %></td>
 
@@ -83,9 +90,6 @@
 
 
               <td><%= stock.try(:supplier).try(:name) %></td>
-              <% if current_user.proprietor? %>
-              <td><%= link_to "Edit", edit_product_stock_path(id: stock.id, product_id: stock.product_id), class: "btn btn-warning btn-sm" %>
-              <% end %>
 
               </tr>
               <% end %>

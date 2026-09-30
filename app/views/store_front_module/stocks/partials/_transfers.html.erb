@@ -1,23 +1,34 @@
 <h4 class="title-up"> Stock Transfers </h4>
-<div  class="table table-responsive">
-  <table class="table table-responsive">
-    <thead>
-      <tr>
-        <th> Date </th>
-        <th> Destination </th>
-        <th> Quantity </th>
-        <th> REF # </th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @stock_transfers.each do |stock_transfer| %>
+<% if @stock_transfers.present? %>
+  <div class="table table-responsive">
+    <table class="table table-striped">
+      <thead>
         <tr>
-          <td><%= link_to stock_transfer.purchase_order_date.strftime('%B %e, %Y'), store_front_module_stock_transfer_path(stock_transfer.purchase_order) %></td>
-          <td><%= stock_transfer.destination_store_front_name %></td>
-          <td><%= stock_transfer.quantity %></td>
-          <td># <%= stock_transfer.reference_number %></td>
+          <th> Date </th>
+          <th> Destination </th>
+          <th> Quantity </th>
+          <th> REF # </th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+      </thead>
+      <tbody>
+        <% @stock_transfers.each do |stock_transfer| %>
+          <tr>
+            <td>
+              <% if stock_transfer.purchase_order.present? %>
+                <%= link_to stock_transfer.purchase_order.date.strftime("%B %e, %Y"), store_front_module_stock_transfer_path(stock_transfer.purchase_order) %>
+              <% else %>
+                <span class="text-muted">—</span>
+              <% end %>
+            </td>
+            <td><%= stock_transfer.purchase_order&.destination_store_front_name %></td>
+            <td><span class="badge bg-yellow"><%= stock_transfer.quantity %></span></td>
+            <td># <%= stock_transfer.purchase_order&.reference_number %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <center><%== pagy_bootstrap_nav(@pagy) %></center>
+  </div>
+<% else %>
+  <p class="text-muted">No stock transfers recorded for this stock yet.</p>
+<% end %>

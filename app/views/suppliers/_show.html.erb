@@ -1,8 +1,14 @@
 
     <div class="card">
       <div class="card-header">
-
+        <div class="row">
+          <div class="col-md-1">
+            <%= supplier_logo(@supplier, height: 60, width: 60) %>
+          </div>
+          <div class="col-md-11">
             <h4 class="title-up"><%= @supplier.business_name.try(:upcase) %></h4>
+          </div>
+        </div>
         </div>
       <div class="card-body">
         <ul class="nav nav-pills nav-pills-underline">

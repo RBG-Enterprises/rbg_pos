@@ -6,7 +6,7 @@
           <%= link_to store_front_module_purchase_order_path(order) do %>
             <div class="row text-muted">
               <div class="col-md-1">
-                <%= image_tag(order.supplier.avatar, class: "img-circle", height: 45, width: 45) %>
+                <%= supplier_logo(order.supplier) %>
               </div>
               <div class="col-md-3">
                 <b class="text-primary"><%= order.supplier_name %></b><br>

@@ -1,3 +1,7 @@
 <div class="tab-pane <%= 'active' if current_page? supplier_path(@supplier) %>">
-      <%= link_to 'Update Info', edit_supplier_path(@supplier) %>
+  <p><strong>Business Name:</strong> <%= @supplier.business_name %></p>
+  <p><strong>Owner Name:</strong> <%= @supplier.owner_name %></p>
+  <p><strong>Address:</strong> <%= @supplier.address %></p>
+  <p><strong>Contact Number:</strong> <%= @supplier.contact_number %></p>
+  <%= link_to 'Update Info', edit_supplier_path(@supplier) %>
 </div>

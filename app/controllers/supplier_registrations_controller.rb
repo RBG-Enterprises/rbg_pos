@@ -9,6 +9,6 @@ class SupplierRegistrationsController < ApplicationController
 	end 
 	private 
 	def supplier_params
-		params.require(:supplier).permit(:business_name, :owner_name, :address, :contact_number)
+		params.require(:supplier).permit(:business_name, :owner_name, :address, :contact_number, :avatar)
 	end 
 end 
