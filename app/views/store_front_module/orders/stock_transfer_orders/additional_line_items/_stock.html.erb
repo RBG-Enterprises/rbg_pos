@@ -17,12 +17,12 @@
        <span class="badge badge-warning">PRICE: <%= number_to_currency stock.unit_of_measurement.try(:price) %></span>
      </div>
 
-     <div class="col-md-3">
-     <%= f.input :quantity, as: :string, input_html: { oninput: 'calculateLineItemTotalCost()', id: 'line_item_quantity', value: 1}, autofocus: true %>
-   </div>
-   <div class="col-md-3">
+<div class="col-md-3">
+      <%= f.input :bar_code, input_html: { value: params[:search], autofocus: true } %>
+    </div>
+    <div class="col-md-3">
 
-     <%= f.input :bar_code, input_html: { value: params[:search] } %>
+      <%= f.input :quantity, as: :string, input_html: { oninput: 'calculateLineItemTotalCost()', id: 'line_item_quantity', value: 1} %>
 
    </div>
    <div class="col-md-3">

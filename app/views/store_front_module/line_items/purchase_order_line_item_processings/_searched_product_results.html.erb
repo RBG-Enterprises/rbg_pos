@@ -18,7 +18,10 @@
                     <%= simple_form_for @purchase_order_line_item, url: :store_front_module_purchase_order_line_item_processings do |f| %>
                       <div class="row">
                         <div class="col-md-12">
-                          <%= f.input :quantity, as: :string, input_html: { oninput: 'calculateLineItemTotalCost()', id: 'line_item_quantity', value: 1}, autofocus: true %>
+                          <%= f.input :bar_code, input_html: { autofocus: true } %>
+                        </div>
+                        <div class="col-md-12">
+                          <%= f.input :quantity, as: :string, input_html: { oninput: 'calculateLineItemTotalCost()', id: 'line_item_quantity', value: 1} %>
                         </div>
                       <div class="col-md-12">
                         <%= f.input :unit_of_measurement_id, label: 'Unit', collection: product.unit_of_measurements.all.map{|a| [a.unit_code, a.id] }, selected: product.base_measurement %>
@@ -29,19 +32,15 @@
                       <div class="col-md-12">
                         <%= f.input :total_cost %>
                       </div>
-                      <div class="col-md-12">
-                        <%= f.input :bar_code %>
                            <%= f.input :cart_id, input_html: { value: @cart.id }, as: :hidden %>
-                      <%= f.input :product_id, input_html: { value: product.id }, as: :hidden %>
-
-                      </div>
-                      <div class="col-md-12">
-                        <br>
-                        <%= button_tag type: 'submit', class: "btn btn-primary btn-block" do %>
-            <i class="fa fa-shopping-basket" aria-hidden="true"></i> Add to Purchase
-          <% end %>
-                    </div>
-                    </div>
+                       <%= f.input :product_id, input_html: { value: product.id }, as: :hidden %>
+                       <div class="col-md-12">
+                         <br>
+                         <%= button_tag type: 'submit', class: "btn btn-primary btn-block" do %>
+             <i class="fa fa-shopping-basket" aria-hidden="true"></i> Add to Purchase
+           <% end %>
+                       </div>
+                       </div>
 <hr>
 
 
