@@ -36,6 +36,9 @@ Rails.application.routes.draw do
   resources :store, only: [:index]
   resources :departments, only: [:index]
   resources :customers do
+    member do
+      post :void_payment
+    end
     resources :departments, only: [:new, :create], module: :customers
     resources :refunds,         only: [:new, :create],                module: :customers
     resources :payments,        only: [:new, :create],                module: :customers

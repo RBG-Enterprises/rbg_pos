@@ -129,7 +129,47 @@ class Customer < ApplicationRecord
   end
 
   def payment_entries
-    other_payments
+    (other_payments + credit_sales_order_payments.to_a + payment_reversals.to_a).uniq
+  end
+
+  # Credit payments posted against this customer's sales orders. These
+  # entries are keyed to the order (commercial_document = Order), so
+  # other_payments (keyed to the customer) misses them.
+  def credit_sales_order_payments
+    account_ids = sales_orders.pluck(:receivable_account_id).compact.uniq
+    return AccountingModule::Entry.none if account_ids.empty?
+
+    AccountingModule::Entry.where(
+      id: AccountingModule::CreditAmount.where(account_id: account_ids).select(:entry_id)
+    )
+  end
+
+  # Reversal (VOID) entries posted against this customer's payments,
+  # keyed either to the customer or to one of its sales orders.
+  # NOTE: polymorphic docs for STI orders store the base class name
+  # ("Order"), not "StoreFrontModule::Orders::SalesOrder". Old payment
+  # entries may also have no document at all (nil); their reversals are
+  # picked up via the order receivable accounts they touch.
+  def payment_reversals
+    order_ids = sales_orders.ids
+    account_ids = sales_orders.pluck(:receivable_account_id).compact.uniq
+    scope = AccountingModule::Entry.where(commercial_document: self)
+    if order_ids.any?
+      scope = scope.or(
+        AccountingModule::Entry.where(
+          commercial_document_type: "Order",
+          commercial_document_id: order_ids
+        )
+      )
+    end
+    if account_ids.any?
+      scope = scope.or(
+        AccountingModule::Entry.where(commercial_document_type: nil).where(
+          id: AccountingModule::Amount.where(account_id: account_ids).select(:entry_id)
+        )
+      )
+    end
+    scope.where("description LIKE ?", "#{AccountingModule::Entry::VOID_DESCRIPTION_PREFIX}%")
   end
 
   def other_payments

@@ -1,0 +1,50 @@
+<div class="table-responsive">
+  <table class="table table-hover table-striped mb-0">
+    <thead class="thead-light">
+      <tr>
+        <th class="text-nowrap">Date</th>
+        <th class="text-nowrap">Recorded By</th>
+        <th class="text-nowrap">Check No. / Reference</th>
+        <th>Invoice # / PO # / Description</th>
+        <th class="text-right text-nowrap">Amount</th>
+        <th class="text-right">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if payments.blank? %>
+        <tr>
+          <td colspan="6" class="text-center text-muted py-4">No matching transactions found.</td>
+        </tr>
+      <% end %>
+      <% payments.each do |payment| %>
+        <tr class="<%= 'table-active' if payment.void_entry? %>">
+          <td class="text-nowrap align-middle"><%= link_to payment.entry_date.strftime("%B %e, %Y"), accounting_entry_path(payment) %></td>
+          <td class="text-nowrap align-middle">
+            <% if payment.recorder.present? %>
+              <%= image_tag(payment.recorder.avatar, class: "img-circle mr-1", height: 32, width: 32, onerror: "this.style.display='none'") %>
+            <% end %>
+            <%= payment.recorder_name.presence || payment.user.try(:full_name) %>
+          </td>
+          <td class="align-middle"><small class="text-muted"><%= payment.reference_number %></small></td>
+          <td class="align-middle"><%= payment.description %></td>
+          <td class="text-right text-nowrap align-middle"><strong><%= number_to_currency payment.debit_amounts.sum(:amount) %></strong></td>
+          <td class="text-right text-nowrap align-middle">
+            <% if payment.voided? %>
+              <span class="badge badge-warning">Voided</span>
+            <% elsif payment.void_entry? %>
+              <span class="badge badge-secondary">Reversal Entry</span>
+            <% elsif current_user.proprietor? %>
+              <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#void-payment-modal-<%= payment.id %>">
+                Void
+              </button>
+              <%= render "shared/void_payment_modal", modal_id: "void-payment-modal-#{payment.id}", form_url: void_payment_customer_path(customer), entry: payment %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<div class="d-flex justify-content-center mt-3">
+  <%= will_paginate payments %>
+</div>

@@ -1,0 +1,57 @@
+<div class="modal fade" id="<%= modal_id %>" tabindex="-1" role="dialog" aria-labelledby="<%= modal_id %>-title" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header py-2 px-3" style="border-bottom: none;">
+        <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close" style="font-size: 1.75rem; line-height: 1; opacity: 0.9;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <%= form_tag form_url, method: :post do %>
+        <div class="modal-body text-left px-4 py-4" style="white-space: normal; overflow-wrap: break-word;">
+          <div class="px-3 py-3 mb-4" style="background-color: #fdf0f0; border: 1px solid #f5c6cb; border-left: 4px solid #dc3545; border-radius: 8px;">
+            <h6 class="text-danger mb-1" id="<%= modal_id %>-title">
+              <i class="fa fa-exclamation-triangle small"></i> Void Payment?
+            </h6>
+            <p class="mb-0" style="color: #000; font-size: 0.85rem;">
+              This will post a reversal entry. The original payment is kept for history. This cannot be undone.
+            </p>
+          </div>
+          <% customer_doc = entry.commercial_document %>
+          <% modal_customer_name = customer_doc.try(:full_name).presence || customer_doc.try(:customer).try(:full_name).presence || "—" %>
+          <% modal_recorder_name = entry.recorder_name.presence || entry.user.try(:full_name).presence || "—" %>
+          <div class="row mb-2">
+            <div class="col-4 text-muted">Amount</div>
+            <div class="col-8"><strong><%= number_to_currency entry.total %></strong></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-4 text-muted">Date</div>
+            <div class="col-8"><strong><%= entry.entry_date.strftime("%B %e, %Y") %></strong></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-4 text-muted">Description</div>
+            <div class="col-8"><%= entry.description %></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-4 text-muted">Customer</div>
+            <div class="col-8"><strong><%= modal_customer_name %></strong></div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-4 text-muted">Recorded By</div>
+            <div class="col-8"><%= modal_recorder_name %></div>
+          </div>
+          <%= hidden_field_tag :entry_id, entry.id %>
+          <div class="form-group mb-0">
+            <%= label_tag "#{modal_id}-note" do %>
+              Void note <span class="text-danger">*</span> <small class="text-muted">(required, saved on the reversal entry)</small>
+            <% end %>
+            <%= text_area_tag :void_note, nil, required: true, id: "#{modal_id}-note", class: "form-control", rows: 4, placeholder: "Reason for voiding this payment" %>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <%= submit_tag "Confirm", class: "btn btn-danger" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

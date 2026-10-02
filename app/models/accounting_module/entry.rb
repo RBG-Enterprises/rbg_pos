@@ -100,7 +100,10 @@ module AccountingModule
     end
 
     def voided?
-      self.class.where(description: self.class.void_description_for(self)).exists?
+      # Prefix match (not exact): reversals carry a void note appended
+      # to the description, so an exact match would miss them.
+      # The " - " suffix keeps "#1" from matching "#17".
+      self.class.where("description LIKE ?", "#{VOID_DESCRIPTION_PREFIX}#{id} - %").exists?
     end
 
     def voidable_transfer_by?(user)

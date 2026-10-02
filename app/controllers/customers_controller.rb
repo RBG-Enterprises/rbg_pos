@@ -41,6 +41,27 @@ class CustomersController < ApplicationController
     redirect_to customers_url, alert: "Customer destroyed successfully"
   end
 
+  # Proprietor-only: void a payment on the customer's account tab by
+  # posting a reversal entry (never deletes the original).
+  def void_payment
+    @customer = Customer.find(params[:id])
+    unless current_user.proprietor?
+      redirect_to customer_account_index_path(@customer),
+                  alert: "Only proprietors can void payments."
+      return
+    end
+
+    entry = AccountingModule::Entry.find(params[:entry_id])
+    Customers::VoidPayment.call(customer: @customer, entry: entry, current_user: current_user, note: params[:void_note])
+    redirect_to customer_account_index_path(@customer),
+                notice: "Payment voided successfully."
+  rescue ActiveRecord::RecordNotFound
+    redirect_to customer_account_index_path(@customer),
+                alert: "Payment not found for this customer."
+  rescue Customers::VoidPayment::NotVoidable => e
+    redirect_to customer_account_index_path(@customer), alert: e.message
+  end
+
 	private
 	def customer_params
 		params.require(:customer).permit(:first_name, :last_name, :contact_number, :address, :business_id, :avatar)
